@@ -7,6 +7,21 @@ import numpy as np
 
 path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Exemple_fasta/"
 
+def Rstudio() :
+	import rpy2
+	import rpy2.robject.packages as rpackages
+	from rpy2.robjects.vectors import StrVector
+	from rpy2.robjects.packages import importr
+	utils = rpackages.importr('utils')
+	utils.chooseCRANmirror(ind = 1)
+
+	# Install packages
+	packnames = ('protr')
+	utils.install_packages(StrVector(packnames))
+	# Load packages 
+	protr = importr('protr')
+
+
 def Score_aa() :
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 	Z1 = [-2.49, 2.18, 0.07, -4.19, 1.96, -4.44, -1.22, 2.84, 2.23, -2.69, 2.88, 3.08, -4.92, 3.64, 0.71, 0.92, \
@@ -158,7 +173,17 @@ def Z_aa(Z_score) :
 
 def Auto_cross_variance() :
 	pass
-	#ACCz_same = sum()
+	lag_r = 4
+	#N = nombre aa du peptide
+	#Z = zscore
+	ACCz_zj_lag4 = []
+	ACC_zjzk_lag4 = []
+	for j in range(len(N)-lag_r) : # surement faire une autre boucle for
+		res_same = sum((Z**2 + lag_r)/(N - lag_r))
+		res_diff = sum((Z*Z_diff + lag_r)/ (N - lag_r))
+		ACCz_zj_lag4.append(res_same)
+		ACC_zjzk_lag4.append(res_diff)
+
 
 
 
