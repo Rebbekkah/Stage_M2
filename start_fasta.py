@@ -1,12 +1,13 @@
-path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Exemple_fasta/Q9SNB7.fasta"
-
+path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Exemple_fasta/"
 
 ######### SUR 1 FICHIER FASTA
 
 def read_fasta(fichier) :
 	#fich = list(fichiers)
 	#for f in fich :
+
 	with open(fichier, 'r') as filin :
+
 		dico = {}
 		seq = ""
 		for line in filin :
@@ -22,7 +23,7 @@ def read_fasta(fichier) :
 	print("Longueur de la séquence : ", len(seq))
 	print("--------------------")
 
-	return(dico, seq)
+	return(dico) ######### Peut être return juste le dico pour la suite
 
 
 def freq_aa(sequence) : 
@@ -43,32 +44,59 @@ def freq_aa(sequence) :
 
 	print("Amino acid and their occurence : ", dico)
 	print("And their frequency : ", freq_dico)
-	print("--------------------")
-	return dico, freq_dico
+	print("----------freq_aa----------")
+	return freq_dico
 
 
 ######### SUR PLUSIEURS FICHIERS FASTAS
 import os
 import sys
+import glob
+import pandas as pd
+import numpy as np 
 
 def specific_occurence(path) :
 	#print(path)
-	fich = os.listdir(path)
+	#fich = os.listdir(path)
+	#fich = os.listdir(path+'*.fasta')
+	#fich = glob.glob('path+*.fasta')
+	fich = glob.glob(path+'*.fasta')
+	#print("path et fasta ---> ", 'path'+'*.fasta')
 	print(fich)
 	print(type(fich))
+	print("----------specific_occ----------")
 
 	reads = []
 	for fasta in fich :
+		#print("ERREUR")
 		print(type(fasta))
 		print(fasta)
-		reads.append(read_fasta(fasta))
+		reads.append(read_fasta(str(fasta)))
 
 	print(reads)
+	print(type(reads))
 
-	'''
-	for fasta in fich : 
-		with open(fasta, 'r') as fastin :
-	'''
+	frequencies = []
+	for dicct in reads :
+		#print(type(dicct))
+		for value in dicct.values() :
+			#print(value)
+			frequencies.append(freq_aa(value))
+			#[dicct.keys()]
+	#print(frequencies)
+
+	print("----------DF FREQ-----------")
+	list_df = []
+	for dicct in frequencies :
+		dicct = pd.DataFrame([dicct])
+		#print(type(dicct))
+		print(dicct)
+		list_df.append(dicct)
+
+	print(list_df, type(list_df))
+
+	return list_df
+	
 
 ######### Biopython
 
@@ -115,10 +143,11 @@ def bio() :
 
 	'''
 
-	for seq_record in SeqIO.parse(path, "fasta") :
-		record = SeqIO.read(path, "fasta")
+	for seq_record in SeqIO.parse("Q9SNB7.fasta", "fasta") :
+		record = SeqIO.read("Q9SNB7.fasta", "fasta")
 		print(record, "\n -----------------------")
-		print(record.seq)
+		seq = record.seq
+		print(seq)
 		my_seq = ProteinAnalysis(str(seq_record.seq))
 		#print(my_seq)
 		#print(my_seq)
@@ -127,7 +156,8 @@ def bio() :
 		#print(len(my_seq))
 	
 		freq = my_seq.get_amino_acids_percent()
-		#print(type(freq))
+		print(freq)
+
 
 		#print(seq_record.annotations)
 
@@ -138,6 +168,9 @@ def Tsne(frequencies) :
 	pass
 
 
+def Auto_cross_variance() :
+	pass
+
 
 
 if __name__ == '__main__' :
@@ -146,10 +179,10 @@ if __name__ == '__main__' :
 	#dico_number, frequency = freq_aa(sequence)
 
 	# Ensemble de fichiers
-	#proportion = specific_occurence(path)
+	proportion = specific_occurence(path)
 
 	# Biopython
-	seq = bio()
+	#seq = bio()
 
 
 
