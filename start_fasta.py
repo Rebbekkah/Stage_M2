@@ -1,4 +1,22 @@
+import os
+import sys
+import glob
+import pandas as pd
+import numpy as np 
+
+
 path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Exemple_fasta/"
+
+def Score_aa() :
+	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
+	Z1 = [-2.49, 2.18, 0.07, -4.19, 1.96, -4.44, -1.22, 2.84, 2.23, -2.69, 2.88, 3.08, -4.92, 3.64, 0.71, 0.92, \
+			3.22, -4.75, -1.39, 2.41]
+	Z2 = [-0.27, 0.53, -1.73, -1.03, -1.63, -1.68, 0.88, 1.41, -5.36, -2.53, 2.52, 0.39, 1.30, 1.13, -0.97, -2.09, \
+			1.45, 3.65, 2.32, 1.74]
+	Z3 = [-0.41, -1.14, 0.09, -0.98, 0.57, -1.03, 2.23, -3.14, 0.30, -1.29, -3.44, -0.07, 0.45, 2.36, 4.13, -1.40, \
+			0.84, 0.85, 0.01, 1.11]
+	df_Zscore = pd.DataFrame({'AA' : list_of_aa, 'Z1' : Z1, 'Z2' : Z2, 'Z3' : Z3})
+	return df_Zscore
 
 ######### SUR 1 FICHIER FASTA
 
@@ -44,35 +62,42 @@ def freq_aa(sequence) :
 
 	print("Amino acid and their occurence : ", dico)
 	print("And their frequency : ", freq_dico)
+	print(len(freq_dico.keys()))
 	print("----------freq_aa----------")
 	return freq_dico
 
 
 ######### SUR PLUSIEURS FICHIERS FASTAS
-import os
-import sys
-import glob
-import pandas as pd
-import numpy as np 
 
-def specific_occurence(path) :
+def listing(path) :
+	fich = glob.glob(path+'*.fasta')
+
+	reads = []
+	for fasta in fich :
+		reads.append(read_fasta(str(fasta)))
+	#print(reads)
+	return reads
+
+
+def specific_occurence(dico) :
 	#print(path)
 	#fich = os.listdir(path)
 	#fich = os.listdir(path+'*.fasta')
 	#fich = glob.glob('path+*.fasta')
-	fich = glob.glob(path+'*.fasta')
+	#fich = glob.glob(path+'*.fasta')
 	#print("path et fasta ---> ", 'path'+'*.fasta')
-	print(fich)
-	print(type(fich))
-	print("----------specific_occ----------")
-
-	reads = []
+	#print(fich)
+	#print(type(fich))
+	#print("----------specific_occ----------")
+	reads = listing(path)
+	#reads = []
+	'''
 	for fasta in fich :
 		#print("ERREUR")
 		print(type(fasta))
 		print(fasta)
 		reads.append(read_fasta(str(fasta)))
-
+	'''
 	print(reads)
 	print(type(reads))
 
@@ -96,7 +121,24 @@ def specific_occurence(path) :
 	print(list_df, type(list_df))
 
 	return list_df
+
+
+def Z_aa(Z_score) :
+	dico = listing(path)
+	print(dico)
+
 	
+	for dicct in dico :
+		for seq in dicct.values() :
+			#print(len(seq))
+			for aa in seq :
+				
+
+def Auto_cross_variance() :
+	pass
+	#ACCz_same = sum()
+
+
 
 ######### Biopython
 
@@ -168,8 +210,6 @@ def Tsne(frequencies) :
 	pass
 
 
-def Auto_cross_variance() :
-	pass
 
 
 
@@ -178,8 +218,12 @@ if __name__ == '__main__' :
 	#reading, sequence = read_fasta("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Exemple_fasta/F4HXU3.fasta")
 	#dico_number, frequency = freq_aa(sequence)
 
+	df_Score = Score_aa()
+
 	# Ensemble de fichiers
 	proportion = specific_occurence(path)
+	ACC_score = Z_aa(df_Score)
+
 
 	# Biopython
 	#seq = bio()
