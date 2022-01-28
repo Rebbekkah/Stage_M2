@@ -16,7 +16,9 @@ def Score_aa() :
 	Z3 = [-0.41, -1.14, 0.09, -0.98, 0.57, -1.03, 2.23, -3.14, 0.30, -1.29, -3.44, -0.07, 0.45, 2.36, 4.13, -1.40, \
 			0.84, 0.85, 0.01, 1.11]
 	df_Zscore = pd.DataFrame({'AA' : list_of_aa, 'Z1' : Z1, 'Z2' : Z2, 'Z3' : Z3})
+
 	return df_Zscore
+
 
 ######### SUR 1 FICHIER FASTA
 
@@ -125,14 +127,34 @@ def specific_occurence(dico) :
 
 def Z_aa(Z_score) :
 	dico = listing(path)
-	print(dico)
+	print("-------------DICO", dico)
+	#print(Z_score)
+	print(Z_score.iloc[:, 1:])
+	print("Nombre lignes : ", Z_score.shape[0])
 
-	
+
 	for dicct in dico :
 		for seq in dicct.values() :
+			print("---------------")
+			#print(list(seq))
+			#seq = list(seq)
 			#print(len(seq))
 			for aa in seq :
-				
+				print(aa, type(aa), len(seq))
+				#print("---------------")
+				break
+				for i in range(Z_score.shape[0]) :
+					#print(Z_score.iloc[i,0])
+					if aa == Z_score.iloc[i, 0] :
+						print("yes")
+						#dico.values().values() = Z_score.iloc[i, 1:]
+	
+					#dicct.values()[aa].replace([Z_score.iloc[]])	
+					
+
+
+	print(dico)
+
 
 def Auto_cross_variance() :
 	pass
@@ -222,7 +244,7 @@ if __name__ == '__main__' :
 
 	# Ensemble de fichiers
 	proportion = specific_occurence(path)
-	ACC_score = Z_aa(df_Score)
+	seq_score = Z_aa(df_Score)
 
 
 	# Biopython
