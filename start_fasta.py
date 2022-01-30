@@ -31,6 +31,7 @@ def Score_aa() :
 	Z3 = [-0.41, -1.14, 0.09, -0.98, 0.57, -1.03, 2.23, -3.14, 0.30, -1.29, -3.44, -0.07, 0.45, 2.36, 4.13, -1.40, \
 			0.84, 0.85, 0.01, 1.11]
 	df_Zscore = pd.DataFrame({'AA' : list_of_aa, 'Z1' : Z1, 'Z2' : Z2, 'Z3' : Z3})
+	df_Zscore.set_index('AA', inplace = True)
 
 	return df_Zscore
 
@@ -143,46 +144,87 @@ def specific_occurence(dico) :
 def Z_aa(Z_score) :
 	dico = listing(path)
 	print("-------------DICO", dico)
-	#print(Z_score)
-	print(Z_score.iloc[:, 1:])
+	print(Z_score)
+	#print(Z_score.loc['H'])
+	#print(Z_score.iloc[:, 1:])
 	print("Nombre lignes : ", Z_score.shape[0])
+	#pos = 0
+
+	for dicct in dico :
+		new_seq = []
+		#print(dicct)
+		for idt, seq in dicct.items() :
+			for aa in seq :
+				new_seq.append(list(Z_score.loc[aa]))
+			dicct[idt] = new_seq
+
+		#print(new_seq)
+		print(dico)
+		return dico
 
 
+
+'''
+			for seq in dico.values() :
+				new_seq.append(seq)
+				print(new_seq)
+'''
+
+
+
+'''
 	for dicct in dico :
 		for seq in dicct.values() :
 			print("---------------")
+			print(type(seq))
+			seq = list(seq)
+			print(type(seq))
 			#print(list(seq))
 			#seq = list(seq)
 			#print(len(seq))
+
+			
 			for aa in seq :
 				print(aa, type(aa), len(seq))
 				#print("---------------")
+				seq[pos].replace(aa, Z_score.iloc[aa])
+				print(seq)
+				pos += 1
 				break
-				for i in range(Z_score.shape[0]) :
+			
+				
+				if aa in Z_score.loc[aa] :
+					print(aa)
+					print(Z_score[aa])
+				
+
+
+								for i in range(Z_score.shape[0]) :
 					#print(Z_score.iloc[i,0])
 					if aa == Z_score.iloc[i, 0] :
-						print("yes")
+						print(Z_score.iloc[i, 0])
 						#dico.values().values() = Z_score.iloc[i, 1:]
 	
-					#dicct.values()[aa].replace([Z_score.iloc[]])	
-					
-
-
-	print(dico)
+						#dicct.values()[aa].replace([Z_score.iloc[]])	
+				'''			
+	#print(dico)
 
 
 def Auto_cross_variance() :
 	pass
+	'''
 	lag_r = 4
 	#N = nombre aa du peptide
 	#Z = zscore
 	ACCz_zj_lag4 = []
 	ACC_zjzk_lag4 = []
+	
 	for j in range(len(N)-lag_r) : # surement faire une autre boucle for
 		res_same = sum((Z**2 + lag_r)/(N - lag_r))
 		res_diff = sum((Z*Z_diff + lag_r)/ (N - lag_r))
 		ACCz_zj_lag4.append(res_same)
 		ACC_zjzk_lag4.append(res_diff)
+	'''
 
 
 
