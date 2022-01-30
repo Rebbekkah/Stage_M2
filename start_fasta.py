@@ -9,9 +9,12 @@ path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Exemple
 
 def Rstudio() :
 	import rpy2
+	import rpy2.robjects as robjects
 	import rpy2.robject.packages as rpackages
 	from rpy2.robjects.vectors import StrVector
 	from rpy2.robjects.packages import importr
+
+
 	utils = rpackages.importr('utils')
 	utils.chooseCRANmirror(ind = 1)
 
@@ -159,59 +162,20 @@ def Z_aa(Z_score) :
 			dicct[idt] = new_seq
 
 		#print(new_seq)
-		print(dico)
-		return dico
+	print("-----------vdfgegse-----------")	
+	print(dico)
+	print("-----------vdfgegse-----------")
+
+	return dico
 
 
 
-'''
-			for seq in dico.values() :
-				new_seq.append(seq)
-				print(new_seq)
-'''
 
-
-
-'''
-	for dicct in dico :
-		for seq in dicct.values() :
-			print("---------------")
-			print(type(seq))
-			seq = list(seq)
-			print(type(seq))
-			#print(list(seq))
-			#seq = list(seq)
-			#print(len(seq))
-
-			
-			for aa in seq :
-				print(aa, type(aa), len(seq))
-				#print("---------------")
-				seq[pos].replace(aa, Z_score.iloc[aa])
-				print(seq)
-				pos += 1
-				break
-			
-				
-				if aa in Z_score.loc[aa] :
-					print(aa)
-					print(Z_score[aa])
-				
-
-
-								for i in range(Z_score.shape[0]) :
-					#print(Z_score.iloc[i,0])
-					if aa == Z_score.iloc[i, 0] :
-						print(Z_score.iloc[i, 0])
-						#dico.values().values() = Z_score.iloc[i, 1:]
+def Auto_cross_variance(ZScores) :
 	
-						#dicct.values()[aa].replace([Z_score.iloc[]])	
-				'''			
-	#print(dico)
-
-
-def Auto_cross_variance() :
-	pass
+	ACCs = robjects.r('acc(Zscores)')
+	print(ACCs)
+	
 	'''
 	lag_r = 4
 	#N = nombre aa du peptide
@@ -311,7 +275,8 @@ if __name__ == '__main__' :
 
 	# Ensemble de fichiers
 	proportion = specific_occurence(path)
-	seq_score = Z_aa(df_Score)
+	dico_score = Z_aa(df_Score)
+	ACCs = Auto_cross_variance(dico_score)
 
 
 	# Biopython
