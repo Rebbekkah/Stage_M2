@@ -6,16 +6,36 @@ import numpy as np
 import seaborn as sns
 from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
-from rpy2 import *
+
+# R
+import rpy2.robjects as robjects
 r = robjects.r
+'''
+import rpy2.robjects.packages as rpackages
+from rpy2.robjects.vectors import StrVector
+from rpy2.robjects.packages import importr
+
+utils = rpackages.importr('utils')
+utils.chooseCRANmirror(ind = 1)
+
+# Install packages
+packnames = ('protr')
+utils.install_packages(StrVector(packnames))
+# Load packages 
+protr = rpackages.importr('protr')
+'''
 
 
-
+# important
 path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Exemple_fasta/"
 list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
+
+
 def Rstudio() :
 	pass
+	#robjects.r.source('acc.R') 
+
 
 	'''
 	#import rpy2
@@ -187,19 +207,30 @@ def Z_aa(Z_score) :
 
 
 
-def Auto_cross_variance(ZScores) :
-	pass
+def Auto_cross_variance(Zscores) :
 	#Rstudio()
 	#ACCs = protr.acc(Zscores)
 	#ACCs = robjects.r('acc(Zscores)')
-	
-	
+
+	'''
+	print(Zscores)
+	ACC = r.acc(Zscores)
+	print(ACC)	
+	'''
+
+	#robjects.r.source('acc.R') 
+
 	lag_r = 4
 	ACCz_zj_lag4 = []
 	ACC_zjzk_lag4 = []
 
-'''
-	for dicct in ZScores :
+	#print(Zscores)
+
+
+	'''
+	for dicct in Zscores :
+		#print(dicct)
+		#break
 		Acc = []
 		for idt, score in dicct.items() :
 			N = len(score)
@@ -207,23 +238,126 @@ def Auto_cross_variance(ZScores) :
 			#for i in range(len(score)) : 
 			for Z in score : 
 				print("------Z-----------", Z)
-				for score in Z :
+				for s in Z :
+					z = s
 					for i in range(0, 3) :
-						print("------I-----------", i)
-						res_same = sum((score[i]**2 + lag_r)/(N - lag_r))
+						#print("------I-----------", i)
+						res_same = sum((z[i]**2 + lag_r)/(N - lag_r))
+
+	'''
+	dico_Acc = {}
+	#newj = []
+	#Acc = []
+	for dicct in Zscores :
+		#print(dicct)
+		#break
+		#Acc = []
+		for idt, score in dicct.items() :
+			N = len(score)
+			j = []
+			k = []
+			l = []
+			Acc = []
+			newj = []
+			#for lag in range(0, N-lag_r, 4) : 
+			#for lag in range(0, N, 4) : 
+			for Z in score : 
+				#print(Z)
+				j.append(Z[0])
+				k.append(Z[1])
+				l.append(Z[2])
+			#for i in range(0, len(j), 4) :
+			#	newj.append(j[i])
+
+			print("----j-----")
+			print(j, len(j))
+			print("----k----")
+			print(k, len(k))
+			print("----l----")
+			print(l, len(l))
+			#print(len(j))
+			#print("-------newj", newj, len(newj))
+
+
+			#print(sum(j))
+
+
+			#mult = []
+			#res_same_one = []
+			#res_diff_one = []
+
+			dico_jkl = {'j' : j, 'k' : k, 'l' : l}
+			#print(dico_jkl)
+
+			#mult = []
+			#res_same_one = []
+			mult = []
+			for jkl in dico_jkl.values() :
+				##### Caler qql par un for i in range(lagr)
+				#mult = []
+				res_same_one = []
+				res_diff_one = []
+				#print(len(jkl))
+				for i in range(len(jkl)-1) :
+					print(jkl[i], jkl[i+1])
+					#break
+					mult.append(jkl[i]*jkl[i+1])
+				#print(mult)
+				for m in mult :
+					res_same_one.append((m**2+lag_r)/(N-lag_r))
+				res_same = sum(res_same_one)
+				Acc.append(res_same)
+				dico_Acc[idt] = Acc
+
+			length = len(j)
+
+			for i in range(length) :
+				
+
+
+
+	print(dico_Acc)
+			
+		
+'''
+			mult = []
+			res_same_one = []
+			for i in range(len(j)-1) :
+				mult.append(j[i]*j[i+1])
+			#print(len(mult))
+			for m in mult :
+				#print(type(m))
+				#print(m)
+				res_same_one.append((m**2+lag_r)/N-lag_r)
+			#print("----res_same1----", res_same_one, len(res_same_one))
+			res_same = sum(res_same_one)
+			Acc.append(res_same)
+			dico_Acc[idt] = Acc
+		
+			#Acc.append(sum((j**2+lag_r)/N-lag_r))
+	print(Acc)
+	print(dico_Acc)
+			#break
+'''
+	
+
 
 '''
-
-
-
-'''	
-	for j in range(len(N)-lag_r) : # surement faire une autre boucle for
-		res_same = sum((Z**2 + lag_r)/(N - lag_r))
-		res_diff = sum((Z*Z_diff + lag_r)/ (N - lag_r))
-		ACCz_zj_lag4.append(res_same)
-		ACC_zjzk_lag4.append(res_diff)
-	
-	print(ACCs)
+def formula_acc(list) :
+	dico_Acc = {}
+	mult = []
+	res_same_one = []
+	for i in range(len(j)-1) :
+		mult.append(j[i]*j[i+1])
+	#print(len(mult))
+	for m in mult :
+		#print(type(m))
+		#print(m)
+		res_same_one.append((m**2+lag_r)/N-lag_r)
+	#print("----res_same1----", res_same_one, len(res_same_one))
+	res_same = sum(res_same_one)
+	Acc.append(res_same)
+	dico_Acc[idt] = Acc
 '''
 
 
