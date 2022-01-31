@@ -3,12 +3,23 @@ import sys
 import glob
 import pandas as pd
 import numpy as np 
+import seaborn as sns
+from sklearn.manifold import TSNE
+from matplotlib import pyplot as plt
+from rpy2 import *
+r = robjects.r
+
 
 
 path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Exemple_fasta/"
+list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 def Rstudio() :
-	import rpy2
+	pass
+
+	'''
+	#import rpy2
+	#from rpy2 import *
 	import rpy2.robjects as robjects
 	import rpy2.robject.packages as rpackages
 	from rpy2.robjects.vectors import StrVector
@@ -22,11 +33,11 @@ def Rstudio() :
 	packnames = ('protr')
 	utils.install_packages(StrVector(packnames))
 	# Load packages 
-	protr = importr('protr')
+	protr = rpackages.importr('protr')
+	'''
 
 
 def Score_aa() :
-	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 	Z1 = [-2.49, 2.18, 0.07, -4.19, 1.96, -4.44, -1.22, 2.84, 2.23, -2.69, 2.88, 3.08, -4.92, 3.64, 0.71, 0.92, \
 			3.22, -4.75, -1.39, 2.41]
 	Z2 = [-0.27, 0.53, -1.73, -1.03, -1.63, -1.68, 0.88, 1.41, -5.36, -2.53, 2.52, 0.39, 1.30, 1.13, -0.97, -2.09, \
@@ -79,6 +90,11 @@ def freq_aa(sequence) :
 	for cle, value in dico.items() :
 		if cle not in freq_dico.keys() :
 			freq_dico[cle] = value/total_aa
+
+
+	for aa in list_of_aa :
+		if aa not in freq_dico :
+			freq_dico[aa] = 0
 
 
 	print("Amino acid and their occurence : ", dico)
@@ -172,25 +188,43 @@ def Z_aa(Z_score) :
 
 
 def Auto_cross_variance(ZScores) :
+	pass
+	#Rstudio()
+	#ACCs = protr.acc(Zscores)
+	#ACCs = robjects.r('acc(Zscores)')
 	
-	ACCs = robjects.r('acc(Zscores)')
-	print(ACCs)
 	
-	'''
 	lag_r = 4
-	#N = nombre aa du peptide
-	#Z = zscore
 	ACCz_zj_lag4 = []
 	ACC_zjzk_lag4 = []
-	
+
+'''
+	for dicct in ZScores :
+		Acc = []
+		for idt, score in dicct.items() :
+			N = len(score)
+			#print(len(score))
+			#for i in range(len(score)) : 
+			for Z in score : 
+				print("------Z-----------", Z)
+				for score in Z :
+					for i in range(0, 3) :
+						print("------I-----------", i)
+						res_same = sum((score[i]**2 + lag_r)/(N - lag_r))
+
+'''
+
+
+
+'''	
 	for j in range(len(N)-lag_r) : # surement faire une autre boucle for
 		res_same = sum((Z**2 + lag_r)/(N - lag_r))
 		res_diff = sum((Z*Z_diff + lag_r)/ (N - lag_r))
 		ACCz_zj_lag4.append(res_same)
 		ACC_zjzk_lag4.append(res_diff)
-	'''
-
-
+	
+	print(ACCs)
+'''
 
 
 ######### Biopython
@@ -260,10 +294,82 @@ def bio() :
 
 
 def Tsne(frequencies) :
-	pass
+
+	tsne = TSNE(n_components = 2, random_state = 0)
+	print(frequencies)
+
+	fit_list = []
+	print("--------")
+	#for i in range(len(frequencies)-1) :
+		#print(i)
+
+	'''
+	for mat in frequencies :
+		print(mat)
+		#break
+		arr = mat.to_numpy()
+		print(arr)
+		print(type(arr))
+
+		arr = np.reshape(arr, (-1, 2))
+		print(arr)
+
+		X_2d = tsne.fit_transform(arr)
+		fit_list.append(X_2d)
+		print("---------")
+		print(X_2d)
+		#plt.scatter(X_2d, )
+		#plt.plot(X_2d, linestyle = 'none', marker = 'o', color = 'red', markersize = 12)
+		#plt.show()
+		#break
+	'''
+
+	df = pd.DataFrame()
+	matrix = []
+
+	'''
+	for mat in frequencies :
+		arr = mat.to_numpy()
+		print(arr)
+		print(type(arr))
+
+		arr = np.reshape(arr, (-1, 2))
+		print(arr)
+
+		X_2d = tsne.fit_transform(arr)
+		df['x'] = X_2d[:,0]
+		df['y'] = X_2d[:,1]
+		print(df)
+
+		sns.scatterplot(x = 'x', y = 'y', data = df)
+		plt.show()
+	'''
+
+	for mat in frequencies :
+		matrix.append(mat.to_numpy())
+
+	matrix = np.asarray(matrix)
+	matrix = np.reshape(matrix, (3, -1))
+	print(matrix.ndim)
+	print(type(matrix))
+	X_2d = tsne.fit_transform(matrix)
+	df['x'] = X_2d[:,0]
+	df['y'] = X_2d[:,1]
+	print(df)
 
 
+	sns.scatterplot(x = 'x', y = 'y', data = df)
+	plt.title("Tsne", fontsize = 15)
 
+	'''
+	for i, label in enumerate(annotations) :
+		plt.annotate()
+	'''
+	
+	plt.show()
+
+
+	
 
 
 if __name__ == '__main__' :
@@ -277,8 +383,9 @@ if __name__ == '__main__' :
 	proportion = specific_occurence(path)
 	dico_score = Z_aa(df_Score)
 	ACCs = Auto_cross_variance(dico_score)
+	#tsne = Tsne(proportion)
 
-
+	
 	# Biopython
 	#seq = bio()
 
