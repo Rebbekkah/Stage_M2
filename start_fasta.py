@@ -311,9 +311,34 @@ def Auto_cross_variance(Zscores) :
 
 			length = len(j)
 
+			mult2 = []
+			mult3 = []
+			mult4 = []
+			res_diff_one = []
 			for i in range(length) :
-				
+				mult2.append(j[i]*k[i])
+				mult3.append(j[i]*l[i])
+				mult4.append(k[i]*l[i])
+			for m in mult2 : 
+				res_diff_one.append((m+lag_r)/(N-lag_r))
+			res_diff = sum(res_diff_one)
+			Acc.append(res_diff)
+			dico_Acc[idt] += Acc
 
+			res_diff_one = []
+			for m in mult3 : 
+				res_diff_one.append((m+lag_r)/(N-lag_r))
+			res_diff = sum(res_diff_one)
+			Acc.append(res_diff)
+			dico_Acc[idt] += Acc
+
+			res_diff_one = []
+			for m in mult4 : 
+				res_diff_one.append((m+lag_r)/(N-lag_r))
+			res_diff = sum(res_diff_one)
+			Acc.append(res_diff)
+			dico_Acc[idt] += Acc
+			
 
 
 	print(dico_Acc)
