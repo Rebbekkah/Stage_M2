@@ -27,7 +27,7 @@ protr = rpackages.importr('protr')
 
 
 # important
-path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteome_diatom.faa"
+path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_Chlamydomonas.fa"
 list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 
@@ -93,7 +93,37 @@ def read_fasta(fichier) :
 	print("Longueur de la séquence : ", len(seq))
 	print("--------------------")
 
-	return(dico) ######### Peut être return juste le dico pour la suite
+	dico_delete = {}	
+	not_aa = []
+	id_not_aa = []
+	for idt, seq in dico.items() :
+		for aa in seq :
+			if aa not in list_of_aa :
+				not_aa.append(aa)
+				id_not_aa.append(idt)
+				dico_delete[str(id_not_aa)] = seq
+	#print(id_not_aa, not_aa)
+	print(dico_delete)
+	nb_delete = len(dico_delete.keys())
+	print(nb_delete)
+
+	with open("Deleted_seq", "w") as filout :
+		for idt, seq in dico_delete.items() :
+			#filout.write(idt+"\n"+seq+"\n")
+			#filout.write(idt+"\n")
+
+	print("avant :", len(dico.keys()), len(dico.values()))
+	print(type(id_not_aa))
+	for idt in id_not_aa :
+		del dico[idt]
+	print("après :", len(dico.keys()), len(dico.values()))
+
+	with open("New_proteome", "w") as filout :
+		for idt, seq in dico.items() :
+			#filout.write(idt+"\n"+seq+"\n")
+			#filout.write(idt+"\n")
+
+	return(dico) 
 
 
 def freq_aa(sequence) : 
@@ -116,6 +146,20 @@ def freq_aa(sequence) :
 		if aa not in freq_dico :
 			freq_dico[aa] = 0
 
+	'''
+	not_aa = []
+	#print(freq_dico, type(freq_dico))
+	for dico in freq_dico :
+		print(dico)
+		break
+		print(dico, type(dico))
+		break
+		for aa, freq in dico.items() :
+			#print(aa)
+			if aa not in list_of_aa :
+				truc.append(not_aa)
+	print(not_aa)
+	'''
 
 	#print("Amino acid and their occurence : ", dico)
 	#print("And their frequency : ", freq_dico)
@@ -217,8 +261,9 @@ def specific_occurence(dico) :
 	list_df = []
 	for dicct in frequencies :
 		dicct = pd.DataFrame([dicct])
-		#print(type(dicct))
 		#print(dicct)
+		#print(type(dicct))
+		#break
 		list_df.append(dicct)
 
 	#print(list_df, type(list_df))
@@ -586,7 +631,7 @@ if __name__ == '__main__' :
 	proportion = specific_occurence(path)
 	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
-	#tsne = Tsne(proportion)
+	tsne = Tsne(proportion)
 	#ACCs = Auto_cross_variance(dico_score)
 	
 	# Biopython
