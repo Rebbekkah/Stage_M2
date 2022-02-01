@@ -117,10 +117,37 @@ def freq_aa(sequence) :
 			freq_dico[aa] = 0
 
 
-	print("Amino acid and their occurence : ", dico)
-	print("And their frequency : ", freq_dico)
-	print(len(freq_dico.keys()))
-	print("----------freq_aa----------")
+	#print("Amino acid and their occurence : ", dico)
+	#print("And their frequency : ", freq_dico)
+	#print(len(freq_dico.keys()))
+	#print("----------freq_aa----------")
+	'''
+	l = []
+	pb = []
+	for dic in freq_dico :
+		l.append(len(freq_dico.keys()))
+	for longueur in l :
+		if longueur != 20 :
+			pb.append(longueur)
+
+	if not pb :
+		print("rien")
+	else :
+		print(pb)
+	'''
+	#print(len(dico.keys()))
+
+
+	'''
+	pb = []
+	print(freq_dico)
+	for dico in freq_dico :
+		if len(freq_dico.keys()) != 20 :
+			pb.append(len(freq_dico.keys()))
+		else :
+			print("rien")
+	print(pb)
+	'''
 	return freq_dico
 
 
@@ -156,17 +183,35 @@ def specific_occurence(dico) :
 		print(fasta)
 		reads.append(read_fasta(str(fasta)))
 	'''
-	print(reads)
-	print(type(reads))
+	#print(reads)
+	#print(type(reads))
 
 	frequencies = []
-	for cle, valeur in reads.items() :
-		#print(valeur)
+	for idt, seq in reads.items() :
+
+		#print(seq)
 		#print(type(dicct))
 		
-		frequencies.append(freq_aa(valeur))
+		frequencies.append(freq_aa(seq))
 			#[dicct.keys()]
-	#print(frequencies)
+	#print(frequencies, type(frequencies))
+
+	'''
+	pb = []
+	for dico in frequencies :
+		if len(dico.keys()) != 20 :
+			pb.append(len(dico.keys()))
+	print(pb)
+	'''
+
+	'''
+	for dico in frequencies :
+		print(dico, type(dico))
+		print(len(dico.keys()))
+	'''
+
+		#for key,val in dico.items() :
+			#print(len(key))
 
 	print("----------DF FREQ-----------")
 	list_df = []
@@ -476,12 +521,15 @@ def Tsne(frequencies) :
 	'''
 
 	for mat in frequencies :
+		#print(mat.dim)
 		matrix.append(mat.to_numpy()[0])
+		if len(mat.columns) != 20 :
+			print(len(mat.columns))
 	
-	for arr in matrix :
-		print(arr.shape)
+	#for arr in matrix :
+	#	print(arr.shape)
 
-	print(len(frequencies))
+	#print(len(frequencies))
 	#print(matrix, type(matrix))
 	#print("LEN : ", len(matrix))
 
@@ -491,12 +539,19 @@ def Tsne(frequencies) :
 		mat = np.asarray(mat)
 		#mat = np.reshape(mat, (1, 20))
 	#print(matrix)
+	
 	matrix = np.array(matrix)
+	
+	for arr in matrix :
+		if arr.shape != (20,) :
+			print(arr.shape)
+			arr = np.reshape(arr, 20,)
+	
 	print(matrix)
 	print(matrix.shape)
 	print(matrix[0].dtype)
 	#matrix = np.asarray(matrix)
-	matrix = np.reshape(matrix, len(frequencies), 2)
+	#matrix = np.reshape(matrix, len(frequencies), 2)
 	#print(matrix.ndim)
 	#print(type(matrix))
 	print("-------------OK----------")
@@ -531,8 +586,8 @@ if __name__ == '__main__' :
 	proportion = specific_occurence(path)
 	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
-	tsne = Tsne(proportion)
-	ACCs = Auto_cross_variance(dico_score)
+	#tsne = Tsne(proportion)
+	#ACCs = Auto_cross_variance(dico_score)
 	
 	# Biopython
 	#seq = bio()
