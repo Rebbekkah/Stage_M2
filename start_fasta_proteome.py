@@ -27,7 +27,7 @@ protr = rpackages.importr('protr')
 
 
 # important
-path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_Chlamydomonas.fa"
+path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_diatom.faa"
 list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 
@@ -98,33 +98,111 @@ def read_fasta(fichier) :
 	id_not_aa = []
 	for idt, seq in dico.items() :
 		for aa in seq :
-			if aa not in list_of_aa :
+			if aa not in list_of_aa and aa != '*':
 				not_aa.append(aa)
 				id_not_aa.append(idt)
 				dico_delete[str(id_not_aa)] = seq
 	#print(id_not_aa, not_aa)
-	print(dico_delete)
+	#print(dico_delete)
 	nb_delete = len(dico_delete.keys())
-	print(nb_delete)
+	print("NOMBRE DE SEQ DELETE : ", nb_delete)
 
 	'''
 	with open("Deleted_seq", "w") as filout :
 		for idt, seq in dico_delete.items() :
 			#filout.write(idt+"\n"+seq+"\n")
 			filout.write(idt+"\n")
-
+	'''
 	print("avant :", len(dico.keys()), len(dico.values()))
-	print(type(id_not_aa))
+	#print(type(id_not_aa))
+	#print(id_not_aa)
+
+
+	#print(dico['>Cre07.g330750.t1.1'])
+
+	dico_nb = {}
+	for idt, seq in dico.items() :
+		#print("-----")
+		dico_nb[idt] = parsing_seq(seq)
+
+	print(dico_nb)
+
+	dico_total = {}
+	'''
+	for dic in dico_nb.values() :
+		for cle, val in dic.items() :
+			if cle not in dico_total.keys() :
+				dico_total[cle] = 0
+			else :
+				dico_total[cle] += 1
+	'''
+	for dic in dico_nb.values() :
+		for cle, val in dic.items() :
+			dico[cle] = sum(val)
+
+
+	print("TOTAL :", dico_total)
+
+
 	for idt in id_not_aa :
 		del dico[idt]
+		print("--------------")
+	'''
+	for seq in dico.values() :
+		#print("-----")
+		dico_nb = parsing_seq(seq)
+	'''
+	#print(dico_nb)
+	#print(dico)
 	print("après :", len(dico.keys()), len(dico.values()))
-
+	'''
 	with open("New_proteome", "w") as filout :
 		for idt, seq in dico.items() :
 			#filout.write(idt+"\n"+seq+"\n")
 			filout.write(idt+"\n")
 	'''
+
+
 	return(dico) 
+
+
+def parsing_seq(seq) :
+	
+	end = 0
+	mid = 0
+	end_mid = 0
+	nothing = 0
+	other = 0
+
+	for aa in seq :
+		if seq[-1] == '*' :
+			end += 1
+			break
+			#print("La séquence se termine par un codon stop")
+		elif aa == '*' and seq[-1] != '*' :
+			mid += 1
+			break
+			#print("La séquence se termine par un codon stop")
+		#elif '*' not in seq :
+		#	nothing += 1
+		elif aa == '*' and seq[-1] == '*' : 
+			end_mid += 1
+			break
+			#print("La séquence se termine par un codon stop et en contient")
+		elif aa == 'X' : 
+			other += 1
+			break
+
+	#dico = {'codon stop' : end, 'codon stop + inseq' : end_mid, 'pseudo gène' : mid, 'aucun' : nothing, 'autre' : other}
+	dico = {'codon stop + inseq' : end_mid, 'pseudo gène' : mid, 'autre' : other}
+
+	return dico
+
+	'''
+	print("Nombre de séquences se terminant par un codon stop :", end)
+	print("Nombre de séquences contenant et se terminant par un codon stop :", end_mid)
+	print("Nombre de séquences ne se terminant pas par un codon stop mais en contenant un:", mid)
+	'''
 
 
 def freq_aa(sequence) : 
@@ -632,7 +710,7 @@ if __name__ == '__main__' :
 	proportion = specific_occurence(path)
 	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
-	tsne = Tsne(proportion)
+	#tsne = Tsne(proportion)
 	#ACCs = Auto_cross_variance(dico_score)
 	
 	# Biopython
