@@ -107,10 +107,11 @@ def read_fasta(fichier) :
 	nb_delete = len(dico_delete.keys())
 	print(nb_delete)
 
+	'''
 	with open("Deleted_seq", "w") as filout :
 		for idt, seq in dico_delete.items() :
 			#filout.write(idt+"\n"+seq+"\n")
-			#filout.write(idt+"\n")
+			filout.write(idt+"\n")
 
 	print("avant :", len(dico.keys()), len(dico.values()))
 	print(type(id_not_aa))
@@ -121,8 +122,8 @@ def read_fasta(fichier) :
 	with open("New_proteome", "w") as filout :
 		for idt, seq in dico.items() :
 			#filout.write(idt+"\n"+seq+"\n")
-			#filout.write(idt+"\n")
-
+			filout.write(idt+"\n")
+	'''
 	return(dico) 
 
 
