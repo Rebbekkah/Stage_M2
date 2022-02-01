@@ -138,7 +138,10 @@ def read_fasta(fichier) :
 	'''
 	for dic in dico_nb.values() :
 		for cle, val in dic.items() :
-			dico[cle] = sum(val)
+			if cle not in dico_total.keys() :
+				dico_total[cle] = 0
+			else :
+				dico_total[cle] += val
 
 
 	print("TOTAL :", dico_total)
