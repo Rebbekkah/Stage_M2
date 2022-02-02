@@ -263,8 +263,8 @@ def specific_occurence(dico) :
 def Z_aa(Z_score) :
 	#dico = listing(path)
 	dico = read_fasta(path)
-	#print("-------------DICO", dico)
-	#print(Z_score)
+	print("-------------DICO", dico, "---------FIN DICO")
+	print(Z_score)
 	#print(Z_score.loc['H'])
 	#print(Z_score.iloc[:, 1:])
 	print("Nombre lignes : ", Z_score.shape[0])
@@ -272,17 +272,21 @@ def Z_aa(Z_score) :
 
 	dico_Z = {}
 	#new_seq = []
-	#print(dico)
 	for idt, seq in dico.items() :
+		if '*' in seq[-1] :
+			#dico[idt] = seq[:-1]
+			seq = seq[:-1]
+			#print(dico[idt])
 		new_seq = []
 		for aa in seq :
+			#print(seq)
 			new_seq.append(list(Z_score.loc[aa]))
-			#print(new_seq)
+			#print("ok2")
 		dico_Z[idt] = new_seq
 	#print(new_seq[1:10])
 
 		#print(new_seq)
-	print("-----------vdfgegse-----------")	
+	print("-----------vdfgegse-----------")
 	print(dico_Z)
 	print("-----------vdfgegse-----------")
 
@@ -538,15 +542,14 @@ if __name__ == '__main__' :
 	df_Score = Score_aa()
 
 	# Ensemble de fichiers
-	proportion = specific_occurence(path)
-	#dico_score = Z_aa(df_Score)
+	#proportion = specific_occurence(path)
+	dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
 	#tsne = Tsne(proportion)
 	#tsne_all_proteom = tsne_proteomes(path_proteom)
 	#ACCs = Auto_cross_variance(dico_score)
 	
-	# Biopython
-	#seq = bio()
+	# ALL proteom
 
 
 
