@@ -96,6 +96,8 @@ def read_fasta(fichier) :
 	dico_delete = {}	
 	not_aa = []
 	id_not_aa = []
+
+	'''
 	for idt, seq in dico.items() :
 		if seq[-1] != '*' :
 			for aa in seq :
@@ -110,6 +112,24 @@ def read_fasta(fichier) :
 					id_not_aa.append(idt)
 					break
 
+	'''
+	for idt, seq in dico.items() :
+		if seq[-1] != '*' :
+			for aa in seq :
+				if aa not in list_of_aa :
+					not_aa.append(aa)
+					if idt in id_not_aa :
+						del id_not_aa[-1]
+					id_not_aa.append(idt)
+			
+		elif seq[-1] == '*' :
+			for aa in seq[:-1] :
+				if aa not in list_of_aa :
+					not_aa.append(aa)
+					if idt in id_not_aa :
+						del id_not_aa[-1]
+					id_not_aa.append(idt)
+	
 		for ident in id_not_aa :
 			dico_delete[ident] = ""
 			dico_delete[ident] += seq
@@ -118,7 +138,8 @@ def read_fasta(fichier) :
 	print("----NOT------")
 	print(len(not_aa))
 	print(len(id_not_aa))
-	nb_delete = len(dico_delete.keys())
+	#nb_delete = len(dico_delete.keys())
+	nb_delete = len(id_not_aa)
 	print("NOMBRE DE SEQ DELETE : ", nb_delete)
 
 	
@@ -362,8 +383,24 @@ def specific_occurence(dico) :
 		#break
 		list_df.append(dicct)
 
-	#print(list_df, type(list_df))
+	#print(list_df[1:100], type(list_df))
 	
+
+	
+	for df in list_df :
+		for col, val in df.iteritems() :
+			if col not in list_of_aa :
+				#print(col, val)
+				del df[col]
+
+	for df in list_df :
+		for col, val in df.iteritems() :
+			if col not in list_of_aa :
+				print(col, val)
+
+	#print(list_df[1:100], type(list_df))
+
+
 	return list_df
 
 
@@ -701,6 +738,8 @@ def Tsne(frequencies) :
 	df['y'] = X_2d[:,1]
 	print(df)
 
+	list_data_tsne = {'X_2d' : X_2d, 'df' : df}
+
 
 	sns.scatterplot(x = 'x', y = 'y', data = df)
 	plt.title("Tsne", fontsize = 15)
@@ -710,9 +749,9 @@ def Tsne(frequencies) :
 		plt.annotate()
 	'''
 	
-	plt.show()
+	#plt.show()
 
-
+	return list_data_tsne
 	
 
 
@@ -727,7 +766,7 @@ if __name__ == '__main__' :
 	proportion = specific_occurence(path)
 	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
-	#tsne = Tsne(proportion)
+	tsne = Tsne(proportion)
 	#ACCs = Auto_cross_variance(dico_score)
 	
 	# Biopython
