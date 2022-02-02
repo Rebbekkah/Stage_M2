@@ -32,32 +32,6 @@ path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script
 list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 
-
-def Rstudio() :
-	pass
-	#robjects.r.source('acc.R') 
-
-
-	'''
-	#import rpy2
-	#from rpy2 import *
-	import rpy2.robjects as robjects
-	import rpy2.robject.packages as rpackages
-	from rpy2.robjects.vectors import StrVector
-	from rpy2.robjects.packages import importr
-
-
-	utils = rpackages.importr('utils')
-	utils.chooseCRANmirror(ind = 1)
-
-	# Install packages
-	packnames = ('protr')
-	utils.install_packages(StrVector(packnames))
-	# Load packages 
-	protr = rpackages.importr('protr')
-	'''
-
-
 def Score_aa() :
 	Z1 = [-2.49, 2.18, 0.07, -4.19, 1.96, -4.44, -1.22, 2.84, 2.23, -2.69, 2.88, 3.08, -4.92, 3.64, 0.71, 0.92, \
 			3.22, -4.75, -1.39, 2.41]
@@ -89,7 +63,7 @@ def read_fasta(fichier) :
 				dico[prot_id] += line.strip()
 		
 	seq += dico[prot_id]
-	#seq.split()
+	
 	print(seq)
 	print("Longueur de la séquence : ", len(seq))
 	print("--------------------")
@@ -118,27 +92,27 @@ def read_fasta(fichier) :
 		if seq[-1] != '*' :
 			for aa in seq :
 				if aa not in list_of_aa :
-					not_aa.append(aa)
-					if idt in id_not_aa :
-						del id_not_aa[-1]
-					id_not_aa.append(idt)
-			
+					if aa not in not_aa :
+						not_aa.append(aa)	
+					if idt not in id_not_aa :				
+						id_not_aa.append(idt)
+
 		elif seq[-1] == '*' :
 			for aa in seq[:-1] :
 				if aa not in list_of_aa :
-					not_aa.append(aa)
-					if idt in id_not_aa :
-						del id_not_aa[-1]
-					id_not_aa.append(idt)
-	
+					if aa not in not_aa :
+						not_aa.append(aa)
+					if idt not in id_not_aa :
+						id_not_aa.append(idt)
+						
 		for ident in id_not_aa :
 			dico_delete[ident] = ""
 			dico_delete[ident] += seq
-	#print(id_not_aa, not_aa)
-	#print(dico_delete)
+
 	print("----NOT------")
-	print(len(not_aa))
-	print(len(id_not_aa))
+	print(not_aa, len(not_aa))
+	print(id_not_aa, len(id_not_aa))
+	#print(dico_delete)
 	#nb_delete = len(dico_delete.keys())
 	nb_delete = len(id_not_aa)
 	print("NOMBRE DE SEQ DELETE : ", nb_delete)
@@ -150,28 +124,14 @@ def read_fasta(fichier) :
 			filout.write(idt+"\n")
 	
 	print("avant :", len(dico.keys()), len(dico.values()))
-	#print(type(id_not_aa))
-	#print(id_not_aa)
-
-
-	#print(dico['>Cre07.g330750.t1.1'])
 
 	dico_nb = {}
 	for idt, seq in dico.items() :
 		#print("-----")
 		dico_nb[idt] = parsing_seq(seq)
 
-	#print(dico_nb)
-
 	dico_total = {}
-	'''
-	for dic in dico_nb.values() :
-		for cle, val in dic.items() :
-			if cle not in dico_total.keys() :
-				dico_total[cle] = 0
-			else :
-				dico_total[cle] += 1
-	'''
+
 	for dic in dico_nb.values() :
 		for cle, val in dic.items() :
 			if cle not in dico_total.keys() :
@@ -179,42 +139,25 @@ def read_fasta(fichier) :
 			else :
 				dico_total[cle] += val
 
-
 	print("TOTAL :", dico_total)
 
 
 	for idt in id_not_aa :
 		del dico[idt]
-		#print("--------------")
-	'''
-	for seq in dico.values() :
-		#print("-----")
-		dico_nb = parsing_seq(seq)
-	'''
-	#print(dico_nb)
-	#print(dico)
+
 	print("après :", len(dico.keys()), len(dico.values()))
 	
 	with open("New_proteome", "w") as filout :
 		for idt, seq in dico.items() :
 			#filout.write(idt+"\n"+seq+"\n")
 			filout.write(idt+"\n")
-	
-
 
 	return(dico) 
 
 
 def parsing_seq(seq) :
 	
-	'''
-	end = 0
-	mid = 0
-	end_mid = 0
-	nothing = 0
-	other = 0
-	'''
-	dico = {'codon-stop' : 0, 'pseudo-gène' : 0, 'nothing' : 0, 'other' : 0}
+	dico = {'codon-stop' : 0, 'pseudo-gène' : 0, 'other' : 0}
 	
 	if seq[-1] == '*' :
 		dico['codon-stop'] += 1
@@ -238,51 +181,9 @@ def parsing_seq(seq) :
 				continue
 			elif (aa == '*') or (aa not in list_of_aa) :
 				break
-			#print("lsdkfldfdsl")
 
-
-
-
-	'''
-	for aa in seq :
-		if aa == '*' and seq[-1] != '*' :
-			dico['mid'] += 1
-		
-			print("breaked")
-		print("non break")
-	'''
-
-
-	'''
-	for aa in seq :
-		if seq[-1] == '*' :
-			end += 1
-			break
-			#print("La séquence se termine par un codon stop")
-		if aa == '*' and seq[-1] != '*' :
-			mid += 1
-			break
-			#print("La séquence se termine par un codon stop")
-		#elif '*' not in seq :
-		#	nothing += 1
-		if aa == '*' and seq[-1] == '*' : 
-			end_mid += 1
-			break
-			#print("La séquence se termine par un codon stop et en contient")
-		if aa == 'X' : 
-			other += 1
-			break
-	'''
-	#dico = {'codon stop' : end, 'codon stop + inseq' : end_mid, 'pseudo gène' : mid, 'aucun' : nothing, 'autre' : other}
-	#dico = {'codon stop + inseq' : end_mid, 'pseudo gène' : mid, 'autre' : other}
 
 	return dico
-
-	'''
-	print("Nombre de séquences se terminant par un codon stop :", end)
-	print("Nombre de séquences contenant et se terminant par un codon stop :", end_mid)
-	print("Nombre de séquences ne se terminant pas par un codon stop mais en contenant un:", mid)
-	'''
 
 
 def freq_aa(sequence) : 
@@ -305,52 +206,12 @@ def freq_aa(sequence) :
 		if aa not in freq_dico :
 			freq_dico[aa] = 0
 
-	'''
-	not_aa = []
-	#print(freq_dico, type(freq_dico))
-	for dico in freq_dico :
-		print(dico)
-		break
-		print(dico, type(dico))
-		break
-		for aa, freq in dico.items() :
-			#print(aa)
-			if aa not in list_of_aa :
-				truc.append(not_aa)
-	print(not_aa)
-	'''
-
 	#print("Amino acid and their occurence : ", dico)
 	#print("And their frequency : ", freq_dico)
 	#print(len(freq_dico.keys()))
 	#print("----------freq_aa----------")
-	'''
-	l = []
-	pb = []
-	for dic in freq_dico :
-		l.append(len(freq_dico.keys()))
-	for longueur in l :
-		if longueur != 20 :
-			pb.append(longueur)
+	
 
-	if not pb :
-		print("rien")
-	else :
-		print(pb)
-	'''
-	#print(len(dico.keys()))
-
-
-	'''
-	pb = []
-	print(freq_dico)
-	for dico in freq_dico :
-		if len(freq_dico.keys()) != 20 :
-			pb.append(len(freq_dico.keys()))
-		else :
-			print("rien")
-	print(pb)
-	'''
 	return freq_dico
 
 
@@ -368,72 +229,25 @@ def listing(path) :
 
 
 def specific_occurence(dico) :
-	#print(path)
-	#fich = os.listdir(path)
-	#fich = os.listdir(path+'*.fasta')
-	#fich = glob.glob('path+*.fasta')
-	#fich = glob.glob(path+'*.fasta')
-	#print("path et fasta ---> ", 'path'+'*.fasta')
-	#print(fich)
-	#print(type(fich))
-	#print("----------specific_occ----------")
-	#reads = listing(path)
+
 	reads = read_fasta(path)
-	#reads = []
-	'''
-	for fasta in fich :
-		#print("ERREUR")
-		print(type(fasta))
-		print(fasta)
-		reads.append(read_fasta(str(fasta)))
-	'''
-	#print(reads)
-	#print(type(reads))
 
 	frequencies = []
 	for idt, seq in reads.items() :
-
-		#print(seq)
-		#print(type(dicct))
-		
 		frequencies.append(freq_aa(seq))
-			#[dicct.keys()]
 	#print(frequencies, type(frequencies))
-
-	'''
-	pb = []
-	for dico in frequencies :
-		if len(dico.keys()) != 20 :
-			pb.append(len(dico.keys()))
-	print(pb)
-	'''
-
-	'''
-	for dico in frequencies :
-		print(dico, type(dico))
-		print(len(dico.keys()))
-	'''
-
-		#for key,val in dico.items() :
-			#print(len(key))
 
 	print("----------DF FREQ-----------")
 	list_df = []
 	for dicct in frequencies :
 		dicct = pd.DataFrame([dicct])
-		#print(dicct)
-		#print(type(dicct))
-		#break
 		list_df.append(dicct)
 
 	#print(list_df[1:100], type(list_df))
 	
-
-	
 	for df in list_df :
 		for col, val in df.iteritems() :
 			if col not in list_of_aa :
-				#print(col, val)
 				del df[col]
 
 	for df in list_df :
@@ -442,7 +256,6 @@ def specific_occurence(dico) :
 				print(col, val)
 
 	#print(list_df[1:100], type(list_df))
-
 
 	return list_df
 
@@ -585,11 +398,6 @@ def Auto_cross_variance(Zscores) :
 			res_diff = sum(res_diff_one)
 			Acc.append(res_diff)
 			dico_Acc[idt] += Acc
-			
-		
-
-			
-
 
 	#print(dico_Acc)
 	
@@ -599,29 +407,6 @@ def Auto_cross_variance(Zscores) :
 	
 	return dico_Acc
 
-
-
-'''
-			mult = []
-			res_same_one = []
-			for i in range(len(j)-1) :
-				mult.append(j[i]*j[i+1])
-			#print(len(mult))
-			for m in mult :
-				#print(type(m))
-				#print(m)
-				res_same_one.append((m**2+lag_r)/N-lag_r)
-			#print("----res_same1----", res_same_one, len(res_same_one))
-			res_same = sum(res_same_one)
-			Acc.append(res_same)
-			dico_Acc[idt] = Acc
-		
-			#Acc.append(sum((j**2+lag_r)/N-lag_r))
-	print(Acc)
-	print(dico_Acc)
-			#break
-'''
-	
 
 ######### Biopython
 
@@ -696,65 +481,14 @@ def Tsne(frequencies) :
 
 	fit_list = []
 	print("--------")
-	#for i in range(len(frequencies)-1) :
-		#print(i)
-
-	'''
-	for mat in frequencies :
-		print(mat)
-		#break
-		arr = mat.to_numpy()
-		print(arr)
-		print(type(arr))
-
-		arr = np.reshape(arr, (-1, 2))
-		print(arr)
-
-		X_2d = tsne.fit_transform(arr)
-		fit_list.append(X_2d)
-		print("---------")
-		print(X_2d)
-		#plt.scatter(X_2d, )
-		#plt.plot(X_2d, linestyle = 'none', marker = 'o', color = 'red', markersize = 12)
-		#plt.show()
-		#break
-	'''
 
 	df = pd.DataFrame()
 	matrix = []
 
-	'''
 	for mat in frequencies :
-		arr = mat.to_numpy()
-		print(arr)
-		print(type(arr))
-
-		arr = np.reshape(arr, (-1, 2))
-		print(arr)
-
-		X_2d = tsne.fit_transform(arr)
-		df['x'] = X_2d[:,0]
-		df['y'] = X_2d[:,1]
-		print(df)
-
-		sns.scatterplot(x = 'x', y = 'y', data = df)
-		plt.show()
-	'''
-
-	for mat in frequencies :
-		#print(mat.dim)
 		matrix.append(mat.to_numpy()[0])
 		if len(mat.columns) != 20 :
 			print(len(mat.columns))
-	
-	#for arr in matrix :
-	#	print(arr.shape)
-
-	#print(len(frequencies))
-	#print(matrix, type(matrix))
-	#print("LEN : ", len(matrix))
-
-	#print(matrix.shape())
 	
 	for mat in matrix :
 		mat = np.asarray(mat)
@@ -771,10 +505,7 @@ def Tsne(frequencies) :
 	print(matrix)
 	print(matrix.shape)
 	print(matrix[0].dtype)
-	#matrix = np.asarray(matrix)
-	#matrix = np.reshape(matrix, len(frequencies), 2)
-	#print(matrix.ndim)
-	#print(type(matrix))
+
 	print("-------------OK----------")
 	X_2d = tsne.fit_transform(matrix)
 	df['x'] = X_2d[:,0]
@@ -786,11 +517,6 @@ def Tsne(frequencies) :
 
 	sns.scatterplot(x = 'x', y = 'y', data = df)
 	plt.title("Tsne", fontsize = 15)
-
-	'''
-	for i, label in enumerate(annotations) :
-		plt.annotate()
-	'''
 	
 	plt.show()
 
@@ -815,7 +541,7 @@ if __name__ == '__main__' :
 	proportion = specific_occurence(path)
 	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
-	tsne = Tsne(proportion)
+	#tsne = Tsne(proportion)
 	#tsne_all_proteom = tsne_proteomes(path_proteom)
 	#ACCs = Auto_cross_variance(dico_score)
 	
