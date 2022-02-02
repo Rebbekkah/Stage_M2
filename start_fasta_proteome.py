@@ -27,8 +27,8 @@ protr = rpackages.importr('protr')
 
 
 # important
-path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_Chlamydomonas.fa"
-path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes"
+path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_diatom.faa"
+path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/"
 list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 
@@ -219,7 +219,8 @@ def freq_aa(sequence) :
 
 def listing(path) :
 	#fich = glob.glob((path+'*.fasta')||(path+'*.faa')||(path+'*.fna'))
-	fich = glob.glob(path+'*.fasta')
+	fich = glob.glob(path+'*.faa')
+	print(fich, type(fich))
 
 	reads = []
 	for fasta in fich :
@@ -263,8 +264,8 @@ def specific_occurence(dico) :
 def Z_aa(Z_score) :
 	#dico = listing(path)
 	dico = read_fasta(path)
-	print("-------------DICO", dico, "---------FIN DICO")
-	print(Z_score)
+	#print("-------------DICO", dico, "---------FIN DICO")
+	#print(Z_score)
 	#print(Z_score.loc['H'])
 	#print(Z_score.iloc[:, 1:])
 	print("Nombre lignes : ", Z_score.shape[0])
@@ -283,12 +284,11 @@ def Z_aa(Z_score) :
 			new_seq.append(list(Z_score.loc[aa]))
 			#print("ok2")
 		dico_Z[idt] = new_seq
-	#print(new_seq[1:10])
+		#break
 
-		#print(new_seq)
-	print("-----------vdfgegse-----------")
-	print(dico_Z)
-	print("-----------vdfgegse-----------")
+	#print("-----------vdfgegse-----------")
+	#print(dico_Z)
+	#print("-----------vdfgegse-----------")
 
 	return dico_Z
 
@@ -310,7 +310,7 @@ def Auto_cross_variance(Zscores) :
 	'''
 
 	#robjects.r.source('acc.R') 
-
+	print(Zscores[1:15])
 	lag_r = 4
 	dico_Acc = {}
 	for dicct in Zscores :
@@ -529,7 +529,8 @@ def Tsne(frequencies) :
 
 
 def tsne_proteomes(path_to_proteom) :
-	fich = listing(path_proteom)
+	fich = listing(path_to_proteom)
+	print(fich)
 
 
 
@@ -543,10 +544,10 @@ if __name__ == '__main__' :
 
 	# Ensemble de fichiers
 	#proportion = specific_occurence(path)
-	dico_score = Z_aa(df_Score)
+	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
 	#tsne = Tsne(proportion)
-	#tsne_all_proteom = tsne_proteomes(path_proteom)
+	tsne_all_proteom = tsne_proteomes(path_proteom)
 	#ACCs = Auto_cross_variance(dico_score)
 	
 	# ALL proteom
