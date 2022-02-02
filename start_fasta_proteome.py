@@ -27,7 +27,8 @@ protr = rpackages.importr('protr')
 
 
 # important
-path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_Chlamydomonas.fa"
+path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_Arabidopsis_thaliana.faa"
+path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes"
 list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 
@@ -315,7 +316,7 @@ def freq_aa(sequence) :
 ######### SUR PLUSIEURS FICHIERS FASTAS
 
 def listing(path) :
-	fich = glob.glob(path+'*.fasta')
+	fich = glob.glob((path+'*.fasta')||(path+'*.faa')||(path+'*.fna'))
 
 	reads = []
 	for fasta in fich :
@@ -738,7 +739,7 @@ def Tsne(frequencies) :
 	df['y'] = X_2d[:,1]
 	print(df)
 
-	list_data_tsne = {'X_2d' : X_2d, 'df' : df}
+	df_data_tsne = df
 
 
 	sns.scatterplot(x = 'x', y = 'y', data = df)
@@ -749,10 +750,16 @@ def Tsne(frequencies) :
 		plt.annotate()
 	'''
 	
-	#plt.show()
+	plt.show()
 
-	return list_data_tsne
+	return df_data_tsne
 	
+
+
+def tsne_proteomes(path_to_proteom) :
+	fich = listing(path_proteom)
+
+
 
 
 if __name__ == '__main__' :
@@ -766,7 +773,8 @@ if __name__ == '__main__' :
 	proportion = specific_occurence(path)
 	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
-	tsne = Tsne(proportion)
+	#tsne = Tsne(proportion)
+	#tsne_all_proteom = tsne_proteomes(path_proteom)
 	#ACCs = Auto_cross_variance(dico_score)
 	
 	# Biopython
