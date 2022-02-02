@@ -27,7 +27,7 @@ protr = rpackages.importr('protr')
 
 
 # important
-path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_Arabidopsis_thaliana.faa"
+path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_Chlamydomonas.fa"
 path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes"
 list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
@@ -207,12 +207,53 @@ def read_fasta(fichier) :
 
 def parsing_seq(seq) :
 	
+	'''
 	end = 0
 	mid = 0
 	end_mid = 0
 	nothing = 0
 	other = 0
-	#print(seq[-1])
+	'''
+	dico = {'codon-stop' : 0, 'pseudo-gène' : 0, 'nothing' : 0, 'other' : 0}
+	
+	if seq[-1] == '*' :
+		dico['codon-stop'] += 1
+		for aa in seq[:-1] :
+			if aa == '*' :
+				dico['pseudo-gène'] += 1
+			elif aa not in list_of_aa :
+				dico['other'] += 1
+			elif aa in list_of_aa :
+				continue
+			else :
+				break
+
+	elif seq[-1] != '*' :
+		for aa in seq :
+			if aa == '*' :
+				dico['pseudo-gène'] += 1
+			elif aa not in list_of_aa :
+				dico['other'] += 1
+			elif aa in list_of_aa :
+				continue
+			elif (aa == '*') or (aa not in list_of_aa) :
+				break
+			#print("lsdkfldfdsl")
+
+
+
+
+	'''
+	for aa in seq :
+		if aa == '*' and seq[-1] != '*' :
+			dico['mid'] += 1
+		
+			print("breaked")
+		print("non break")
+	'''
+
+
+	'''
 	for aa in seq :
 		if seq[-1] == '*' :
 			end += 1
@@ -231,9 +272,9 @@ def parsing_seq(seq) :
 		if aa == 'X' : 
 			other += 1
 			break
-
+	'''
 	#dico = {'codon stop' : end, 'codon stop + inseq' : end_mid, 'pseudo gène' : mid, 'aucun' : nothing, 'autre' : other}
-	dico = {'codon stop + inseq' : end_mid, 'pseudo gène' : mid, 'autre' : other}
+	#dico = {'codon stop + inseq' : end_mid, 'pseudo gène' : mid, 'autre' : other}
 
 	return dico
 
@@ -316,7 +357,8 @@ def freq_aa(sequence) :
 ######### SUR PLUSIEURS FICHIERS FASTAS
 
 def listing(path) :
-	fich = glob.glob((path+'*.fasta')||(path+'*.faa')||(path+'*.fna'))
+	#fich = glob.glob((path+'*.fasta')||(path+'*.faa')||(path+'*.fna'))
+	fich = glob.glob(path+'*.fasta')
 
 	reads = []
 	for fasta in fich :
@@ -773,7 +815,7 @@ if __name__ == '__main__' :
 	proportion = specific_occurence(path)
 	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
-	#tsne = Tsne(proportion)
+	tsne = Tsne(proportion)
 	#tsne_all_proteom = tsne_proteomes(path_proteom)
 	#ACCs = Auto_cross_variance(dico_score)
 	
