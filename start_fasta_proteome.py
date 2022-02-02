@@ -27,7 +27,7 @@ protr = rpackages.importr('protr')
 
 
 # important
-path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_diatom.faa"
+path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_Chlamydomonas.fa"
 list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 
@@ -97,22 +97,36 @@ def read_fasta(fichier) :
 	not_aa = []
 	id_not_aa = []
 	for idt, seq in dico.items() :
-		for aa in seq :
-			if aa not in list_of_aa and aa != '*':
-				not_aa.append(aa)
-				id_not_aa.append(idt)
-				dico_delete[str(id_not_aa)] = seq
+		if seq[-1] != '*' :
+			for aa in seq :
+				if aa not in list_of_aa :
+					not_aa.append(aa)
+					id_not_aa.append(idt)
+					break
+		elif seq[-1] == '*' :
+			for aa in seq[:-1] :
+				if aa not in list_of_aa :
+					not_aa.append(aa)
+					id_not_aa.append(idt)
+					break
+
+		for ident in id_not_aa :
+			dico_delete[ident] = ""
+			dico_delete[ident] += seq
 	#print(id_not_aa, not_aa)
 	#print(dico_delete)
+	print("----NOT------")
+	print(len(not_aa))
+	print(len(id_not_aa))
 	nb_delete = len(dico_delete.keys())
 	print("NOMBRE DE SEQ DELETE : ", nb_delete)
 
-	'''
+	
 	with open("Deleted_seq", "w") as filout :
 		for idt, seq in dico_delete.items() :
 			#filout.write(idt+"\n"+seq+"\n")
 			filout.write(idt+"\n")
-	'''
+	
 	print("avant :", len(dico.keys()), len(dico.values()))
 	#print(type(id_not_aa))
 	#print(id_not_aa)
@@ -125,7 +139,7 @@ def read_fasta(fichier) :
 		#print("-----")
 		dico_nb[idt] = parsing_seq(seq)
 
-	print(dico_nb)
+	#print(dico_nb)
 
 	dico_total = {}
 	'''
@@ -149,7 +163,7 @@ def read_fasta(fichier) :
 
 	for idt in id_not_aa :
 		del dico[idt]
-		print("--------------")
+		#print("--------------")
 	'''
 	for seq in dico.values() :
 		#print("-----")
@@ -158,12 +172,12 @@ def read_fasta(fichier) :
 	#print(dico_nb)
 	#print(dico)
 	print("après :", len(dico.keys()), len(dico.values()))
-	'''
+	
 	with open("New_proteome", "w") as filout :
 		for idt, seq in dico.items() :
 			#filout.write(idt+"\n"+seq+"\n")
 			filout.write(idt+"\n")
-	'''
+	
 
 
 	return(dico) 
@@ -176,23 +190,23 @@ def parsing_seq(seq) :
 	end_mid = 0
 	nothing = 0
 	other = 0
-
+	#print(seq[-1])
 	for aa in seq :
 		if seq[-1] == '*' :
 			end += 1
 			break
 			#print("La séquence se termine par un codon stop")
-		elif aa == '*' and seq[-1] != '*' :
+		if aa == '*' and seq[-1] != '*' :
 			mid += 1
 			break
 			#print("La séquence se termine par un codon stop")
 		#elif '*' not in seq :
 		#	nothing += 1
-		elif aa == '*' and seq[-1] == '*' : 
+		if aa == '*' and seq[-1] == '*' : 
 			end_mid += 1
 			break
 			#print("La séquence se termine par un codon stop et en contient")
-		elif aa == 'X' : 
+		if aa == 'X' : 
 			other += 1
 			break
 
