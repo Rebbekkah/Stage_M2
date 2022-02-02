@@ -48,8 +48,6 @@ def Score_aa() :
 ######### SUR 1 FICHIER FASTA
 
 def read_fasta(fichier) :
-	#fich = list(fichiers)
-	#for f in fich :
 
 	with open(fichier, 'r') as filin :
 
@@ -64,9 +62,9 @@ def read_fasta(fichier) :
 		
 	seq += dico[prot_id]
 	
-	print(seq)
-	print("Longueur de la séquence : ", len(seq))
-	print("--------------------")
+	#print(seq)
+	#print("Longueur de la séquence : ", len(seq))
+	#print("--------------------")
 
 	dico_delete = {}	
 	not_aa = []
@@ -109,13 +107,13 @@ def read_fasta(fichier) :
 			dico_delete[ident] = ""
 			dico_delete[ident] += seq
 
-	print("----NOT------")
-	print(not_aa, len(not_aa))
-	print(id_not_aa, len(id_not_aa))
+	#print("----NOT------")
+	#print(not_aa, len(not_aa))
+	#print(id_not_aa, len(id_not_aa))
 	#print(dico_delete)
 	#nb_delete = len(dico_delete.keys())
 	nb_delete = len(id_not_aa)
-	print("NOMBRE DE SEQ DELETE : ", nb_delete)
+	#print("NOMBRE DE SEQ DELETE : ", nb_delete)
 
 	
 	with open("Deleted_seq", "w") as filout :
@@ -123,7 +121,7 @@ def read_fasta(fichier) :
 			#filout.write(idt+"\n"+seq+"\n")
 			filout.write(idt+"\n")
 	
-	print("avant :", len(dico.keys()), len(dico.values()))
+	#print("avant :", len(dico.keys()), len(dico.values()))
 
 	dico_nb = {}
 	for idt, seq in dico.items() :
@@ -139,13 +137,13 @@ def read_fasta(fichier) :
 			else :
 				dico_total[cle] += val
 
-	print("TOTAL :", dico_total)
+	#print("TOTAL :", dico_total)
 
 
 	for idt in id_not_aa :
 		del dico[idt]
 
-	print("après :", len(dico.keys()), len(dico.values()))
+	#print("après :", len(dico.keys()), len(dico.values()))
 	
 	with open("New_proteome", "w") as filout :
 		for idt, seq in dico.items() :
@@ -220,12 +218,16 @@ def freq_aa(sequence) :
 def listing(path) :
 	#fich = glob.glob((path+'*.fasta')||(path+'*.faa')||(path+'*.fna'))
 	fich = glob.glob(path+'*.faa')
-	print(fich, type(fich))
+	#print(fich, type(fich))
 
 	reads = []
 	for fasta in fich :
 		reads.append(read_fasta(str(fasta)))
-	#print(reads)
+	
+	print(reads)
+	print(fich, type(fich))
+	print(len(fich))
+
 	return reads
 
 
@@ -530,7 +532,6 @@ def Tsne(frequencies) :
 
 def tsne_proteomes(path_to_proteom) :
 	fich = listing(path_to_proteom)
-	print(fich)
 
 
 
