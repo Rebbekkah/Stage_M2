@@ -236,24 +236,25 @@ def freq_aa(sequence) :
 
 def listing(path) :
 	fich = glob.glob(path+'*.f'+'*')
+	#print(fich)
 	#fich.append(path+'*.faa')
 	#fich.append(path+'*fna')
 	#print(fich, type(fich))
-
 	reads = []
+	
 	for fasta in fich :
 		reads.append(read_fasta(str(fasta)))
 	
-	print(reads)
-	print(fich, type(fich))
-	print(len(fich))
+	#print(reads)
+	#print(fich, type(fich))
+	#print(len(fich))
 
 	return reads
 
 
-def specific_occurence(dico) :
+def specific_occurence(reads) :
 
-	reads = read_fasta(path)
+	#reads = read_fasta(path) # ACTIVATE ONLY FOR 1 PROTEOM
 
 	frequencies = []
 	for idt, seq in reads.items() :
@@ -501,7 +502,7 @@ def bio() :
 
 
 def Tsne(frequencies) :
-
+	print(frequencies, type(frequencies))
 	tsne = TSNE(n_components = 2, random_state = 0)
 	#print(frequencies)
 
@@ -522,8 +523,6 @@ def Tsne(frequencies) :
 
 ######## TSNE ON MANY PROTEOMS
 
-	print(frequencies)
-
 	for mat in matrix :
 		mat = np.asarray(mat)
 		#mat = np.reshape(mat, (1, 20))
@@ -536,23 +535,23 @@ def Tsne(frequencies) :
 			print(arr.shape)
 			arr = np.reshape(arr, 20,)
 	
-	print(matrix)
-	print(matrix.shape)
-	print(matrix[0].dtype)
+	#print(matrix)
+	#print(matrix.shape)
+	#print(matrix[0].dtype)
 
 	print("-------------OK----------")
 	X_2d = tsne.fit_transform(matrix)
 	df['x'] = X_2d[:,0]
 	df['y'] = X_2d[:,1]
-	print(df)
+	#print(df)
 
 	df_data_tsne = df
 
 
-	sns.scatterplot(x = 'x', y = 'y', data = df)
-	plt.title("Tsne", fontsize = 15)
+	#sns.scatterplot(x = 'x', y = 'y', data = df)
+	#plt.title("Tsne", fontsize = 15)
 	
-	plt.show()
+	#plt.show()
 
 	return df_data_tsne
 	
@@ -560,18 +559,32 @@ def Tsne(frequencies) :
 
 def tsne_proteomes(path_to_proteom) :
 	fich = listing(path_to_proteom)
-	occ = list(specific_occurence(fich))
-	print(occ, type(occ))
-
+	#print("----len fihc\n", fich, "\n", len(fich))
+	occ = []
+	
+	'''
+	for f in fich :
+		occ.append(specific_occurence(f))
+	print("OCC", occ, type(occ), len(occ))
+	print("--------------------------------------------------")
 	tsne = []
-	#for df in occ :
-	#	print("ok")
-	tsne.append(Tsne(occ))
+	list_df = []
+	#tsne.append(Tsne(occ[1]))
+	for proteom in occ :
+		#for seq in proteom :
+		print("---proteom\n",proteom)
+		tsne.append(Tsne(proteom))
+	
+	
+	print("--------tsne append")
+
 
 	print("--------------TSNE--------------")
-	print(tsne, len(tsne))
-
-
+	print(tsne, len(tsne), type(tsne))
+	for i in tsne :
+		print(type(i))
+		break
+	'''
 
 
 
@@ -581,18 +594,17 @@ if __name__ == '__main__' :
 	#reading, sequence = read_fasta("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Exemple_fasta/F4HXU3.fasta")
 	#dico_number, frequency = freq_aa(sequence)
 
-	df_Score = Score_aa()
+	#df_Score = Score_aa()
 
 	# Ensemble de fichiers
-	proportion = specific_occurence(path)
+	#proportion = specific_occurence(path)
 	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
 	#tsne = Tsne(proportion)
-	tsne_all_proteom = tsne_proteomes(path_proteom)
 	#ACCs = Auto_cross_variance(dico_score)
 	
 	# ALL proteom
-
+	tsne_all_proteom = tsne_proteomes(path_proteom)
 
 
 
