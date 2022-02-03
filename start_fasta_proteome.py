@@ -110,16 +110,16 @@ def read_fasta(fichier) :
 	print("----NOT------")
 	print(not_aa, len(not_aa))
 	print(id_not_aa, len(id_not_aa))
-	print(dico_delete)
+	#print(dico_delete)
 	nb_delete = len(dico_delete.keys())
 	nb_delete = len(id_not_aa)
 	print("NOMBRE DE SEQ DELETE : ", nb_delete)
 
-	for seq in dico_delete.values() :
-		if 'X' in seq :
-			print("oui")
-		else :
-			print("non")
+	#for seq in dico_delete.values() :
+	#	if 'X' in seq :
+	#		print("oui")
+	#	else :
+	#		print("non")
 
 
 	with open("Deleted_seq", "w") as filout :
@@ -223,7 +223,9 @@ def freq_aa(sequence) :
 
 def listing(path) :
 	#fich = glob.glob((path+'*.fasta')||(path+'*.faa')||(path+'*.fna'))
-	fich = glob.glob(path+'*.faa')
+	fich = glob.glob(path+'*.f'+'*')
+	#fich.append(path+'*.faa')
+	#fich.append(path+'*fna')
 	#print(fich, type(fich))
 
 	reads = []
@@ -538,6 +540,16 @@ def Tsne(frequencies) :
 
 def tsne_proteomes(path_to_proteom) :
 	fich = listing(path_to_proteom)
+	occ = list(specific_occurence(fich))
+
+	tsne = []
+	for df in occ :
+		tsne.append(Tsne(df))
+
+	print("--------------TSNE--------------")
+	print(tsne, len(tsne))
+
+
 
 
 
@@ -550,7 +562,7 @@ if __name__ == '__main__' :
 	df_Score = Score_aa()
 
 	# Ensemble de fichiers
-	proportion = specific_occurence(path)
+	#proportion = specific_occurence(path)
 	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
 	#tsne = Tsne(proportion)
