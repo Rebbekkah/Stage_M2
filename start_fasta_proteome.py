@@ -48,7 +48,7 @@ def Score_aa() :
 ######### SUR 1 FICHIER FASTA
 
 def read_fasta(fichier) :
-
+	print(fichier)
 	with open(fichier, 'r') as filin :
 
 		dico = {}
@@ -158,12 +158,16 @@ def read_fasta(fichier) :
 
 
 	dico2 = {}
-	for i in range(10) :
-		for seq in dico.values() :
-			dico2[i] = ""
-			dico2[i] += seq
-
-	#print(dico2)
+	idt_list = []
+	for idt, seq in dico.items() :
+		idt_list.append(idt)
+	for i in idt_list[:5] :
+		dico2[i] = ""
+		dico2[i] += dico[i]
+				
+	print("------------DICO2----------")
+	print(dico2)
+	print("------------FIN DICO2----------")
 	#return(dico) 
 	return(dico2)
 
@@ -231,7 +235,6 @@ def freq_aa(sequence) :
 ######### SUR PLUSIEURS FICHIERS FASTAS
 
 def listing(path) :
-	#fich = glob.glob((path+'*.fasta')||(path+'*.faa')||(path+'*.fna'))
 	fich = glob.glob(path+'*.f'+'*')
 	#fich.append(path+'*.faa')
 	#fich.append(path+'*fna')
@@ -508,11 +511,19 @@ def Tsne(frequencies) :
 	df = pd.DataFrame()
 	matrix = []
 
+
+######## FOR 1 PROTEOM ONLY
 	for mat in frequencies :
-		matrix.append(mat.to_numpy()[0])
+		print(mat)
+		matrix.append(mat.to_numpy()[0]) 
 		if len(mat.columns) != 20 :
 			print(len(mat.columns))
-	
+########
+
+######## TSNE ON MANY PROTEOMS
+
+	print(frequencies)
+
 	for mat in matrix :
 		mat = np.asarray(mat)
 		#mat = np.reshape(mat, (1, 20))
@@ -550,10 +561,12 @@ def Tsne(frequencies) :
 def tsne_proteomes(path_to_proteom) :
 	fich = listing(path_to_proteom)
 	occ = list(specific_occurence(fich))
+	print(occ, type(occ))
 
 	tsne = []
-	for df in occ :
-		tsne.append(Tsne(df))
+	#for df in occ :
+	#	print("ok")
+	tsne.append(Tsne(occ))
 
 	print("--------------TSNE--------------")
 	print(tsne, len(tsne))
@@ -574,8 +587,8 @@ if __name__ == '__main__' :
 	proportion = specific_occurence(path)
 	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
-	tsne = Tsne(proportion)
-	#tsne_all_proteom = tsne_proteomes(path_proteom)
+	#tsne = Tsne(proportion)
+	tsne_all_proteom = tsne_proteomes(path_proteom)
 	#ACCs = Auto_cross_variance(dico_score)
 	
 	# ALL proteom
