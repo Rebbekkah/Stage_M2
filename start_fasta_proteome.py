@@ -70,22 +70,6 @@ def read_fasta(fichier) :
 	not_aa = []
 	id_not_aa = []
 
-	'''
-	for idt, seq in dico.items() :
-		if seq[-1] != '*' :
-			for aa in seq :
-				if aa not in list_of_aa :
-					not_aa.append(aa)
-					id_not_aa.append(idt)
-					break
-		elif seq[-1] == '*' :
-			for aa in seq[:-1] :
-				if aa not in list_of_aa :
-					not_aa.append(aa)
-					id_not_aa.append(idt)
-					break
-
-	'''
 	for idt, seq in dico.items() :
 		if seq[-1] != '*' :
 			for aa in seq :
@@ -110,16 +94,9 @@ def read_fasta(fichier) :
 	print("----NOT------")
 	print(not_aa, len(not_aa))
 	print(id_not_aa, len(id_not_aa))
-	#print(dico_delete)
 	nb_delete = len(dico_delete.keys())
 	nb_delete = len(id_not_aa)
 	print("NOMBRE DE SEQ DELETE : ", nb_delete)
-
-	#for seq in dico_delete.values() :
-	#	if 'X' in seq :
-	#		print("oui")
-	#	else :
-	#		print("non")
 
 
 	with open("Deleted_seq", "w") as filout :
@@ -244,10 +221,6 @@ def listing(path) :
 	
 	for fasta in fich :
 		reads.append(read_fasta(str(fasta)))
-	
-	#print("-----------READS-------------")
-	#print(reads, type(reads))
-	#print(len(fich))
 
 	return reads
 
@@ -259,15 +232,12 @@ def specific_occurence(reads) :
 	frequencies = []
 	for idt, seq in reads.items() :
 		frequencies.append(freq_aa(seq))
-	#print(frequencies, type(frequencies))
 
 	print("----------DF FREQ-----------")
 	list_df = []
 	for dicct in frequencies :
 		dicct = pd.DataFrame([dicct])
 		list_df.append(dicct)
-
-	#print(list_df[1:100], type(list_df))
 	
 	for df in list_df :
 		for col, val in df.iteritems() :
@@ -278,8 +248,6 @@ def specific_occurence(reads) :
 		for col, val in df.iteritems() :
 			if col not in list_of_aa :
 				print(col, val)
-
-	#print(list_df[1:100], type(list_df))
 
 	return list_df
 
@@ -502,9 +470,8 @@ def bio() :
 
 
 def Tsne(frequencies) :
-	#print(frequencies, type(frequencies))
+
 	tsne = TSNE(n_components = 2, random_state = 0)
-	#print(frequencies)
 
 	print("--------")
 
@@ -521,8 +488,6 @@ def Tsne(frequencies) :
 
 	for mat in matrix :
 		mat = np.asarray(mat)
-		#mat = np.reshape(mat, (1, 20))
-	#print(matrix)
 	
 	matrix = np.array(matrix)
 	
@@ -530,10 +495,7 @@ def Tsne(frequencies) :
 		if arr.shape != (20,) :
 			print(arr.shape)
 			arr = np.reshape(arr, 20,)
-	
-	#print(matrix)
-	#print(matrix.shape)
-	#print(matrix[0].dtype)
+
 
 	print("-------------OK----------")
 	X_2d = tsne.fit_transform(matrix)
@@ -544,7 +506,7 @@ def Tsne(frequencies) :
 	df_data_tsne = df
 	print(df)
 
-	#sns.scatterplot(x = 'x', y = 'y', data = df)
+	#sns.scatterplot(x = 'x', y = 'y', data = df). # For 1 proteom
 	#plt.title("Tsne", fontsize = 15)
 	
 	#plt.show()
@@ -555,7 +517,6 @@ def Tsne(frequencies) :
 
 def tsne_proteomes(path_to_proteom) :
 	reads = listing(path_to_proteom)
-	print("----reads\n", reads, "\n", len(reads))
 	occ = []
 	
 	for dico in reads :
@@ -565,18 +526,25 @@ def tsne_proteomes(path_to_proteom) :
 	
 	tsne = []
 	list_df = []
-	#tsne.append(Tsne(occ[1]))
+
 	for proteom in occ :
-		#for seq in proteom :
-		#print("---proteom\n",proteom)
 		tsne.append(Tsne(proteom))
 	
-	
-	print("--------tsne append")
 
-	
 	print("--------------TSNE--------------")
 	print(tsne, len(tsne), type(tsne))
+
+	label = glob.glob(path_to_proteom+'*.f'+'*')
+	print(label, type(label))
+
+	 
+
+	for data in tsne :
+		sns.scatterplot(x = 'x', y = 'y', data = data)
+	plt.title("Tsne of proteoms", fontsize = 15)
+	
+	plt.show()
+
 
 
 
