@@ -4,6 +4,7 @@ import glob
 import pandas as pd
 import numpy as np 
 import seaborn as sns
+from os.path import basename
 from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
 
@@ -534,16 +535,39 @@ def tsne_proteomes(path_to_proteom) :
 	print("--------------TSNE--------------")
 	print(tsne, len(tsne), type(tsne))
 
-	label = glob.glob(path_to_proteom+'*.f'+'*')
-	print(label, type(label))
+	label = proteom_name(path_proteom)
 
-	 
-
+	
 	for data in tsne :
 		sns.scatterplot(x = 'x', y = 'y', data = data)
+	plt.legend(label, prop = {'size' : 5.7})
+	#legend.fontsize()
+
+
+	#for lab in label :
+	#	plt.legend([lab])
+
+	#print(label)
+	#for lab in label :
+	#	print(lab)
+	#	plt.legend(loc = 'best', label = lab)
+	
+
+
 	plt.title("Tsne of proteoms", fontsize = 15)
 	
 	plt.show()
+
+
+def proteom_name(path_to_proteom) :
+	
+	fich = glob.glob(path_to_proteom+'*.f'+'*')
+
+	label = []
+	for f in fich :
+		label.append(basename(f))
+
+	return label
 
 
 
