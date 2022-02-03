@@ -161,7 +161,7 @@ def read_fasta(fichier) :
 	idt_list = []
 	for idt, seq in dico.items() :
 		idt_list.append(idt)
-	for i in idt_list[:5] :
+	for i in idt_list[:50] :
 		dico2[i] = ""
 		dico2[i] += dico[i]
 				
@@ -245,8 +245,8 @@ def listing(path) :
 	for fasta in fich :
 		reads.append(read_fasta(str(fasta)))
 	
-	#print(reads)
-	#print(fich, type(fich))
+	#print("-----------READS-------------")
+	#print(reads, type(reads))
 	#print(len(fich))
 
 	return reads
@@ -502,26 +502,22 @@ def bio() :
 
 
 def Tsne(frequencies) :
-	print(frequencies, type(frequencies))
+	#print(frequencies, type(frequencies))
 	tsne = TSNE(n_components = 2, random_state = 0)
 	#print(frequencies)
 
-	fit_list = []
 	print("--------")
 
 	df = pd.DataFrame()
 	matrix = []
 
 
-######## FOR 1 PROTEOM ONLY
 	for mat in frequencies :
 		print(mat)
 		matrix.append(mat.to_numpy()[0]) 
 		if len(mat.columns) != 20 :
 			print(len(mat.columns))
-########
 
-######## TSNE ON MANY PROTEOMS
 
 	for mat in matrix :
 		mat = np.asarray(mat)
@@ -546,7 +542,7 @@ def Tsne(frequencies) :
 	#print(df)
 
 	df_data_tsne = df
-
+	print(df)
 
 	#sns.scatterplot(x = 'x', y = 'y', data = df)
 	#plt.title("Tsne", fontsize = 15)
@@ -558,34 +554,29 @@ def Tsne(frequencies) :
 
 
 def tsne_proteomes(path_to_proteom) :
-	fich = listing(path_to_proteom)
-	#print("----len fihc\n", fich, "\n", len(fich))
+	reads = listing(path_to_proteom)
+	print("----reads\n", reads, "\n", len(reads))
 	occ = []
 	
-	'''
-	for f in fich :
-		occ.append(specific_occurence(f))
+	for dico in reads :
+		occ.append(specific_occurence(dico))
 	print("OCC", occ, type(occ), len(occ))
 	print("--------------------------------------------------")
+	
 	tsne = []
 	list_df = []
 	#tsne.append(Tsne(occ[1]))
 	for proteom in occ :
 		#for seq in proteom :
-		print("---proteom\n",proteom)
+		#print("---proteom\n",proteom)
 		tsne.append(Tsne(proteom))
 	
 	
 	print("--------tsne append")
 
-
+	
 	print("--------------TSNE--------------")
 	print(tsne, len(tsne), type(tsne))
-	for i in tsne :
-		print(type(i))
-		break
-	'''
-
 
 
 
