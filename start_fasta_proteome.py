@@ -62,9 +62,9 @@ def read_fasta(fichier) :
 		
 	seq += dico[prot_id]
 	
-	#print(seq)
-	#print("Longueur de la séquence : ", len(seq))
-	#print("--------------------")
+	print(seq)
+	print("Longueur de la séquence : ", len(seq))
+	print("--------------------")
 
 	dico_delete = {}	
 	not_aa = []
@@ -105,23 +105,29 @@ def read_fasta(fichier) :
 						
 		for ident in id_not_aa :
 			dico_delete[ident] = ""
-			dico_delete[ident] += seq
+			dico_delete[ident] += dico[ident]
 
-	#print("----NOT------")
-	#print(not_aa, len(not_aa))
-	#print(id_not_aa, len(id_not_aa))
-	#print(dico_delete)
-	#nb_delete = len(dico_delete.keys())
+	print("----NOT------")
+	print(not_aa, len(not_aa))
+	print(id_not_aa, len(id_not_aa))
+	print(dico_delete)
+	nb_delete = len(dico_delete.keys())
 	nb_delete = len(id_not_aa)
-	#print("NOMBRE DE SEQ DELETE : ", nb_delete)
+	print("NOMBRE DE SEQ DELETE : ", nb_delete)
 
-	
+	for seq in dico_delete.values() :
+		if 'X' in seq :
+			print("oui")
+		else :
+			print("non")
+
+
 	with open("Deleted_seq", "w") as filout :
 		for idt, seq in dico_delete.items() :
 			#filout.write(idt+"\n"+seq+"\n")
 			filout.write(idt+"\n")
 	
-	#print("avant :", len(dico.keys()), len(dico.values()))
+	print("avant :", len(dico.keys()), len(dico.values()))
 
 	dico_nb = {}
 	for idt, seq in dico.items() :
@@ -137,13 +143,13 @@ def read_fasta(fichier) :
 			else :
 				dico_total[cle] += val
 
-	#print("TOTAL :", dico_total)
+	print("TOTAL :", dico_total)
 
 
 	for idt in id_not_aa :
 		del dico[idt]
 
-	#print("après :", len(dico.keys()), len(dico.values()))
+	print("après :", len(dico.keys()), len(dico.values()))
 	
 	with open("New_proteome", "w") as filout :
 		for idt, seq in dico.items() :
@@ -544,11 +550,11 @@ if __name__ == '__main__' :
 	df_Score = Score_aa()
 
 	# Ensemble de fichiers
-	#proportion = specific_occurence(path)
+	proportion = specific_occurence(path)
 	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
 	#tsne = Tsne(proportion)
-	tsne_all_proteom = tsne_proteomes(path_proteom)
+	#tsne_all_proteom = tsne_proteomes(path_proteom)
 	#ACCs = Auto_cross_variance(dico_score)
 	
 	# ALL proteom
