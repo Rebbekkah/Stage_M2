@@ -156,7 +156,16 @@ def read_fasta(fichier) :
 			#filout.write(idt+"\n"+seq+"\n")
 			filout.write(idt+"\n")
 
-	return(dico) 
+
+	dico2 = {}
+	for i in range(10) :
+		for seq in dico.values() :
+			dico2[i] = ""
+			dico2[i] += seq
+
+	#print(dico2)
+	#return(dico) 
+	return(dico2)
 
 
 def parsing_seq(seq) :
@@ -562,10 +571,10 @@ if __name__ == '__main__' :
 	df_Score = Score_aa()
 
 	# Ensemble de fichiers
-	#proportion = specific_occurence(path)
+	proportion = specific_occurence(path)
 	#dico_score = Z_aa(df_Score)
 	#ACCs = Auto_cross_variance(dico_score)
-	#tsne = Tsne(proportion)
+	tsne = Tsne(proportion)
 	#tsne_all_proteom = tsne_proteomes(path_proteom)
 	#ACCs = Auto_cross_variance(dico_score)
 	
