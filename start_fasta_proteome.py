@@ -321,12 +321,13 @@ def Auto_cross_variance(Zscores) :
 		#print(idt,  seq)
 		for aa in seq :
 			#print(aa)
-			print(aa[2])
+			#print(aa[2])
+			pass
 			#for Z in aa :
 				#print(Z)
 				#break
 	
-	####SAME Z
+	#### SAME Z
 	N = len(Zscores.keys())
 	Z1 = []
 	Z2 = []
@@ -366,7 +367,6 @@ def Auto_cross_variance(Zscores) :
 	z2z2 = sum(res)
 	print("z2 -->", z2z2)
 
-
 	z_same = []
 	for i in range(0, len(Z3), r) :
 		#print(i, type(i))
@@ -382,6 +382,9 @@ def Auto_cross_variance(Zscores) :
 	z3z3 = sum(res)
 	print("z3 -->", z3z3)
 
+
+	# Z DIFF
+	
 
 	'''
 	for dicct in Zscores :
@@ -485,72 +488,6 @@ def Auto_cross_variance(Zscores) :
 	return dico_Acc
 
 
-######### Biopython
-
-from Bio.Seq import Seq
-from Bio import SeqIO
-from Bio.SeqUtils.ProtParam import ProteinAnalysis
-
-#def bio(path) :
-#def bio(*fasta) :
-def bio() :
-	'''
-	fich = os.listdir(path)
-	print(fich)
-	print("------------")
-	for fasta in fich :
-		for seq_record in SeqIO.parse(fasta, "fasta") :
-			print(seq_record.id)
-			print(seq_record.seq)
-			print(len(seq_record))
-	'''
-
-	'''
-	files = list(fasta)
-	print(files)
-	frequencies = []
-	#files = os.listdir(path)
-	#for fasta in files :
-	for file in files :
-		for seq_record in SeqIO.parse(file, "fasta") :
-			my_seq = ProteinAnalysis(str(seq_record.seq))
-			#print(my_seq)
-			#print(my_seq)
-			#print(my_seq.id)
-			#print(my_seq.seq)
-			#print(len(my_seq))
-		
-			freq = my_seq.get_amino_acids_percent()
-			#count = my_seq.count_amino_acids()['E']
-			print(type(freq))
-
-			frequencies.append(freq)
-			print(frequencies)
-			#return freq
-
-	'''
-
-	for seq_record in SeqIO.parse("Q9SNB7.fasta", "fasta") :
-		record = SeqIO.read("Q9SNB7.fasta", "fasta")
-		print(record, "\n -----------------------")
-		seq = record.seq
-		print(seq)
-		my_seq = ProteinAnalysis(str(seq_record.seq))
-		#print(my_seq)
-		#print(my_seq)
-		#print(my_seq.id)
-		#print(my_seq.seq)
-		#print(len(my_seq))
-	
-		freq = my_seq.get_amino_acids_percent()
-		print(freq)
-
-
-		#print(seq_record.annotations)
-
-		return freq
-
-
 def Tsne(frequencies) :
 
 	tsne = TSNE(n_components = 2, random_state = 0)
@@ -622,7 +559,7 @@ def tsne_proteomes(path_to_proteom) :
 	for data in tsne :
 		sns.scatterplot(x = 'x', y = 'y', data = data)
 	plt.legend(label, prop = {'size' : 5.7})
-	plt.title("Tsne of proteoms", fontsize = 15)
+	plt.title("Tsne of frequencies", fontsize = 15)
 	
 	plt.show()
 
