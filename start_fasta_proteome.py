@@ -302,10 +302,91 @@ def Auto_cross_variance(Zscores) :
 	'''
 
 	#robjects.r.source('acc.R') 
-	print(Zscores[1:15])
-	lag_r = 4
+	print(Zscores, type(Zscores))
+	print(Zscores['>XP_002176126.1'])
+	print(Zscores.keys())
+
+
+	print("----------lalallalaa")
+	for seq in Zscores.values() :
+		print(seq, "\n")
+	print("----------lalallalaa")
+
+	r = 4
 	dico_Acc = {}
+
+	print("---TYPE ZSCORES---", type(Zscores.items()))
+	
+	for idt, seq in Zscores.items() :
+		#print(idt,  seq)
+		for aa in seq :
+			#print(aa)
+			print(aa[2])
+			#for Z in aa :
+				#print(Z)
+				#break
+	
+	####SAME Z
+	N = len(Zscores.keys())
+	Z1 = []
+	Z2 = []
+	Z3 = []
+	z_same = []
+	for idt, seq in Zscores.items() :
+		for aa in seq :
+			Z1.append(aa[0]) # tous les z1 de chaque seq
+			Z2.append(aa[1]) # tous les z2 de chaque seq
+			Z3.append(aa[2]) # tous les z3 de chaque seq
+	#for Z in Z1 :
+	for i in range(0, len(Z1), r) :
+		#print(i, type(i))
+		z_same.append(Z1[i])
+	print(z_same, len(z_same))
+
+	res = []
+	for i in range(len(Z1)-1) :
+		num = (Z1[i]*Z1[i+1])+r
+		denum = N-r
+		res.append(num/denum)
+	z1z1 = sum(res)
+	print("z1 -->", z1z1)
+
+	z_same = []
+	for i in range(0, len(Z2), r) :
+		#print(i, type(i))
+		z_same.append(Z2[i])
+	print(z_same, len(z_same))
+
+	res = []
+	for i in range(len(Z2)-1) :
+		num = (Z2[i]*Z2[i+1])+r
+		denum = N-r
+		res.append(num/denum)
+	#print(sum(m1))
+	z2z2 = sum(res)
+	print("z2 -->", z2z2)
+
+
+	z_same = []
+	for i in range(0, len(Z3), r) :
+		#print(i, type(i))
+		z_same.append(Z3[i])
+	print(z_same, len(z_same))
+
+	res = []
+	for i in range(len(Z3)-1) :
+		num = (Z3[i]*Z3[i+1])+r
+		denum = N-r
+		res.append(num/denum)
+	#print("RES z3 -->", res)
+	z3z3 = sum(res)
+	print("z3 -->", z3z3)
+
+
+	'''
 	for dicct in Zscores :
+		print(dicct.items())
+		break
 		for idt, score in dicct.items() :
 			N = len(score)
 			j = []
@@ -400,7 +481,7 @@ def Auto_cross_variance(Zscores) :
 	for i in dico_Acc.values() :
 		print(i)
 		print(len(i))
-	
+	'''
 	return dico_Acc
 
 
@@ -541,19 +622,6 @@ def tsne_proteomes(path_to_proteom) :
 	for data in tsne :
 		sns.scatterplot(x = 'x', y = 'y', data = data)
 	plt.legend(label, prop = {'size' : 5.7})
-	#legend.fontsize()
-
-
-	#for lab in label :
-	#	plt.legend([lab])
-
-	#print(label)
-	#for lab in label :
-	#	print(lab)
-	#	plt.legend(loc = 'best', label = lab)
-	
-
-
 	plt.title("Tsne of proteoms", fontsize = 15)
 	
 	plt.show()
@@ -577,17 +645,17 @@ if __name__ == '__main__' :
 	#reading, sequence = read_fasta("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Exemple_fasta/F4HXU3.fasta")
 	#dico_number, frequency = freq_aa(sequence)
 
-	#df_Score = Score_aa()
+	df_Score = Score_aa()
 
 	# Ensemble de fichiers
 	#proportion = specific_occurence(path)
-	#dico_score = Z_aa(df_Score)
-	#ACCs = Auto_cross_variance(dico_score)
+	dico_score = Z_aa(df_Score)
+	ACCs = Auto_cross_variance(dico_score)
 	#tsne = Tsne(proportion)
 	#ACCs = Auto_cross_variance(dico_score)
 	
 	# ALL proteom
-	tsne_all_proteom = tsne_proteomes(path_proteom)
+	#tsne_all_proteom = tsne_proteomes(path_proteom)
 
 
 
