@@ -312,7 +312,7 @@ def Auto_cross_variance(Zscores) :
 		print(seq, "\n")
 	print("----------lalallalaa")
 
-	r = 4
+	r = 1
 	dico_Acc = {}
 
 	print("---TYPE ZSCORES---", type(Zscores.items()))
@@ -333,6 +333,7 @@ def Auto_cross_variance(Zscores) :
 	Z2 = []
 	Z3 = []
 	z_same = []
+	# for k in range(1, r) :
 	for idt, seq in Zscores.items() :
 		for aa in seq :
 			Z1.append(aa[0]) # tous les z1 de chaque seq
@@ -384,7 +385,88 @@ def Auto_cross_variance(Zscores) :
 
 
 	# Z DIFF
+	#print(len(Z1), "\n", len(Z2), "\n", len(Z3), "\n")
 	
+	mz1z2 = []
+	mz1z3 = []
+	mz2z1 = []
+	mz2z3 = []
+	mz3z1 = []
+	mz3z2 = []
+	
+	for i in range (len(Z1)) : # ou Z2 ou Z3
+		mz1z2.append(Z1[i]*Z2[i])
+		mz1z3.append(Z1[i]*Z3[i])
+		mz2z1.append(Z2[i]*Z1[i])
+		mz2z3.append(Z2[i]*Z3[i])
+		mz3z1.append(Z3[i]*Z1[i])
+		mz3z2.append(Z3[i]*Z2[i])
+
+	print(len(mz1z2))
+	print(mz1z2[1:5])
+	print(mz3z1[1:5])
+	print(mz1z3[1:5])
+
+	res = []
+	for m in range(len(mz1z2)) : # no matter mz actually
+		num = (mz1z2[m]+r)
+		denum = N-r
+		res.append(num/denum)
+	z1z2 = sum(res)
+	#print(res[0])
+
+	res = []
+	for m in range(len(mz1z3)) : # no matter mz actually
+		num = (mz1z3[m]+r)
+		denum = N-r
+		res.append(num/denum)
+
+	z1z3 = sum(res)
+	print(z1z3)
+	print(res[0])
+
+	res = []
+	for m in range(len(mz2z1)) : # no matter mz actually
+		num = (mz2z1[m]+r)
+		denum = N-r
+		res.append(num/denum)
+	z2z1 = sum(res)
+	print(z2z1)
+
+	res = []
+	for m in range(len(mz2z3)) : # no matter mz actually
+		num = (mz2z3[m]+r)
+		denum = N-r
+		res.append(num/denum)
+	z2z3 = sum(res)
+	print(z2z3)
+
+	res = []
+	for m in range(len(mz3z1)) : # no matter mz actually
+		num = (mz3z1[m]+r)
+		denum = N-r
+		res.append(num/denum)
+	z3z1 = sum(res)
+	print(z3z1)
+
+	res = []
+	for m in range(len(mz3z2)) : # no matter mz actually
+		num = (mz3z2[m]+r)
+		denum = N-r
+		res.append(num/denum)
+	z3z2 = sum(res)
+	print(z3z2)
+
+	dico_Acc = {'z1z1_'+str(r) : z1z1, 'z1z2_'+str(r) : z1z2, 'z1z3_'+str(r) : z1z3, \
+		'z2z1_'+str(r) : z2z1, 'z2z2_'+str(r) : z2z2, 'z2z3_'+str(r) : z2z3, \
+		'z3z1_'+str(r) : z3z1, 'z3z2_'+str(r) : z3z2, 'z3z3_'+str(r) : z3z3}
+
+	print(dico_Acc)
+
+
+
+
+
 
 	'''
 	for dicct in Zscores :
