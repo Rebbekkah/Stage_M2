@@ -61,7 +61,7 @@ print(list_of_aa)
 
 mat_vect=c()
 Acc = data.drame()
-for (s in (1:dim(df[1:15,])[1]))
+for (s in (1:dim(df)[1]))
 {
   #print(s)
   seq = as.character(df[s, 2])
@@ -90,67 +90,10 @@ for (s in (1:dim(df[1:15,])[1]))
   }
 }
 
-rownames(Acc) <- df$seq_name[1:15]
+rownames(Acc) <- df$seq_name
 
-#tsne(mat[, 1:ncol(mat)], labels = as.factor(df$seq_name), perplex = 1^-90000000000000000000000000)
-#tsne(mat[1,], labels = as.factor(df$seq_name), perplex = )
-#RunTSNE(object = mat[1,], perplexity = ...)
-
-
-Rtsne(mat, labels = as.factor(df$seq_name), perplex = )
-
-
-Acc = data.frame()
-for (seq in df[, 2]) {
-  print(seq)
-  df[seq, 'sequence'] = acc((seq), lag = 4)
-}
-
-
-
-######################################################################################
-######################################################################################
-for (elem in data2[1:100, 1]) {
-  if ('>' %in% elem) {
-    
-  }
-}
-
-
-#data <- read.csv(opt$f, sep = '\t')
-#is.data.frame(data2)
-`%!in%` = Negate(`%in%`)
-df = data.frame()
-idt <- c()
-seq <- c()
-for (elem in data2[1:100, 1]) {
-  #vec = c(vec, elem)
-  elem2 = str_split(elem, pattern = "")
-  #print(elem2)
-  #print(typeof(elem2))
-  #seq = c(str_split(elem, pattern = ""))
-  #print(seq)
-  for (letter in elem2) {
-    #print(typeof(letter))
-    #print(letter) 
-    if (letter == '>') {
-      idt = c(idt, elem)
-    }
-    else if (letter %in% list_of_aa) {
-      seq = c(seq, elem)
-    }
-  }
-}
-idt[1]
-seq[1]
-#df = data.frame(idt, seq)
-
-#idt_splited = str_split(idt, pattern = " ")
-#typeof(idt_splited)
-#idt_splited[]
-#idt2 = substr(idt_splited, )
-idt2
-
+tsne = Rtsne(Acc, labels = as.factor(df$seq_name), perplex = 0.0001, check_duplicates = FALSE)
+plot(tsne$Y)
 
 
 
