@@ -29,8 +29,7 @@ library('Rtsne')
 # Necessary path
 
  
-path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_diatom.faa"
-data2 <-  read.csv(path)
+path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_Chlamydomonas.fa"
 
 # Data reading & arguments
 fastaFile <- readDNAStringSet(path)
@@ -48,7 +47,9 @@ option_list  =  list(
   make_option(c("-l", "--lag"), type = "integer", default = NULL,
               help = "l refers to lag, which is the interval between residues being compared"),
   make_option(c("-o", "--out-file"), type = "character", default = NULL,
-              help = "out csv file")
+              help = "out csv file"),
+  make_option(c("-p", "--path"), type = "character", default = NULL,
+              help = "path to proteom")
   );
 
 opt_parser  =  OptionParser(option_list = option_list);
@@ -60,15 +61,11 @@ print(list_of_aa)
 
 
 mat_vect=c()
-Acc = data.drame()
-for (s in (1:dim(df)[1]))
+Acc = data.frame()
+for (s in (1:dim(df[1:50,])[1]))
 {
-  #print(s)
   seq = as.character(df[s, 2])
-  #print(seq)
   mat = rbind(AAindex[390,str_sub(seq,1,1)],AAindex[391,str_sub(seq,1,1)],AAindex[392,str_sub(seq,1,1)])
-  #print(mat)
-  #break
   for (i in (2:nchar(seq)))
   {	
     if (str_sub(seq,i,i)=="Z"|str_sub(seq,i,i)=="U"|str_sub(seq,i,i)=="O"|str_sub(seq,i,i)=="J"|str_sub(seq,i,i)=="B"|str_sub(seq,i,i)=="X" )
@@ -90,13 +87,13 @@ for (s in (1:dim(df)[1]))
   }
 }
 
-rownames(Acc) <- df$seq_name
+#rownames(Acc) <- df$seq_name[1:nrow(Acc)]
 
 tsne = Rtsne(Acc, labels = as.factor(df$seq_name), perplex = 0.0001, check_duplicates = FALSE)
 plot(tsne$Y)
 
 
-
+list.files(path = ".", pattern = (".html$")) 
 
 
 
