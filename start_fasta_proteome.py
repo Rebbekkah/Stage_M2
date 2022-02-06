@@ -10,8 +10,9 @@ from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
 
 # R
-import rpy2.robjects as robjects
-r = robjects.r
+import rpy2
+#import rpy2.robjects as robjects
+#r = robjects.r
 '''
 import rpy2.robjects.packages as rpackages
 from rpy2.robjects.vectors import StrVector
@@ -556,6 +557,9 @@ def proteom_name(path_to_proteom) :
 	return label
 
 
+def Acc_Tsne() :
+	os.system('Rscript --vanilla acc.R -f ')
+	print("Script acc.R lancé")
 
 
 if __name__ == '__main__' :
@@ -567,13 +571,14 @@ if __name__ == '__main__' :
 
 	# Ensemble de fichiers
 	#proportion = specific_occurence(path)
-	dico_score = Z_aa(df_Score)
-	ACCs = Auto_cross_variance(dico_score)
+	#dico_score = Z_aa(df_Score)
+	#ACCs = Auto_cross_variance(dico_score)
 	#tsne = Tsne(proportion)
 	#ACCs = Auto_cross_variance(dico_score)
 	
 	# ALL proteom
 	#tsne_all_proteom = tsne_proteomes(path_proteom)
+	tsneACC = Acc_Tsne()
 
 
 
