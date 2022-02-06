@@ -28,14 +28,21 @@ library('Rtsne')
 
 # Necessary path
 
- 
-path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_Chlamydomonas.fa"
+path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/"
+files <- list.files(path = path, pattern = (".f")) 
+#print(files)
 
 # Data reading & arguments
-fastaFile <- readDNAStringSet(path)
-seq_name = names(fastaFile)
-sequence = paste(fastaFile)
-df <- data.frame(seq_name, sequence)
+
+fastaFile = c()
+for (f in files) {
+  df = data.frame()
+  fastaFile <- readDNAStringSet(paste0(path, f))
+  seq_name = names(fastaFile)
+  sequence = paste(fastaFile)
+  df <- data.frame(seq_name, sequence)
+  df = assign(paste0("df_", f), df)
+}
 
 #Command line : Rscript --vanilla acc.R -f <fasta-file> -a <column-name> -l <lag> -o <out-file>
 
