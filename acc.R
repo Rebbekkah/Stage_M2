@@ -5,6 +5,8 @@
 -------------------------------------
 # Command line : Rscript --vanilla acc.R 
   
+# This script was highly inspired by Clothilde Garrido's work (acc.R) at :  https://github.com/UMR7141/Peptides_Analysis.
+  
   
 # Librairies
 
