@@ -32,7 +32,7 @@ library('Rtsne')
 library('RColorBrewer')
 
 # Necessary path
-path_save <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/img"
+path_save <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/img"
 path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/"
 files <- list.files(path = path, pattern = (".f")) 
 #print(files)
@@ -130,7 +130,7 @@ for (acc in Acc_list) {
   }
 }
 title("Tsne of ACC on proteoms")
-legend(1, 95, legend = files,
+legend("topleft", legend = files,
        col = col, lty=1:2, cex=0.8)
 dev.off()
 
