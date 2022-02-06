@@ -1,6 +1,9 @@
+title: "ACC on proteoms calculator"
+author: "Goulancourt Rebecca"
+date: "06/02/2022"
+
 # Installation des librairies
 
- 
 #if (!requireNamespace("BiocManager", quietly   =   TRUE))
 #    install.packages("BiocManager")
 #BiocManager::install("Biostrings")
@@ -29,7 +32,7 @@ library('Rtsne')
 library('RColorBrewer')
 
 # Necessary path
-
+path_save <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/img"
 path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/"
 files <- list.files(path = path, pattern = (".f")) 
 #print(files)
@@ -72,18 +75,6 @@ option_list  =  list(
 opt_parser  =  OptionParser(option_list = option_list);
 opt  =  parse_args(opt_parser);
 
- 
-list_of_aa = c('M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H')
-print(list_of_aa)
-
-
-
-for (df in df_list) {
-  for (s in (1:dim(df[1:50,])[1])) {
-    print(s)
-  }
-}
-
 k = 0
 Acc_list = NULL
 for (df in df_list) {
@@ -119,8 +110,9 @@ for (s in (1:dim(df[1:50,])[1]))
   Acc_list = c(Acc_list, list(Acc))
 }
 
-#rownames(Acc) <- df$seq_name[1:nrow(Acc)]
 
+setwd(path_save)
+pdf("Tsne_ACC.pdf", height = 10,width = 10)
 tsne = NULL
 col = NULL
 col =  palette(rainbow(length(Acc_list))) 
@@ -129,18 +121,18 @@ for (acc in Acc_list) {
   i = i + 1
   #print(i)
   tsne = Rtsne(acc, labels = as.factor(df$seq_name), perplex = 0.0001, check_duplicates = FALSE)
+  if (i == 1) {
   plot(tsne$Y, type = "p", col = col[i])
-  par(new = TRUE)
-  #lines(tsne$Y, type = "p", col = col[i])
-  #legend("topleft", legend = Acc_list,
-  #       col = col, lty=1:2, cex=0.8)
+  }
+  #par(new = TRUE)
+  else {
+  lines(tsne$Y, type = "p", col = col[i])
+  }
 }
-legend("topleft", legend = Acc_list,
+title("Tsne of ACC on proteoms")
+legend(1, 95, legend = files,
        col = col, lty=1:2, cex=0.8)
-
-#tsne = Rtsne(Acc, labels = as.factor(df$seq_name), perplex = 0.0001, check_duplicates = FALSE)
-#plot(tsne$Y)
-
+dev.off()
 
 
 
