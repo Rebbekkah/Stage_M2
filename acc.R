@@ -11,6 +11,7 @@
 #install.packages('optparse')
 #install.packages('stringr')
 #install.packages("Rtsne") 
+#install.packages('RColorBrewer')
 #if (!require("BiocManager", quietly = TRUE))
 #  install.packages("BiocManager")
 #BiocManager::install("M3C")
@@ -25,6 +26,7 @@ library('optparse')
 library('stringr')
 library('M3C')
 library('Rtsne')
+library('RColorBrewer')
 
 # Necessary path
 
@@ -35,6 +37,7 @@ files <- list.files(path = path, pattern = (".f"))
 # Data reading & arguments
 
 fastaFile = c()
+df_list = NULL
 for (f in files) {
   df = data.frame()
   fastaFile <- readDNAStringSet(paste0(path, f))
@@ -42,7 +45,14 @@ for (f in files) {
   sequence = paste(fastaFile)
   df <- data.frame(seq_name, sequence)
   df = assign(paste0("df_", f), df)
+  df_list = c(df_list, list(df))
 }
+
+for (df in df_list) {
+  print(head(df$sequence))
+  break
+}
+
 
 #Command line : Rscript --vanilla acc.R -f <fasta-file> -a <column-name> -l <lag> -o <out-file>
 
@@ -67,8 +77,20 @@ list_of_aa = c('M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 
 print(list_of_aa)
 
 
-mat_vect=c()
-Acc = data.frame()
+
+for (df in df_list) {
+  for (s in (1:dim(df[1:50,])[1])) {
+    print(s)
+  }
+}
+
+k = 0
+Acc_list = NULL
+for (df in df_list) {
+  k = k + 1
+  mat_vect=c()
+  Acc = data.frame()
+  #Acc = assign(paste0("Acc_", df), Acc)
 for (s in (1:dim(df[1:50,])[1]))
 {
   seq = as.character(df[s, 2])
@@ -93,14 +115,31 @@ for (s in (1:dim(df[1:50,])[1]))
     Acc = rbind(Acc, mat)
   }
 }
+  Acc = assign(paste0("Acc_", files[k]), Acc)
+  Acc_list = c(Acc_list, list(Acc))
+}
 
 #rownames(Acc) <- df$seq_name[1:nrow(Acc)]
 
-tsne = Rtsne(Acc, labels = as.factor(df$seq_name), perplex = 0.0001, check_duplicates = FALSE)
-plot(tsne$Y)
+tsne = NULL
+col = NULL
+col =  palette(rainbow(length(Acc_list))) 
+i = 0
+for (acc in Acc_list) {
+  i = i + 1
+  #print(i)
+  tsne = Rtsne(acc, labels = as.factor(df$seq_name), perplex = 0.0001, check_duplicates = FALSE)
+  plot(tsne$Y, type = "p", col = col[i])
+  par(new = TRUE)
+  #lines(tsne$Y, type = "p", col = col[i])
+  #legend("topleft", legend = Acc_list,
+  #       col = col, lty=1:2, cex=0.8)
+}
+legend("topleft", legend = Acc_list,
+       col = col, lty=1:2, cex=0.8)
 
-
-list.files(path = ".", pattern = (".html$")) 
+#tsne = Rtsne(Acc, labels = as.factor(df$seq_name), perplex = 0.0001, check_duplicates = FALSE)
+#plot(tsne$Y)
 
 
 
