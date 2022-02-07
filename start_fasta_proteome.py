@@ -1,3 +1,19 @@
+"""Code that allows to perform Tsne 
+   on amino acid frequency and ACC (based on Zscale)
+   for a set of proteoms (fasta format)
+
+------------------------------------------------------------------
+Rebecca GOULANCOURT
+M2 BIOLOGIE - INFORMATIQUE
+Université de Paris 2021 - 2022
+Stage M2 - supervisor : Ingrid Lafontaine
+------------------------------------------------------------------
+
+This code calls another script in R : acc.R.
+
+"""
+
+# Import of the necessary modules
 import os
 import sys
 import glob
@@ -9,33 +25,25 @@ from os.path import basename
 from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
 
-# R
-import rpy2
-#import rpy2.robjects as robjects
-#r = robjects.r
-'''
-import rpy2.robjects.packages as rpackages
-from rpy2.robjects.vectors import StrVector
-from rpy2.robjects.packages import importr
-
-utils = rpackages.importr('utils')
-utils.chooseCRANmirror(ind = 1)
-
-# Install packages
-packnames = ('protr')
-utils.install_packages(StrVector(packnames))
-# Load packages 
-protr = rpackages.importr('protr')
-'''
-
-
-# important
+# Variables 
 path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_diatom.faa"
 path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/"
 list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 
 def Score_aa() :
+	""" Initialization of the Zscales dataframefor each amino acid
+
+	Parameters
+	----------
+	None
+
+	Returns
+	-------
+	df_Zscore : dataframe
+		Dataframe that contains the (Z1, Z2, Z3) of the 20 amino acids
+
+	"""
 	Z1 = [-2.49, 2.18, 0.07, -4.19, 1.96, -4.44, -1.22, 2.84, 2.23, -2.69, 2.88, 3.08, -4.92, 3.64, 0.71, 0.92, \
 			3.22, -4.75, -1.39, 2.41]
 	Z2 = [-0.27, 0.53, -1.73, -1.03, -1.63, -1.68, 0.88, 1.41, -5.36, -2.53, 2.52, 0.39, 1.30, 1.13, -0.97, -2.09, \
@@ -48,10 +56,25 @@ def Score_aa() :
 	return df_Zscore
 
 
-######### SUR 1 FICHIER FASTA
+######### These functions below are made for 1 proteom/file or sequence and will be recalled later
 
 def read_fasta(fichier) :
-	print(fichier)
+	""" Reading and parsing of a proteom file
+		Also writes in a .txt file the results of sequence filtering
+
+	Parameters
+	----------
+	fichier : str
+		Name of the proteom file
+
+	Returns
+	-------
+	dico : dictionnary
+		Dictionnary where keys represents the sequence id and
+		values are the corresponding sequence
+
+	"""
+	print("File : ", fichier)
 	with open(fichier, 'r') as filin :
 
 		dico = {}
@@ -64,10 +87,6 @@ def read_fasta(fichier) :
 				dico[prot_id] += line.strip()
 		
 	seq += dico[prot_id]
-	
-	print(seq)
-	print("Longueur de la séquence : ", len(seq))
-	print("--------------------")
 
 	dico_delete = {}	
 	not_aa = []
@@ -94,24 +113,18 @@ def read_fasta(fichier) :
 			dico_delete[ident] = ""
 			dico_delete[ident] += dico[ident]
 
-	print("----NOT------")
-	print(not_aa, len(not_aa))
-	print(id_not_aa, len(id_not_aa))
-	nb_delete = len(dico_delete.keys())
 	nb_delete = len(id_not_aa)
-	print("NOMBRE DE SEQ DELETE : ", nb_delete)
+	print("Number of deleted sequences : ", nb_delete)
 
 
 	with open("Deleted_seq", "w") as filout :
 		for idt, seq in dico_delete.items() :
-			#filout.write(idt+"\n"+seq+"\n")
 			filout.write(idt+"\n")
 	
-	print("avant :", len(dico.keys()), len(dico.values()))
+	print("Before :", len(dico.keys()), len(dico.values()))
 
 	dico_nb = {}
 	for idt, seq in dico.items() :
-		#print("-----")
 		dico_nb[idt] = parsing_seq(seq)
 
 	dico_total = {}
@@ -123,20 +136,16 @@ def read_fasta(fichier) :
 			else :
 				dico_total[cle] += val
 
-	print("TOTAL :", dico_total)
-
-
 	for idt in id_not_aa :
 		del dico[idt]
 
-	print("après :", len(dico.keys()), len(dico.values()))
+	print("After :", len(dico.keys()), len(dico.values()))
 	
 	with open("New_proteome", "w") as filout :
 		for idt, seq in dico.items() :
-			#filout.write(idt+"\n"+seq+"\n")
 			filout.write(idt+"\n")
 
-
+	# If you want to try o a limited number of sequence for each proteom
 	dico2 = {}
 	idt_list = []
 	for idt, seq in dico.items() :
@@ -145,22 +154,32 @@ def read_fasta(fichier) :
 		dico2[i] = ""
 		dico2[i] += dico[i]
 				
-	print("------------DICO2----------")
-	print(dico2)
-	print("------------FIN DICO2----------")
 	#return(dico) 
 	return(dico2)
 
 
 def parsing_seq(seq) :
-	
-	dico = {'codon-stop' : 0, 'pseudo-gène' : 0, 'other' : 0}
+	""" Function that reads a sequence to verify its nature 
+		i.e presence of * or a non amino acid
+
+	Parameters
+	----------
+	seq : str
+		Sequence to analyze
+
+	Returns
+	-------
+	dico : dictionnary
+		Dictionnary where keys represents the nature of the sequence
+
+	"""
+	dico = {'stop codon' : 0, 'pseudo-gene' : 0, 'other' : 0}
 	
 	if seq[-1] == '*' :
-		dico['codon-stop'] += 1
+		dico['stop codon'] += 1
 		for aa in seq[:-1] :
 			if aa == '*' :
-				dico['pseudo-gène'] += 1
+				dico['pseudo-gene'] += 1
 			elif aa not in list_of_aa :
 				dico['other'] += 1
 			elif aa in list_of_aa :
@@ -171,7 +190,7 @@ def parsing_seq(seq) :
 	elif seq[-1] != '*' :
 		for aa in seq :
 			if aa == '*' :
-				dico['pseudo-gène'] += 1
+				dico['pseudo-gene'] += 1
 			elif aa not in list_of_aa :
 				dico['other'] += 1
 			elif aa in list_of_aa :
@@ -184,6 +203,20 @@ def parsing_seq(seq) :
 
 
 def freq_aa(sequence) : 
+	""" Calculates for a given sequence its frequency of amino acid
+
+	Parameters
+	----------
+	sequence : str
+		Sequence to analyze
+
+	Returns
+	-------
+	freq_dico : dictionnary
+		Dictionnary of frequencies, where each key is a amino acid
+		and the dictionnary value its frequency in the sequence
+
+	"""
 	dico = {}
 	for letter in sequence :
 		if letter not in dico.keys() :
@@ -212,14 +245,24 @@ def freq_aa(sequence) :
 	return freq_dico
 
 
-######### SUR PLUSIEURS FICHIERS FASTAS
+######### These funtions below are written in order to read many proteoms
 
 def listing(path) :
+	""" Collects proteoms files in a directory and applies the read_fasta
+		function on each proteoms
+
+	Parameters
+	----------
+	path : str
+		path to the proteoms (should finish by "/")
+
+	Returns
+	-------
+	reads : list
+		List of dictionnaries for all proteoms that contains sequence id and the sequence
+
+	"""
 	fich = glob.glob(path+'*.f'+'*')
-	#print(fich)
-	#fich.append(path+'*.faa')
-	#fich.append(path+'*fna')
-	#print(fich, type(fich))
 	reads = []
 	
 	for fasta in fich :
@@ -229,14 +272,29 @@ def listing(path) :
 
 
 def specific_occurence(reads) :
+	""" Calculates for a given proteom the amino acid frequency of each sequences
+		Also take into account the nature of the sequence
+		--> frequencies with unknown amino acid or '*' are deleted
 
-	#reads = read_fasta(path) # ACTIVATE ONLY FOR 1 PROTEOM
+	Parameters
+	----------
+	reads : dictionnary
+		Dictionnary of id and sequences
+
+	Returns
+	-------
+	list_df : list
+		List of dataframes that contains amino acid frequency 
+		--> each dataframe is a sequence
+
+	"""
+
+	#reads = read_fasta(path) # ACTIVATE IF YOU WANT TO READ ONLY 1 SPCIFIC PROTEOM
 
 	frequencies = []
 	for idt, seq in reads.items() :
 		frequencies.append(freq_aa(seq))
 
-	print("----------DF FREQ-----------")
 	list_df = []
 	for dicct in frequencies :
 		dicct = pd.DataFrame([dicct])
@@ -255,226 +313,21 @@ def specific_occurence(reads) :
 	return list_df
 
 
-def Z_aa(Z_score) :
-	#dico = listing(path)
-	dico = read_fasta(path)
-	#print("-------------DICO", dico, "---------FIN DICO")
-	#print(Z_score)
-	#print(Z_score.loc['H'])
-	#print(Z_score.iloc[:, 1:])
-	print("Nombre lignes : ", Z_score.shape[0])
-	#pos = 0
-
-	dico_Z = {}
-	#new_seq = []
-	for idt, seq in dico.items() :
-		if '*' in seq[-1] :
-			#dico[idt] = seq[:-1]
-			seq = seq[:-1]
-			#print(dico[idt])
-		new_seq = []
-		for aa in seq :
-			#print(seq)
-			new_seq.append(list(Z_score.loc[aa]))
-			#print("ok2")
-		dico_Z[idt] = new_seq
-		#break
-
-	#print("-----------vdfgegse-----------")
-	#print(dico_Z)
-	#print("-----------vdfgegse-----------")
-
-	return dico_Z
-
-
-
-
-def Auto_cross_variance(Zscores) :
-
-	print("--------ACC----------")
-	dico_Acc = {}
-
-
-
-	#Rstudio()
-	#ACCs = protr.acc(Zscores)
-	#ACCs = robjects.r('acc(Zscores)')
-
-	'''
-	print(Zscores)
-	ACC = r.acc(Zscores)
-	print(ACC)	
-	'''
-
-	#robjects.r.source('acc.R') 
-	print(Zscores, type(Zscores))
-	print(Zscores['>XP_002176126.1'])
-	print(Zscores.keys())
-
-	'''
-	print("----------lalallalaa")
-	for seq in Zscores.values() :
-		print(seq, "\n")
-	print("----------lalallalaa")
-	'''
-
-	
-	r = 1
-	dico_Acc = {}
-
-	print("---TYPE ZSCORES---", type(Zscores.items()))
-
-	#### SAME Z
-	N = len(Zscores.keys())
-	'''
-	Z1 = []
-	Z2 = []
-	Z3 = []
-	'''
-	z_same = []
-	# for k in range(1, r) :
-	for idt, seq in Zscores.items() :
-		Z1 = []
-		Z2 = []
-		Z3 = []
-		for aa in seq :
-			Z1.append(aa[0]) # tous les z1 de chaque seq
-			Z2.append(aa[1]) # tous les z2 de chaque seq
-			Z3.append(aa[2]) # tous les z3 de chaque seq
-		for i in range(0, len(Z1), r) :
-			#print(i, type(i))
-			z_same.append(Z1[i])
-		print(z_same, len(z_same))
-
-		res = []
-		for i in range(len(Z1)-1) :
-			num = (Z1[i]*Z1[i+1])+r
-			denum = N-r
-			res.append(num/denum)
-		z1z1 = sum(res)
-		print("z1 -->", z1z1)
-
-		z_same = []
-		for i in range(0, len(Z2), r) :
-			#print(i, type(i))
-			z_same.append(Z2[i])
-		print(z_same, len(z_same))
-
-		res = []
-		for i in range(len(Z2)-1) :
-			num = (Z2[i]*Z2[i+1])+r
-			denum = N-r
-			res.append(num/denum)
-		#print(sum(m1))
-		z2z2 = sum(res)
-		print("z2 -->", z2z2)
-
-		z_same = []
-		for i in range(0, len(Z3), r) :
-			#print(i, type(i))
-			z_same.append(Z3[i])
-		print(z_same, len(z_same))
-
-		res = []
-		for i in range(len(Z3)-1) :
-			num = (Z3[i]*Z3[i+1])+r
-			denum = N-r
-			res.append(num/denum)
-		#print("RES z3 -->", res)
-		z3z3 = sum(res)
-		print("z3 -->", z3z3)
-
-
-		# Z DIFFERENT Z
-		
-		mz1z2 = []
-		mz1z3 = []
-		mz2z1 = []
-		mz2z3 = []
-		mz3z1 = []
-		mz3z2 = []
-		
-		for i in range (len(Z1)) : # ou Z2 ou Z3
-			mz1z2.append(Z1[i]*Z2[i])
-			mz1z3.append(Z1[i]*Z3[i])
-			mz2z1.append(Z2[i]*Z1[i])
-			mz2z3.append(Z2[i]*Z3[i])
-			mz3z1.append(Z3[i]*Z1[i])
-			mz3z2.append(Z3[i]*Z2[i])
-
-		print(len(mz1z2))
-		print(mz1z2[1:5])
-		print(mz3z1[1:5])
-		print(mz1z3[1:5])
-
-		res = []
-		for m in range(len(mz1z2)) : # no matter mz actually
-			num = (mz1z2[m]+r)
-			denum = N-r
-			res.append(num/denum)
-		z1z2 = sum(res)
-		#print(res[0])
-
-		res = []
-		for m in range(len(mz1z3)) : # no matter mz actually
-			num = (mz1z3[m]+r)
-			denum = N-r
-			res.append(num/denum)
-
-		z1z3 = sum(res)
-		print(z1z3)
-		print(res[0])
-
-		res = []
-		for m in range(len(mz2z1)) : # no matter mz actually
-			num = (mz2z1[m]+r)
-			denum = N-r
-			res.append(num/denum)
-		z2z1 = sum(res)
-		print(z2z1)
-
-		res = []
-		for m in range(len(mz2z3)) : # no matter mz actually
-			num = (mz2z3[m]+r)
-			denum = N-r
-			res.append(num/denum)
-		z2z3 = sum(res)
-		print(z2z3)
-
-		res = []
-		for m in range(len(mz3z1)) : # no matter mz actually
-			num = (mz3z1[m]+r)
-			denum = N-r
-			res.append(num/denum)
-		z3z1 = sum(res)
-		print(z3z1)
-
-		res = []
-		for m in range(len(mz3z2)) : # no matter mz actually
-			num = (mz3z2[m]+r)
-			denum = N-r
-			res.append(num/denum)
-		z3z2 = sum(res)
-		print(z3z2)
-
-	dico_Acc[idt] = {}
-	dico_Acc[idt] = {'z1z1_'+str(r) : z1z1, 'z1z2_'+str(r) : z1z2, 'z1z3_'+str(r) : z1z3, \
-		'z2z1_'+str(r) : z2z1, 'z2z2_'+str(r) : z2z2, 'z2z3_'+str(r) : z2z3, \
-		'z3z1_'+str(r) : z3z1, 'z3z2_'+str(r) : z3z2, 'z3z3_'+str(r) : z3z3}
-
-	#dico_Acc = {idt : {z1z1 z1z2 ....}}
-	print(dico_Acc)
-	print(len(dico_Acc.keys()))
-	
-
-	return dico_Acc
-
-
 def Tsne(frequencies) :
+	""" Calculates the Tsne on a proteom for its amino acid frequency
 
+	Parameters
+	----------
+	frequencies : list
+		List of frequecies as a dataframe for a proteom and its sequences
+
+	Returns
+	-------
+	df_data_tsne : dataframe
+		Dataframe that contains the Tsne results
+
+	"""
 	tsne = TSNE(n_components = 2, random_state = 0)
-
-	print("--------")
 
 	df = pd.DataFrame()
 	matrix = []
@@ -497,33 +350,39 @@ def Tsne(frequencies) :
 			print(arr.shape)
 			arr = np.reshape(arr, 20,)
 
-
-	print("-------------OK----------")
 	X_2d = tsne.fit_transform(matrix)
 	df['x'] = X_2d[:,0]
 	df['y'] = X_2d[:,1]
-	#print(df)
 
 	df_data_tsne = df
-	print(df)
 
-	#sns.scatterplot(x = 'x', y = 'y', data = df). # For 1 proteom
-	#plt.title("Tsne", fontsize = 15)
-	
-	#plt.show()
 
 	return df_data_tsne
 	
 
 
 def tsne_proteomes(path_to_proteom) :
+	""" Perform a tsne for all the selected proteoms
+
+	Parameters
+	----------
+	path_to_proteom : str
+		Path to the directory that contains all the proteoms
+
+	Returns
+	-------
+	None
+
+	Plot
+	----
+		A scatterplot for the tsne on frequencies for all the proteoms
+
+	"""
 	reads = listing(path_to_proteom)
 	occ = []
 	
 	for dico in reads :
 		occ.append(specific_occurence(dico))
-	print("OCC", occ, type(occ), len(occ))
-	print("--------------------------------------------------")
 	
 	tsne = []
 	list_df = []
@@ -532,8 +391,7 @@ def tsne_proteomes(path_to_proteom) :
 		tsne.append(Tsne(proteom))
 	
 
-	print("--------------TSNE--------------")
-	print(tsne, len(tsne), type(tsne))
+	print("--------------TSNE PERFORMING--------------")
 
 	label = proteom_name(path_proteom)
 
@@ -547,7 +405,19 @@ def tsne_proteomes(path_to_proteom) :
 
 
 def proteom_name(path_to_proteom) :
-	
+	""" Save the proteom name only (not the entire path) 
+
+	Parameters
+	----------
+	path_to_proteom : str
+		Path to the directory that contains all the proteoms
+
+	Returns
+	-------
+	label : str
+		Each proteoms name 
+
+	"""
 	fich = glob.glob(path_to_proteom+'*.f'+'*')
 
 	label = []
@@ -558,7 +428,22 @@ def proteom_name(path_to_proteom) :
 
 
 def Acc_Tsne() :
-	os.system('Rscript --vanilla acc.R -f ')
+	""" Calculates via R the acc of each sequence of each proteoms and perform a tsne
+
+	Parameters
+	----------
+	None
+
+	Returns
+	-------
+	None
+
+	Plot
+	----
+		A tsne of ACC 
+
+	"""	
+	os.system('Rscript --vanilla acc.R')
 	print("Script acc.R lancé")
 
 
@@ -566,17 +451,10 @@ if __name__ == '__main__' :
 	# 1 fichier
 	#reading, sequence = read_fasta("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Exemple_fasta/F4HXU3.fasta")
 	#dico_number, frequency = freq_aa(sequence)
-
-	df_Score = Score_aa()
-
-	# Ensemble de fichiers
 	#proportion = specific_occurence(path)
-	#dico_score = Z_aa(df_Score)
-	#ACCs = Auto_cross_variance(dico_score)
 	#tsne = Tsne(proportion)
-	#ACCs = Auto_cross_variance(dico_score)
 	
-	# ALL proteom
+	# ALL proteoms
 	#tsne_all_proteom = tsne_proteomes(path_proteom)
 	tsneACC = Acc_Tsne()
 
