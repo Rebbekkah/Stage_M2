@@ -140,7 +140,8 @@ def read_fasta(fichier) :
 		del dico[idt]
 
 	print("After :", len(dico.keys()), len(dico.values()))
-	
+	#print("On the proteom we count : ", dico_total)
+
 	with open("New_proteome", "w") as filout :
 		for idt, seq in dico.items() :
 			filout.write(idt+"\n")
@@ -236,11 +237,6 @@ def freq_aa(sequence) :
 		if aa not in freq_dico :
 			freq_dico[aa] = 0
 
-	#print("Amino acid and their occurence : ", dico)
-	#print("And their frequency : ", freq_dico)
-	#print(len(freq_dico.keys()))
-	#print("----------freq_aa----------")
-	
 
 	return freq_dico
 
@@ -334,7 +330,6 @@ def Tsne(frequencies) :
 
 
 	for mat in frequencies :
-		print(mat)
 		matrix.append(mat.to_numpy()[0]) 
 		if len(mat.columns) != 20 :
 			print(len(mat.columns))
@@ -455,8 +450,8 @@ if __name__ == '__main__' :
 	#tsne = Tsne(proportion)
 	
 	# ALL proteoms
-	#tsne_all_proteom = tsne_proteomes(path_proteom)
-	tsneACC = Acc_Tsne()
+	tsne_all_proteom = tsne_proteomes(path_proteom)
+	#tsneACC = Acc_Tsne()
 
 
 
