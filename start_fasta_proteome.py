@@ -117,7 +117,7 @@ def read_fasta(fichier) :
 	print("Number of deleted sequences : ", nb_delete)
 
 
-	with open("Deleted_seq", "w") as filout :
+	with open("Deleted_seq_"+str(basename(fichier)), "w") as filout :
 		for idt, seq in dico_delete.items() :
 			filout.write(idt+"\n")
 	
@@ -141,10 +141,11 @@ def read_fasta(fichier) :
 
 	print("After :", len(dico.keys()), len(dico.values()))
 	#print("On the proteom we count : ", dico_total)
-
-	with open("New_proteome", "w") as filout :
+	'''
+	with open("New_proteome_"+str(basename(fichier)), "w") as filout :
 		for idt, seq in dico.items() :
 			filout.write(idt+"\n")
+	'''
 
 	# If you want to try o a limited number of sequence for each proteom
 	dico2 = {}
