@@ -42,27 +42,7 @@ path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteo
 
 # Data reading
 list_of_aa = c('M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H')
-
-reading = function(file) {
-data = readFASTA(paste0(path, "proteome_diatom.faa"),
-#data = readFASTA(file,
-          legacy.mode = TRUE, seqonly = FALSE)
-df = data.frame(nrow = length(data))
-for (i in 1:length(data)) {
-  df[i, 1] = cbind(data[i])
-}
-rownames(df) = names(data)
-return(df)
-}
-
-#hmm = system.file(paste0(path, "proteome_diatom.faa"), package = "seqinr")
-#hmm2 = read.fasta((paste0(path, "proteome_diatom.faa")))
 files <- list.files(path = path, pattern = (".f")) 
-
-
-parsing = function(file) {
-  
-}
 
 id = c()
 seq = c()
@@ -157,7 +137,17 @@ for(i in nrow(truc)[1:24]) {
 ####################################################
 
 
-#df2 = reading(paste0(path, files[2]))
+reading = function(file) {
+  #data = readFASTA(paste0(path, "proteome_diatom.faa"),
+  data = readFASTA(file,
+                   legacy.mode = TRUE, seqonly = FALSE)
+  df = data.frame(nrow = length(data))
+  for (i in 1:length(data)) {
+    df[i, 1] = cbind(data[i])
+  }
+  rownames(df) = names(data)
+  return(df)
+}
 
 fastaFile = c()
 df_list = NULL
@@ -175,6 +165,7 @@ for (f in files) {
   print("--> ok")
 }
 
+
 # Calculation of ACC
 
 k = 0
@@ -183,10 +174,11 @@ for (df in df_list) {
   k = k + 1
   mat_vect=c()
   Acc = data.frame()
-  #Acc = assign(paste0("Acc_", df), Acc)
-for (s in (1:dim(df[1:50,])[1]))
+  #for (s in (1:dim(df[1:50,])[1]))
+  for (s in (1:50))
 {
-  seq = as.character(df[s, 2])
+  #seq = as.character(df[s, 2])
+  seq = as.character(df[s, 1])
   mat = rbind(AAindex[390,str_sub(seq,1,1)],AAindex[391,str_sub(seq,1,1)],AAindex[392,str_sub(seq,1,1)])
   for (i in (2:nchar(seq)))
   {	
@@ -222,12 +214,10 @@ col =  palette(rainbow(length(Acc_list)))
 i = 0
 for (acc in Acc_list) {
   i = i + 1
-  #print(i)
   tsne = Rtsne(acc, labels = as.factor(df$seq_name), perplex = 0.0001, check_duplicates = FALSE)
   if (i == 1) {
   plot(tsne$Y, type = "p", col = col[i])
   }
-  #par(new = TRUE)
   else {
   lines(tsne$Y, type = "p", col = col[i])
   }
