@@ -10,10 +10,10 @@
   
 # Librairies
 
-#install.packages('seqinr')
 #if (!requireNamespace("BiocManager", quietly   =   TRUE))
 #    install.packages("BiocManager")
 #BiocManager::install("Biostrings")
+
 #install.packages('protr')
 #install.packages('Biostrings')
 #install.packages('seqinr')
@@ -32,8 +32,6 @@ library('stringr')
 library('M3C')
 library('Rtsne')
 library('RColorBrewer')
-library('seqinr')
-
 
 # Necessary paths
 
@@ -41,119 +39,8 @@ path_save <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/i
 path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/"
 
 # Data reading
-list_of_aa = c('M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H')
 
-alorspeutetre = readFASTA(paste0(path, "proteome_diatom.faa"),
-          legacy.mode = TRUE, seqonly = FALSE)
-
-
-
-#hmm = system.file(paste0(path, "proteome_diatom.faa"), package = "seqinr")
-#hmm2 = read.fasta((paste0(path, "proteome_diatom.faa")))
 files <- list.files(path = path, pattern = (".f")) 
-
-
-parsing = function(file) {
-  
-}
-
-id = c()
-seq = c()
-truc = read.csv(paste0(path, "proteome_diatom.faa"), header = FALSE)
-
-for (elem in truc[1:24, 1]) {
-  first = str_sub(elem, 1, 1)
-  #print(first)
-  if (first == '>') {
-    id = c(id, elem)
-    s = c()
-  }
-  else if (first %in% list_of_aa) {
-    #while (first %in% list_of_aa) {
-      s = paste0(s, elem, sep = "")
-      #break
-  }
-  seq = c(seq, list(s))
-  }
-  #seq = c(seq, s)
-#}
-
-vec2 = c("a", "b", "c")
-vec = c()
-machin = c()
-for (i in 1:vec2) {
-machin = paste0(vec, vec2, sep = "")
-}
-machin
-
-
-#####################################
-#notin = Negate('%in%')
-id = c()
-seq = c()
-truc = read.csv(paste0(path, "proteome_diatom.faa"), header = FALSE)
-
-all = c()
-id = c()
-s = c()
-df = data.frame()
-for(seq in truc[1:24, 1]) {
-  all = c(all, list(seq))
-}
-
-for (item in all) {
-  first = str_sub(item, 1, 1)
-  if (first == '>') {
-    df = rbind(df, as.character(item))
-    s = c()
-  }
-  else if (first %in% list_of_aa) {
-    s = c(s, item)
-  }
-}
-
-
-for (i in 1:nrow(truc[1:24]-1)) {
-  first2 = truc[i+1,1]
-  for (line in truc[1:24, 1]) {
-  first = str_sub(line, 1, 1)
-  
-    if (first %in% list_of_aa) {
-      #for (i in 1:nrow(truc[1:24, 1])) {
-      #  first2 = truc[i,1]
-      #}
-      #if (nchar(as.character(seq[1])) != 80)
-      seq = c(seq, line)
-    }
-  else if (first == '>') {
-    id = c(id, line)
-  }
-  }
-}
-  
-df = as.data.frame(id, seq)
-
-seq = c()
-id = c()
-for(i in nrow(truc)[1:24]) {
-  first = str_sub(truc[i,1], 1, 1)
-  first2 = str_sub(truc[i+1,1], 1, 1)
-  #print(first)
-  #if ((first %in% list_of_aa) && (first2 %in% list_of_aa)) {
-  if ((first %in% list_of_aa) && (first2 != '>')) {
-    seq = c(paste0(seq, truc[i,1]))
-  }
-  #else if (is.na(first)) {
-  else if (first == '>') {
-    id = c(id, line)
-  }
-}
-####################################################
-
-
-
-
-parsing(files[1])
 
 fastaFile = c()
 df_list = NULL
@@ -166,6 +53,7 @@ for (f in files) {
   df = assign(paste0("df_", f), df)
   df_list = c(df_list, list(df))
 }
+
 
 # Calculation of ACC
 
