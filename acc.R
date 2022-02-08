@@ -43,10 +43,17 @@ path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteo
 # Data reading
 list_of_aa = c('M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H')
 
-alorspeutetre = readFASTA(paste0(path, "proteome_diatom.faa"),
+reading = function(file) {
+data = readFASTA(paste0(path, "proteome_diatom.faa"),
+#data = readFASTA(file,
           legacy.mode = TRUE, seqonly = FALSE)
-
-
+df = data.frame(nrow = length(data))
+for (i in 1:length(data)) {
+  df[i, 1] = cbind(data[i])
+}
+rownames(df) = names(data)
+return(df)
+}
 
 #hmm = system.file(paste0(path, "proteome_diatom.faa"), package = "seqinr")
 #hmm2 = read.fasta((paste0(path, "proteome_diatom.faa")))
@@ -60,7 +67,6 @@ parsing = function(file) {
 id = c()
 seq = c()
 truc = read.csv(paste0(path, "proteome_diatom.faa"), header = FALSE)
-
 for (elem in truc[1:24, 1]) {
   first = str_sub(elem, 1, 1)
   #print(first)
@@ -151,20 +157,22 @@ for(i in nrow(truc)[1:24]) {
 ####################################################
 
 
-
-
-parsing(files[1])
+#df2 = reading(paste0(path, files[2]))
 
 fastaFile = c()
 df_list = NULL
 for (f in files) {
   df = data.frame()
-  fastaFile <- readDNAStringSet(paste0(path, f))
-  seq_name = names(fastaFile)
-  sequence = paste(fastaFile)
-  df <- data.frame(seq_name, sequence)
+  #fastaFile <- readDNAStringSet(paste0(path, f))
+  #seq_name = names(fastaFile)
+  #sequence = paste(fastaFile)
+  #df <- data.frame(seq_name, sequence)
+  print(f)
+  df = reading(paste0(path, f))
+  print("ok")
   df = assign(paste0("df_", f), df)
   df_list = c(df_list, list(df))
+  print("--> ok")
 }
 
 # Calculation of ACC
