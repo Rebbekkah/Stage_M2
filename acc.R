@@ -37,13 +37,15 @@ library('seqinr')
 
 # Necessary paths
 
-path_save <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/img"
+path_output <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/output"
 path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/"
 
 # Data reading
 list_of_aa = c('M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H')
 files <- list.files(path = path, pattern = (".f")) 
+df <- reading(paste0(path, files[2]))
 
+#####################################
 id = c()
 seq = c()
 truc = read.csv(paste0(path, "proteome_diatom.faa"), header = FALSE)
@@ -73,7 +75,6 @@ machin = paste0(vec, vec2, sep = "")
 machin
 
 
-#####################################
 #notin = Negate('%in%')
 id = c()
 seq = c()
@@ -134,6 +135,37 @@ for(i in nrow(truc)[1:24]) {
     id = c(id, line)
   }
 }
+
+
+#-----------------------------------------------------
+`%!in%` = Negate('%in%')
+print(nrow(df))
+s = c()
+for (seq in df[, 1]) {
+  l = substr(seq, nchar(as.character(seq)), nchar(as.character(seq)))
+  #print(l)
+  print(seq)
+  break
+  if (l == '*') {
+    print(str_split())
+    #df[seq,1] = as.character(seq[1:nchar(as.character(seq))-1])
+  }
+  print(df[seq,1])
+  break
+  for (i in 1:nchar(as.character(seq))) {
+    if (substr(seq, i, i) %!in% list_of_aa) {
+      #print(substr(seq, i, i))
+      #print("unkwown aa")
+      s = c(s, list(seq))
+    }
+  }
+}
+print(s)
+typeof(s)
+
+
+
+
 ####################################################
 
 
@@ -165,6 +197,28 @@ for (f in files) {
   print("--> ok")
 }
 
+Nm = c()
+for (df in df_list) {
+  print(nrow(df))
+  N = 0
+  for (i in 1:nrow(df)) {
+    #print(nchar(as.character(df[i,1])))
+    if (nchar(as.character(df[i,1])) < 100) {
+      #print("oui")
+      #df <- df[-i,1]
+      df[i,] = NA
+      N = N + 1
+    }
+  }
+  
+  df = na.omit(df)
+  print(paste0("nb of deleted seq : ", N))
+  #Nm = c(Nm, N)
+  print(nrow(df))
+}
+#print(Nm, "total deleted sequences")
+
+
 
 # Calculation of ACC
 
@@ -174,8 +228,8 @@ for (df in df_list) {
   k = k + 1
   mat_vect=c()
   Acc = data.frame()
-  #for (s in (1:dim(df[1:50,])[1]))
-  for (s in (1:50))
+  for (s in (1:dim(df)[1]))
+  #for (s in (1:50))
 {
   #seq = as.character(df[s, 2])
   seq = as.character(df[s, 1])
@@ -204,9 +258,27 @@ for (df in df_list) {
   Acc_list = c(Acc_list, list(Acc))
 }
 
+# --> faire un return de l'ACC pour le lire dans python ou les écrire dans un fichier puis le lire via python
+
+setwd(path_output)
+
+for (i in 1:length(files)) {
+  write.table(Acc_list[i], file = paste0("Acc_output_", files[i], ".txt"),  
+              append = FALSE, sep = "\t", dec = ".", row.names = TRUE,
+              col.names = TRUE)
+}
+
+
+for (acc in Acc_list) {
+  for (f in files) {
+write.table(acc, file = paste0("Acc_output_", f, ".txt"), append = FALSE, sep = "\t",
+            dec = ".", row.names = TRUE, col.names = TRUE)
+  }
+}
+
 # Plot of Acc with Tsne
 
-setwd(path_save)
+setwd(path_output)
 pdf("Tsne_ACC.pdf", height = 10,width = 10)
 tsne = NULL
 col = NULL
