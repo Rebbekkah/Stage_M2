@@ -43,130 +43,7 @@ path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteo
 # Data reading
 list_of_aa = c('M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H')
 files <- list.files(path = path, pattern = (".f")) 
-#df <- reading(paste0(path, files[2]))
 
-#####################################
-id = c()
-seq = c()
-truc = read.csv(paste0(path, "proteome_diatom.faa"), header = FALSE)
-for (elem in truc[1:24, 1]) {
-  first = str_sub(elem, 1, 1)
-  #print(first)
-  if (first == '>') {
-    id = c(id, elem)
-    s = c()
-  }
-  else if (first %in% list_of_aa) {
-    #while (first %in% list_of_aa) {
-      s = paste0(s, elem, sep = "")
-      #break
-  }
-  seq = c(seq, list(s))
-  }
-  #seq = c(seq, s)
-#}
-
-vec2 = c("a", "b", "c")
-vec = c()
-machin = c()
-for (i in 1:vec2) {
-machin = paste0(vec, vec2, sep = "")
-}
-machin
-
-
-#notin = Negate('%in%')
-id = c()
-seq = c()
-truc = read.csv(paste0(path, "proteome_diatom.faa"), header = FALSE)
-
-all = c()
-id = c()
-s = c()
-df = data.frame()
-for(seq in truc[1:24, 1]) {
-  all = c(all, list(seq))
-}
-
-for (item in all) {
-  first = str_sub(item, 1, 1)
-  if (first == '>') {
-    df = rbind(df, as.character(item))
-    s = c()
-  }
-  else if (first %in% list_of_aa) {
-    s = c(s, item)
-  }
-}
-
-
-for (i in 1:nrow(truc[1:24]-1)) {
-  first2 = truc[i+1,1]
-  for (line in truc[1:24, 1]) {
-  first = str_sub(line, 1, 1)
-  
-    if (first %in% list_of_aa) {
-      #for (i in 1:nrow(truc[1:24, 1])) {
-      #  first2 = truc[i,1]
-      #}
-      #if (nchar(as.character(seq[1])) != 80)
-      seq = c(seq, line)
-    }
-  else if (first == '>') {
-    id = c(id, line)
-  }
-  }
-}
-  
-df = as.data.frame(id, seq)
-
-seq = c()
-id = c()
-for(i in nrow(truc)[1:24]) {
-  first = str_sub(truc[i,1], 1, 1)
-  first2 = str_sub(truc[i+1,1], 1, 1)
-  #print(first)
-  #if ((first %in% list_of_aa) && (first2 %in% list_of_aa)) {
-  if ((first %in% list_of_aa) && (first2 != '>')) {
-    seq = c(paste0(seq, truc[i,1]))
-  }
-  #else if (is.na(first)) {
-  else if (first == '>') {
-    id = c(id, line)
-  }
-}
-
-
-#-----------------------------------------------------
-`%!in%` = Negate('%in%')
-print(nrow(df))
-s = c()
-for (seq in df[, 1]) {
-  l = substr(seq, nchar(as.character(seq)), nchar(as.character(seq)))
-  #print(l)
-  print(seq)
-  break
-  if (l == '*') {
-    print(str_split())
-    #df[seq,1] = as.character(seq[1:nchar(as.character(seq))-1])
-  }
-  print(df[seq,1])
-  break
-  for (i in 1:nchar(as.character(seq))) {
-    if (substr(seq, i, i) %!in% list_of_aa) {
-      #print(substr(seq, i, i))
-      #print("unkwown aa")
-      s = c(s, list(seq))
-    }
-  }
-}
-print(s)
-typeof(s)
-
-
-
-
-####################################################
 
 
 reading = function(file) {
@@ -198,38 +75,21 @@ for (f in files) {
 }
 
 
-
-#récupérer nom des dataframes --> boucle for avec les files et les stocker dans vecteur
-
-names = c()
-for (f in files) {
-  names = c(names, f)
-}
-
-
 Nm = c()
 id_seq = c()
 k = 0
 df2_list = NULL
 for (df in df_list) {
   df2_ = data.frame()
-  #print(nrow(df))
   N = 0
   k = k + 1
   for (i in 1:nrow(df)) {
-  
-    #print(nchar(as.character(df[i,1])))
-    if (nchar(as.character(df[i,1])) < 100) {
-      #print("oui")
-      #id_seq = c(id_seq, rownames(reading(paste0(path, ))[i,]))
-      #df = df[-id,]
-      #df <- df[-i,1]
+      if (nchar(as.character(df[i,1])) < 100) {
       df2_ = df[-i, 1]
       df[i,] = NA
       N = N + 1
     }
   }
-  #df2_ = assign(paste0("df2_", files[k]), df2_)
   Nm = c(Nm, N)
   
   df = na.omit(df)
@@ -240,7 +100,14 @@ for (df in df_list) {
 }
 #print(Nm, "total deleted sequences")
 
-
+for (df in df2_list) {
+  print("-------")
+  for (i in 1:nrow(df)) {
+    if (nchar(as.character(df[i, 1])) < 4) {
+      print(i)
+    }
+  }
+}
 
 # Calculation of ACC
 
