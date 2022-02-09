@@ -43,7 +43,7 @@ path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteo
 # Data reading
 list_of_aa = c('M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H')
 files <- list.files(path = path, pattern = (".f")) 
-df <- reading(paste0(path, files[2]))
+#df <- reading(paste0(path, files[2]))
 
 #####################################
 id = c()
@@ -197,23 +197,45 @@ for (f in files) {
   print("--> ok")
 }
 
+
+
+#récupérer nom des dataframes --> boucle for avec les files et les stocker dans vecteur
+
+names = c()
+for (f in files) {
+  names = c(names, f)
+}
+
+
 Nm = c()
+id_seq = c()
+k = 0
+df2_list = NULL
 for (df in df_list) {
-  print(nrow(df))
+  df2_ = data.frame()
+  #print(nrow(df))
   N = 0
+  k = k + 1
   for (i in 1:nrow(df)) {
+  
     #print(nchar(as.character(df[i,1])))
     if (nchar(as.character(df[i,1])) < 100) {
       #print("oui")
+      #id_seq = c(id_seq, rownames(reading(paste0(path, ))[i,]))
+      #df = df[-id,]
       #df <- df[-i,1]
+      df2_ = df[-i, 1]
       df[i,] = NA
       N = N + 1
     }
   }
+  #df2_ = assign(paste0("df2_", files[k]), df2_)
+  Nm = c(Nm, N)
   
   df = na.omit(df)
+  df2_ = assign(paste0("df2_", files[k]), df)
+  df2_list = c(df2_list, list(df2_))
   print(paste0("nb of deleted seq : ", N))
-  #Nm = c(Nm, N)
   print(nrow(df))
 }
 #print(Nm, "total deleted sequences")
@@ -224,7 +246,8 @@ for (df in df_list) {
 
 k = 0
 Acc_list = NULL
-for (df in df_list) {
+#for (df in df_list) {
+for (df in df2_list) {
   k = k + 1
   mat_vect=c()
   Acc = data.frame()
