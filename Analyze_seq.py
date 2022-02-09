@@ -1,11 +1,12 @@
 import pandas as pd
+from os.path import basename
 import glob
 
 
 def reading(fichier) :
-	print("File :", fichier)
+	print("File :", basename(fichier))
 	with open(fichier, "r") as filin :
-		id_list = []
+		id_list_ok = []
 		idt_all = []
 		dico = {}
 		dico_h = {}
@@ -13,7 +14,9 @@ def reading(fichier) :
 		id_TB = []
 		for line in filin :
 			if line.startswith('#') : 
-				idt_all.append(line.split(' ')[1])
+				i = line.split(' ')[1]
+				if i not in idt_all :
+					idt_all.append(i)
 			else :	
 				if line.split('\t')[2] == 'TMhelix' :
 					id_TB.append(line.split('\t')[0])
@@ -21,7 +24,7 @@ def reading(fichier) :
 					dico[line.split('\t')[0]] = line.split('\t')[3].strip()
 				else : 
 					idt = line.split('\t')[0]
-					id_list.append(idt)
+					id_list_ok.append(idt)
 
 
 		print("----dico helix :", dico)
@@ -37,6 +40,8 @@ def reading(fichier) :
 			dico_h[cle] = {}
 			dico_h[cle] = {'start' : start, 'end' : end}
 		elif end < 70 :
+			if cle not in id_list_ok :
+				id_list_ok.append(cle)
 			dico_ok = {}
 			dico_ok[cle] = {'start' : start, 'end' : end}
 
@@ -47,9 +52,10 @@ def reading(fichier) :
 			print("À SUPP : ", idt)
 
 
-	print(dico_h)
-	print(dico_ok)
-	print(id_list, len(id_list))
+	#print(dico_h)
+	#print(dico_ok)
+	#print(id_list_ok, len(id_list_ok))
+	print(idt_all, len(idt_all))
 
 
 
@@ -63,7 +69,7 @@ def reading(fichier) :
 	print(dico)
 	print(len(id_list), len(dico.keys()))
 	'''
-	return id_list
+	return id_list_ok
 
 def listing(path) :
 
