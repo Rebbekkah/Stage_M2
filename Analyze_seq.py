@@ -66,9 +66,9 @@ def reading(fichier) :
 	return id_to_keep
 
 
-def listing(path) :
+def listing(path, pattern) :
 
-	fich = glob.glob(path+'*.tmhmm')
+	fich = glob.glob(path+pattern)
 	print(fich)
 	prot = []
 	
@@ -80,14 +80,84 @@ def listing(path) :
 
 
 
+def proteome_maker(ToKeep, path_proteom) :
+	print("-----------------proteom maker-----------------")
+	#print(ToKeep)
+	proteom = glob.glob(path_proteom+"*.f"+"*")
+
+	os.chdir(path_output)
+	dico = {}
+	dico2 = {}
+	for p in proteom :
+		print(basename(p))
+		with open(p, "r") as filin :
+			for line in filin :
+				if line.startswith('>') :
+					idt = line.split()[0]
+					dico[idt] = ""
+				else : 
+					dico[idt] += line.strip()
+	for proteom in ToKeep :
+		for ident in proteom :
+			ident = ">"+ident
+			#print(ident)
+			if ident in dico.keys() :
+				dico2[ident] = ""
+				dico2[ident] = dico[ident]
+				
+
+	print(len(dico2.keys()))
+	idt_del = []
+	for idt, seq in dico2.items() :
+		if seq[-1] == '*' :
+			new_seq = seq[:-1]
+			dico2[idt] = new_seq
+	
+	for seq in dico2.values() :
+		for aa in seq :
+			if aa not in list_of_aa :
+				idt_del.append(idt)
+
+	for idt in idt_del :
+		if idt in dico2.keys() :
+			print(idt)
+			del dico2[idt]
+	print(dico2, len(dico2))
+
+
+	with open("New_Proteom_All.txt", "w") as filout :
+		for idt, seq in dico2.items() :
+			filout.write(idt+"\n"+seq+"\n")
+	
+	#print(ToKeep)
+	#print(dico2)
+	#print(idt, len(idt))
+	#print(seq, len(seq))
+	#print(dico)
+	
+
+
 if __name__ == '__main__' :
 
 	#path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/tests/proteome_diatom.tmhmm"
 	path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/tests_small/"
+	path_small_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/tests_small/"
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/output_Analyzeseq"
 	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script"
+	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 
 
 	#read = reading(path)
-	proteins = listing(path)
+	proteins = listing(path, '*.tmhmm')
+	new_proteom = proteome_maker(proteins, path_small_proteom)
+
+
+
+
+
+
+
+
+
+
