@@ -484,6 +484,8 @@ def ACC_tsne_plot() :
 	for n in names :
 		label.append(n)
 
+	print("--------------TSNE ON ACC PERFORMING--------------")
+
 	for data in tsne :
 		sns.scatterplot(x = 'x', y = 'y', data = data)
 	plt.legend(label, prop = {'size' : 5.7})
