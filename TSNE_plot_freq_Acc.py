@@ -9,7 +9,7 @@ Université de Paris 2021 - 2022
 Stage M2 - supervisor : Ingrid Lafontaine
 ------------------------------------------------------------------
 
-This code calls another script in R : acc.R.
+This code use another script results in R : acc.R.
 
 """
 
@@ -27,7 +27,6 @@ from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
 
 # Variables 
-path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/proteome_diatom.faa"
 path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/"
 path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/"
 list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
@@ -57,8 +56,6 @@ def Score_aa() :
 
 	return df_Zscore
 
-
-######### These functions below are made for 1 proteom/file or sequence and will be recalled later
 
 def read_fasta(fichier) :
 	""" Reading and parsing of a proteom file
@@ -149,17 +146,18 @@ def read_fasta(fichier) :
 			filout.write(idt+"\n")
 	'''
 
-	# If you want to try o a limited number of sequence for each proteom
+	# If you want to try o a limited number of sequence for each proteom, i.e N = 50
 	dico2 = {}
 	idt_list = []
+	N = 50
 	for idt, seq in dico.items() :
 		idt_list.append(idt)
-	for i in idt_list[:50] :
+	for i in idt_list[:N] :
 		dico2[i] = ""
 		dico2[i] += dico[i]
 				
-	#return(dico) 
-	return(dico2)
+	#return(dico2) 
+	return(dico)
 
 
 def parsing_seq(seq) :
@@ -424,9 +422,35 @@ def proteom_name(path_to_proteom) :
 
 	return label
 
-	'''
-def Acc_Tsne(path_to_output) :
-	""" Calculates via R the acc of each sequence of each proteoms and perform a tsne
+
+def tsne_data(matrix) : 
+	""" Fonction that allow to perform a tsne on a matrix
+
+	Parameters
+	----------
+	matrix : array
+		array of the data
+
+	Returns
+	-------
+	data : dataframe
+		Dataframe with the results of the tsne values
+
+	"""
+
+
+	tsne = TSNE(n_components = 2, random_state = 0)
+
+	X_2d = tsne.fit_transform(matrix)
+
+	data = pd.DataFrame()
+	data['x'] = X_2d[:,0]
+	data['y'] = X_2d[:,1]
+
+	return data
+
+def ACC_tsne_plot() :
+	""" Perform a tsne for all the selected proteoms
 
 	Parameters
 	----------
@@ -438,195 +462,21 @@ def Acc_Tsne(path_to_output) :
 
 	Plot
 	----
-		A tsne of ACC and put the pdf image in the working directory
+		A scatterplot for the tsne on ACC for all the proteoms
 
-	"""	
-	
-
-	#os.system('Rscript --vanilla acc.R') # à la place lire fichier des ACC issu de R
-	#print("Script acc.R lancé")
-
-	
-	fich = glob.glob(path_to_output+'Acc_output_*')
-	names = proteom_name(path_output+'Acc_output_*')
-	print("FICH", fich, '\n', "NAMES", names)
-
-	list_df = []
-	#essai = fich[0]
-	for f in fich :
-		df = pd.read_csv(f, sep = "\t", header = None)
-		#df = df.head(100)
-		list_df.append(df)
-	#print(list_df)
-
-	matrix = []
-	for df in list_df :
-		if len(df.columns) != 36 :
-			print(df, len(df.columns))
-		#print(df)
-		#print(type(df))
-		matrix.append(df.to_numpy()[0])
-		#matrix.append(df.to_numpy())
-	
-	print("----------ICI----------")
-	#for m in matrix :
-	#	print(type(m))
-	
-	#print(data)
-	#for i in matrix :
-	#	print(i, type(i), i.shape)
-
-	for mat in matrix :
-		mat = np.asarray(mat)
-	
-	#matrix = np.array(matrix)
-	#matrix = np.array(matrix, ndmin = 2)[0]
-	matrix = np.array(matrix, ndmin = 2)
-
-	print(matrix)
-	for arr in matrix :
-		#print(arr)
-		print(arr.shape)
-		print(len(arr))
-		#if arr.shape != (100, 36) :
-		#	print("--------DIFF")
-		#	print(arr.shape)
-		#	arr = np.reshape(arr, 100, 36)
-		#print(arr)
-		if arr.ndim == 3 :
-			print(arr)
-			print(arr.dim)
-			print("----")
-		else :
-			print("None")
-
-		#arr.reshape(len(arr), 36)
-	
-
-	tsne = TSNE(n_components = 2, random_state = 0)
-	#data = []
-	#for m in matrix :
-	#	break
-		#X_2d = tsne.fit_transform(matrix)
-	#	data.append(tsne.fit_transform(m))
-	print("OK -----------")
-
-
-	#list_data = []
-	#for proteom in label :
-	X_2d = tsne.fit_transform(matrix)
-	print("ALORSPEUTETRE")
-
-	data = pd.DataFrame()
-	data['x'] = X_2d[:,0]
-	data['y'] = X_2d[:,1]
-		#list_data.append(data)
-
-	
-	sns.scatterplot(x = 'x', y = 'y', data = data)
-	plt.legend(label, prop = {'size' : 5.7})
-	plt.title("Tsne of frequencies", fontsize = 15)
-	
-	plt.show()
-	'''
-
-	'''
-	print("-------------TSNE ON ACC PERFORMING------------")
-
-	
-	for data in list_data :
-		sns.scatterplot(x = 'x', y = 'y', data = data)
-	plt.legend(label, prop = {'size' : 5.7})
-	plt.title("Tsne of frequencies", fontsize = 15)
-	
-	plt.show()
-	
-	return data
-
-	'''
-def tsne_data(matrix) : 
-
-	tsne = TSNE(n_components = 2, random_state = 0)
-	#data = []
-	#for m in matrix :
-	#	break
-		#X_2d = tsne.fit_transform(matrix)
-	#	data.append(tsne.fit_transform(m))
-	print("OK -----------")
-
-
-	#list_data = []
-	#for proteom in label :
-	X_2d = tsne.fit_transform(matrix)
-	print("ALORSPEUTETRE")
-
-	data = pd.DataFrame()
-	data['x'] = X_2d[:,0]
-	data['y'] = X_2d[:,1]
-
-	return data
-
-def ACC_tsne_plot() :
-
+	"""
 
 	fich = glob.glob(path_output+'Acc_output_*')
 	names = proteom_name(path_output+'Acc_output_*')
-	print("FICH", fich, '\n', "NAMES", names)
+	print("FILES : ",  names)
 
 	list_df = []
-	#essai = fich[0]
 	for f in fich :
 		df = pd.read_csv(f, sep = "\t", header = None)
-		df = df.head(10000)
+		df = df.head(6000)
 		list_df.append(df)
-	#print(list_df)
-
-
-	matrix = []
-	for df in list_df :
-		if len(df.columns) != 36 :
-			print(df, len(df.columns))
-		#print(df)
-		#print(type(df))
-		matrix.append(df.to_numpy()[0])
-		#matrix.append(df.to_numpy())
-	
-	print("----------ICI----------")
-	#for m in matrix :
-	#	print(type(m))
-	
-	#print(data)
-	#for i in matrix :
-	#	print(i, type(i), i.shape)
-
-	for mat in matrix :
-		mat = np.asarray(mat)
-	
-	#matrix = np.array(matrix)
-	#matrix = np.array(matrix, ndmin = 2)[0]
-	matrix = np.array(matrix, ndmin = 2)
-
-	print(matrix)
-	for arr in matrix :
-		#print(arr)
-		print(arr.shape)
-		print(len(arr))
-		#if arr.shape != (100, 36) :
-		#	print("--------DIFF")
-		#	print(arr.shape)
-		#	arr = np.reshape(arr, 100, 36)
-		#print(arr)
-		if arr.ndim == 3 :
-			print(arr)
-			print(arr.dim)
-			print("----")
-		else :
-			print("None")
-
-		#arr.reshape(len(arr), 36)
 
 	tsne = []
-	#for proteom in matrix :
 	for proteom in list_df :
 		tsne.append(tsne_data(proteom))
 
@@ -637,21 +487,22 @@ def ACC_tsne_plot() :
 	for data in tsne :
 		sns.scatterplot(x = 'x', y = 'y', data = data)
 	plt.legend(label, prop = {'size' : 5.7})
-	plt.title("Tsne of frequencies", fontsize = 15)
+	plt.title("Tsne of ACC", fontsize = 15)
 	
 	plt.show()
 
 
 
 if __name__ == '__main__' :
-	# 1 fichier
-	#reading, sequence = read_fasta("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Exemple_fasta/F4HXU3.fasta")
+
+	# IF YOU WANT TO TRY ON 1 FILE YOU CAN USE THIS CODE BELOW
+	#reading, sequence = read_fasta(path)
 	#dico_number, frequency = freq_aa(sequence)
 	#proportion = specific_occurence(path)
 	#tsne = Tsne(proportion)
 	
 	# ALL proteoms
-	#tsne_all_proteom = tsne_proteomes(path_proteom)
+	tsne_all_proteom = tsne_proteomes(path_proteom)
 	ACC_tsne = ACC_tsne_plot()
 
 
