@@ -185,19 +185,27 @@ def sep(path_proteom) :
 
 def ard2(file) :
 	dico = {}
-	dico_linker = {} 
+	#dico_linker = {} 
 	with open(file, "r") as filin :
 		for line in filin :
 			if line.startswith('>') :
 				dico[line] = ""
-			else :
 				dico_linker = {} 
+			else :
+				#dico_linker = {} 
 				#dico[line] += line.split("\t")[0]
-				elem = line.split("\t")[0]
-				aa = elem.split()[0]
+				#elem = line.split("\t")[0]
+				#aa = elem.split()[0]
+				aa = line.split()[0]
+				proba = line.split()[1:4]
+				#proba = elem.split()[1]
+			if proba > 0.10 :
 				dico_linker[aa] = ""
-				dico_linker[aa] = elem.split()[1:4] 
-			dico[line] = dico_linker
+				dico_linker[aa] = proba 
+			dico[line] += dico_linker
+
+
+	####changer les cles du dico en identifiant protéique
 
 	return dico
 
@@ -209,8 +217,12 @@ def wolfpsort(file) :
 			if not line.startswith('#') :
 				elem = line.split(" ")
 				idt = elem[0]
-				adressage = elem[1:2]
+				adressage = elem[1]
+			if adressage == 'chlo' or adressage == 'mito' :
+				dico[idt] = ""
+				dico[idt] += adressage
 
+	return dico
 
 
 
