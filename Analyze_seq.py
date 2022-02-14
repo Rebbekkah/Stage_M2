@@ -184,52 +184,61 @@ def sep(path_proteom) :
 
 
 def ard2(file) :
+	print(basename(file))
 	dico = {}
-	#dico_linker = {} 
+	idt = []
 	with open(file, "r") as filin :
 		for line in filin :
 			if line.startswith('>') :
+				line = line.strip()
 				dico[line] = ""
 				dico_linker = {} 
 			else :
 				#dico_linker = {} 
 				#dico[line] += line.split("\t")[0]
-				#elem = line.split("\t")[0]
-				#aa = elem.split()[0]
-				aa = line.split()[0]
-				proba = line.split()[1:4]
+				elem = line.split("\t")[0]
+				elem = elem.split()[0]
+				aa = elem[0]
+				#print(aa)
+				proba = elem[1:5]
 				#proba = elem.split()[1]
-			if proba > 0.10 :
-				dico_linker[aa] = ""
-				dico_linker[aa] = proba 
-			dico[line] += dico_linker
+				if float(proba) > 0.10 :
+					dico_linker[aa] = ""
+					dico_linker[aa] = proba 
+			dico[line] = dico_linker
 
 
 	#### changer les cles du dico en identifiant protéique en comparant les seq
 	#### + récupérer les positions avec les lignes et faire attention aux idt 
 	#### qui prennent des lignes
 
+	print(dico)
 	return dico
 
 
 def wolfpsort(file) :
+
 	dico = {}
 	with open(file, "r") as filin :
 		for line in filin :
 			if not line.startswith('#') :
 				elem = line.split(" ")
+				#print(elem)
 				idt = elem[0]
-				adressage12 = elem[1:2]
-				adressage1 = adressage12.split()[0]
-			if adressage1 == 'chlo' or adressage1 == 'mito' :
-				dico[idt] = ""
-				dico[idt] += adressage
+				#print(idt)
+				adressage = elem[1]
+				#print(adressage)
+				#print(adressage, type(adressage))
+				if adressage == 'chlo' or adressage == 'mito' :
+					dico[idt] = ""
+					dico[idt] += str(adressage)
 
+	#print(dico)
 	return dico
 
 
 def targetp2(file) :
-	
+
 	dico = {}
 	with open(file, "r") as filin :
 		for line in filin :
@@ -241,6 +250,46 @@ def targetp2(file) :
 	return dico
 
 
+def dataFrame() :
+
+	df_pos = pd.DataFrame()
+	df_neg = pd.DataFrame()
+
+	file_ard2 = glob.glob(path_ard2+"STDOUT_"+"*")
+	print(file_ard2)
+	file_wlf = glob.glob(path_wpsort+"*.wolfpsort")
+	#print(file_wlf)
+	file_trgp2 = glob.glob(path_trgp2+"short_output_"+"*")
+	#print(file_trgp2)
+
+	dico_trgp2 = {}
+	for file in file_trgp2 :
+		if basename(file) == 'short_output_neg' :
+			dico_trgp2['neg'] = {}
+		dico_trgp2['neg'] = targetp2(file)
+		if basename(file) == 'short_output_pos' :
+			dico_trgp2['pos'] = {}
+		dico_trgp2['pos'] = targetp2(file)
+	#print("------------------")
+	#print(dico_trgp2, len(dico_trgp2))
+	
+	#wolfpsort(file_wlf[0])
+
+	dico_wlf = {}
+	for file in file_wlf :
+		if basename(file) == 'output_neg.wolfpsort' :
+			dico_wlf['neg'] = {}
+		dico_wlf['neg'] = wolfpsort(file)
+		if basename(file) == 'output_pos.wolfpsort' :
+			dico_wlf['pos'] = {}
+		dico_wlf['pos'] = wolfpsort(file)
+
+	#print(dico_wlf)
+
+	ard2(file_ard2[0])
+
+
+	#return dico_trgp2
 
 
 if __name__ == '__main__' :
@@ -256,21 +305,26 @@ if __name__ == '__main__' :
 
 	#read = reading(path)
 
+
+
+	os.chdir(path_output)
+
 	# TMHMM
-	proteins = listing(path_proteom, '*.tmhmm')
-	new_proteom = proteome_maker(proteins, path_proteom)
+	#proteins = listing(path_proteom, '*.tmhmm')
+	#new_proteom = proteome_maker(proteins, path_proteom)
 	#separateur = sep(new_proteom, path_proteom)
-	separateur = sep(path_proteom)
+	#separateur = sep(path_proteom)
 
 	# ARD2
-
+	path_ard2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/ard2_outputs/"
 
 	# WOLFPSORT
+	path_wpsort = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/wolfpsort_output/"
+
+	# TARGETP2
+	path_trgp2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/targetp2_outputs/"
 
 
-
-
-
-
+	data_final = dataFrame()
 
 
