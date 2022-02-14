@@ -205,7 +205,9 @@ def ard2(file) :
 			dico[line] += dico_linker
 
 
-	####changer les cles du dico en identifiant protéique
+	#### changer les cles du dico en identifiant protéique en comparant les seq
+	#### + récupérer les positions avec les lignes et faire attention aux idt 
+	#### qui prennent des lignes
 
 	return dico
 
@@ -217,10 +219,24 @@ def wolfpsort(file) :
 			if not line.startswith('#') :
 				elem = line.split(" ")
 				idt = elem[0]
-				adressage = elem[1]
-			if adressage == 'chlo' or adressage == 'mito' :
+				adressage12 = elem[1:2]
+				adressage1 = adressage12.split()[0]
+			if adressage1 == 'chlo' or adressage1 == 'mito' :
 				dico[idt] = ""
 				dico[idt] += adressage
+
+	return dico
+
+
+def targetp2(file) :
+	
+	dico = {}
+	with open(file, "r") as filin :
+		for line in filin :
+			if not line.startswith('#') :
+				idt = line.split()[0]
+				dico[idt] = ""
+				dico[idt] += line.split()[1]
 
 	return dico
 
