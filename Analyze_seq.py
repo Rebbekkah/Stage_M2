@@ -186,26 +186,31 @@ def sep(path_proteom) :
 def ard2(file) :
 	print(basename(file))
 	dico = {}
-	idt = []
+	#idt = []
 	with open(file, "r") as filin :
 		for line in filin :
 			if line.startswith('>') :
-				line = line.strip()
-				dico[line] = ""
+				pos = 0
+				idt = line.split()[0]
+				dico[idt] = ""
 				dico_linker = {} 
 			else :
-				#dico_linker = {} 
-				#dico[line] += line.split("\t")[0]
+				pos += 1
 				elem = line.split("\t")[0]
 				elem = elem.split()[0]
 				aa = elem[0]
-				#print(aa)
 				proba = elem[1:5]
-				#proba = elem.split()[1]
 				if float(proba) > 0.10 :
-					dico_linker[aa] = ""
-					dico_linker[aa] = proba 
-			dico[line] = dico_linker
+					#dico_linker[aa] = []
+					#dico_linker[aa].extend([proba, pos])
+					#dico_linker[aa] = [proba, pos]
+					#for cle, val in dico_linker.items() :
+					if aa in dico_linker.keys() :
+						#dico_linker[aa].append([proba, pos])
+						dico_linker[aa].extend([proba, pos])
+					else :
+						dico_linker[aa] = [proba, pos]
+			dico[idt] = dico_linker
 
 
 	#### changer les cles du dico en identifiant protéique en comparant les seq
