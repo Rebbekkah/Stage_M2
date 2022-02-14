@@ -83,7 +83,7 @@ def listing(path, pattern) :
 def proteome_maker(ToKeep, path_proteom) :
 	print("-----------------proteom maker-----------------")
 	#print(ToKeep)
-	proteom = glob.glob(path_proteom+"*.f"+"*")
+	proteom = glob.glob(path_proteom+"*.fasta_line")
 
 	os.chdir(path_output)
 	dico = {}
@@ -106,7 +106,7 @@ def proteome_maker(ToKeep, path_proteom) :
 				dico2[ident] = dico[ident]
 				
 
-	print(len(dico2.keys()))
+	#print(len(dico2.keys()))
 	idt_del = []
 	for idt, seq in dico2.items() :
 		if seq[-1] == '*' :
@@ -122,19 +122,97 @@ def proteome_maker(ToKeep, path_proteom) :
 		if idt in dico2.keys() :
 			print(idt)
 			del dico2[idt]
-	print(dico2, len(dico2))
+	print("LEN DICO2------", len(dico2))
 
 
 	with open("New_Proteom_All.txt", "w") as filout :
 		for idt, seq in dico2.items() :
 			filout.write(idt+"\n"+seq+"\n")
 	
-	#print(ToKeep)
-	#print(dico2)
+	#print(len(ToKeep[0])+len(ToKeep[1]))
 	#print(idt, len(idt))
 	#print(seq, len(seq))
 	#print(dico)
-	
+	return dico2
+
+def sep(path_proteom) :
+	print("-----------------separateur-----------------")
+	proteom = glob.glob(path_proteom+"*.fasta_line")
+	proteom = proteom[::-1]
+	file = glob.glob(path_proteom+"*.tmhmm")
+	print(proteom, "\n", file)
+
+	idt_ok = []
+	for f in file :
+		idt_ok.append(reading(f))
+	#for i in idt_ok :
+	#	print("LEN IDT OK ", len(i))
+
+	os.chdir(path_output)
+	idt_all = []
+	#print("LEN DICO", len(dico))	
+	dico2 = {}
+	dico_all = {}
+	i = 0
+	for p in proteom :
+		dico2 = {}
+		dico_all = {}
+		print(basename(p))
+		with open(p, "r") as filin :
+			for line in filin :
+				if line.startswith('>') :
+					elem = line.split()[0]
+					dico_all[elem] = ""
+				else :
+					dico_all[elem] += line.strip()
+			print(len(dico_all.keys()))
+		for idt in idt_ok[i] :
+			#print("LEN IDT", len(idt_ok[i]))
+			#print(idt)
+			#break
+			idt = ">"+idt
+			if idt in dico_all.keys() :
+				#print("oui")
+				dico2[idt] = ""
+				dico2[idt] += dico_all[idt]
+		print("LEN DICO2", len(dico2))
+		with open("New_Proteom_"+basename(p)+".txt", "w") as filout :
+			for idt, seq in dico2.items() :
+				filout.write(idt+"\n"+seq+"\n")
+		i += 1
+
+
+
+def ard2(file) :
+	dico = {}
+	dico_linker = {} 
+	with open(file, "r") as filin :
+		for line in filin :
+			if line.startswith('>') :
+				dico[line] = ""
+			else :
+				dico_linker = {} 
+				#dico[line] += line.split("\t")[0]
+				elem = line.split("\t")[0]
+				aa = elem.split()[0]
+				dico_linker[aa] = ""
+				dico_linker[aa] = elem.split()[1:4] 
+			dico[line] = dico_linker
+
+	return dico
+
+
+def wolfpsort(file) :
+	dico = {}
+	with open(file, "r") as filin :
+		for line in filin :
+			if not line.startswith('#') :
+				elem = line.split(" ")
+				idt = elem[0]
+				adressage = elem[1:2]
+
+
+
 
 
 if __name__ == '__main__' :
@@ -142,17 +220,24 @@ if __name__ == '__main__' :
 	#path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/tests/proteome_diatom.tmhmm"
 	path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/tests_small/"
 	path_small_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/tests_small/"
-	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/output_Analyzeseq"
+	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/"
 	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
-
+	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
 
 	#read = reading(path)
-	proteins = listing(path, '*.tmhmm')
-	new_proteom = proteome_maker(proteins, path_small_proteom)
+
+	# TMHMM
+	proteins = listing(path_proteom, '*.tmhmm')
+	new_proteom = proteome_maker(proteins, path_proteom)
+	#separateur = sep(new_proteom, path_proteom)
+	separateur = sep(path_proteom)
+
+	# ARD2
 
 
+	# WOLFPSORT
 
 
 
