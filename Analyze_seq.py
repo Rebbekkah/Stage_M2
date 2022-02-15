@@ -315,24 +315,34 @@ def radar(file) :
 	#Cre13.g603250.t1.2
 	#new_file = convertisseur(file)
 
-	
+	#os.chdir(path_output)	
+	idt = []
 	dico = {}
-	with open(file, "r") as filin :
+	with open(file, "r", encoding = 'ascii', errors = 'ignore') as filin :
 		for line in filin :
-			print(line)
+			#print(line)
 			if line.startswith('>') :
-				idt = line
+				#idt = line
+				idt.append(line)
 				#print(idt)
-				dico[idt] = ""
+				#dico[idt] = ""
 				#print(idt)
 	#print(dico.keys())
+	print(len(idt))
+	print(basename(file))
 	
 
+def verif() : 
+	pass
+
+
+
+'''
 def convertisseur(file) :
 
 	#unicodeData.encode('ascii', 'ignore')
 	
-	with open(file, 'r') as filin :
+	with open(file, 'r', encoding = 'ascii', errors = 'ignore') as filin :
 		for line in filin :
 			for elem in line :
 				#print(type(elem))
@@ -359,13 +369,15 @@ def convertisseur(file) :
 				#	elem = unicode(elem)
 	
 #####################ou alors juste réécrire le fichier en sautant les mauvais caractères
-	'''
 	os.chdir(path_radar)
 	with open(file, "r") as filin :
 		with open("NEW_OUTPUT_"+basename(file), "w") as filout :
 			for line in filin :
 				filout.write(line)
-	'''
+'''
+
+
+
 
 def Data_Create() :
 
@@ -447,8 +459,8 @@ def Data_Create() :
 	#print(dico_dploc)
 
 
-	#radar(file_radar[0])
-	radar(path_pb)
+	radar(file_radar[1])
+	#radar(path_pb)
 
 
 if __name__ == '__main__' :
