@@ -167,7 +167,7 @@ def sep(path_proteom) :
 
 
 def ard2(file) :
-	print(basename(file))
+	#print(basename(file))
 	dico = {}
 	with open(file, "r") as filin :
 		for line in filin :
@@ -191,7 +191,7 @@ def ard2(file) :
 
 
 	proteoms = glob.glob(path_tmhmm+'*.fasta_line.txt')
-	print(proteoms)
+	#print(proteoms)
 
 	dico_pos = {}
 	dico_neg = {}
@@ -259,50 +259,51 @@ def targetp2(file) :
 
 
 def deeploc(file) :
-#################################################
+
 	dico = {}
 	with open(file, "r") as filin :
 		for line in filin :
 			if not line.startswith('ID') :
 				idt = line.split()[0]
-				print(idt)
+				mito = line.split()[6]
+				plastid = line.split()[9]
+				dico[idt] = {}
+				dico[idt] = {'mito' : mito, 'plastid' : plastid}
+				#dico[idt] = [mito, plastid]
+			#else :
+			#	print(line.split())
+
+	return dico
+
 
 
 def localizer(file) : 
-	print(basename(file))
+
+	#print(basename(file))
 	dico = {}
 	non = ['Over', '#', 'Identifier', '-']
 	with open(file, "r") as filin :
 		for line in filin :
-			#print(line.split("\t")[0])
 			first = line.split(" ")[0]
-			#print(line)
 			if first not in non :
 				one = line.split("\t")[0]
-				#dico[idt] = ""
-				#print(line.split("\t")[1])
 				if one[0] not in non :
 					idt = line.split("\t")[0]
 					idt = idt.split()[0]
-					#dico[idt] = ""
-					#print(line.split("\t")[1])
 					elem = line.split("\t")[1]
-					#print(elem.split()[0])
 					if elem.split()[0] != '-' :
-						#print(line.split("\t")[1])
 						dico[idt] = ""
 						dico[idt] += elem.split()[0]
 					#else : 
 					#	dico[idt] += 'None'
-					#print(idt)
 				else :
 					break
 
-					#print(line.split("\t")[1])
-	#print(dico)
 	return dico		
 
-########## attention prendre en compte la fin
+
+
+
 
 def Data_Create() :
 
@@ -310,23 +311,25 @@ def Data_Create() :
 	#df_neg = pd.DataFrame()
 
 	file_ard2 = glob.glob(path_ard2+"STDOUT_"+"*")
-	print(file_ard2)
+	#print(file_ard2)
 	file_wlf = glob.glob(path_wpsort+"*.wolfpsort")
 	#print(file_wlf)
 	file_trgp2 = glob.glob(path_trgp2+"short_output_"+"*")
 	#print(file_trgp2)
 	file_dploc = glob.glob(path_dploc+"*"+"deeploc"+"*")
+	#print(file_dploc)
 	file_loca = glob.glob(path_loca+'*'+'localizer')
-	print(file_loca)
+	#print(file_loca)
+	file_radar = glob.
 
 	dico_trgp2 = {}
 	for file in file_trgp2 :
 		if basename(file) == 'short_output_neg' :
 			dico_trgp2['neg'] = {}
-		dico_trgp2['neg'] = targetp2(file)
+			dico_trgp2['neg'] = targetp2(file)
 		if basename(file) == 'short_output_pos' :
 			dico_trgp2['pos'] = {}
-		dico_trgp2['pos'] = targetp2(file)
+			dico_trgp2['pos'] = targetp2(file)
 	#print("------------------")
 	#print(dico_trgp2, len(dico_trgp2))
 	
@@ -336,10 +339,10 @@ def Data_Create() :
 	for file in file_wlf :
 		if basename(file) == 'output_neg.wolfpsort' :
 			dico_wlf['neg'] = {}
-		dico_wlf['neg'] = wolfpsort(file)
+			dico_wlf['neg'] = wolfpsort(file)
 		if basename(file) == 'output_pos.wolfpsort' :
 			dico_wlf['pos'] = {}
-		dico_wlf['pos'] = wolfpsort(file)
+			dico_wlf['pos'] = wolfpsort(file)
 
 	#print(dico_wlf)
 
@@ -349,24 +352,36 @@ def Data_Create() :
 	for file in file_ard2 :
 		if basename(file) == 'STDOUT_neg' :
 			dico_ard2['neg'] = {}
-		dico_ard2['neg'] = ard2(file)
+			dico_ard2['neg'] = ard2(file)
 		if basename(file) == 'STDOUT_pos' :
 			dico_ard2['pos'] = {}
-		dico_ard2['pos'] = ard2(file)
+			dico_ard2['pos'] = ard2(file)
 	
 	#print(dico_ard2)
 
 	#localizer(file_loca[0])
 	dico_loca = {}
-	for file in file_loca :
-		if basename(file) == 'STDOUT_neg' :
+	for file in file_loca : 
+		if basename(file) == 'New_Proteom_1196_tem_neg.fasta_line.txt_localizer' :
 			dico_loca['neg'] = {}
-		dico_loca['neg'] = localizer(file)
-		if basename(file) == 'STDOUT_pos' :
+			dico_loca['neg'] = localizer(file)
+		if basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_localizer' :
 			dico_loca['pos'] = {}
-		dico_loca['pos'] = localizer(file)
-	print(dico_loca)
+			dico_loca['pos'] = localizer(file)
+	#print(dico_loca)
 	#return dico_trgp2
+
+	#deeploc(file_dploc[0])
+	
+	dico_dploc = {}
+	for file in file_dploc :
+		if basename(file) == 'New_Proteom_1196_tem_neg.fasta_line.txt_deeploc.txt' :
+			dico_dploc['neg'] = {}
+			dico_dploc['neg'] = deeploc(file)
+		if basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_deeploc.txt' :
+			dico_dploc['pos'] = {}
+			dico_dploc['pos'] = deeploc(file)	
+	print(dico_dploc)
 
 
 if __name__ == '__main__' :
@@ -402,11 +417,15 @@ if __name__ == '__main__' :
 	# TARGETP2
 	path_trgp2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/targetp2_outputs/"
 
-	# dploc
-	path_dploc = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_deeploc/"
+	# DEEPLOC
+	path_dploc = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/outputs_deeploc/"
 
-	# Localizer
+	# LOCALIZER
 	path_loca = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_localizer/"
+
+	# RADAR
+	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/"
+
 
 	data_final = Data_Create()
 
