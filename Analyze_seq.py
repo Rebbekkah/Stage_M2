@@ -30,14 +30,11 @@ def reading(fichier) :
 	for cle, val in dico.items() :
 		start = int(val.split(' ')[0])
 		end = int(val.split(' ')[-1])
-		#print(start)
-		#print(end)
 
 		if start > 68 or end > 68 :
 			dico_h[cle] = {}
 			dico_h[cle] = {'start' : start, 'end' : end}
 		elif end < 68 :
-			#print(cle)
 			if cle not in id_list_ok :
 				id_list_ok.append(cle)
 			dico_ok = {}
@@ -61,7 +58,6 @@ def reading(fichier) :
 	with open("output_Analyzeseq_ToKeep_"+basename(fichier)+".txt", "w") as filout :
 		for idt in id_to_keep :
 			filout.write(idt+"\n")
-	#os.chdir(to_script)
 
 	return id_to_keep
 
@@ -82,7 +78,6 @@ def listing(path, pattern) :
 
 def proteome_maker(ToKeep, path_proteom) :
 	print("-----------------proteom maker-----------------")
-	#print(ToKeep)
 	proteom = glob.glob(path_proteom+"*.fasta_line")
 
 	os.chdir(path_output)
@@ -100,13 +95,11 @@ def proteome_maker(ToKeep, path_proteom) :
 	for proteom in ToKeep :
 		for ident in proteom :
 			ident = ">"+ident
-			#print(ident)
 			if ident in dico.keys() :
 				dico2[ident] = ""
 				dico2[ident] = dico[ident]
 				
 
-	#print(len(dico2.keys()))
 	idt_del = []
 	for idt, seq in dico2.items() :
 		if seq[-1] == '*' :
@@ -129,11 +122,8 @@ def proteome_maker(ToKeep, path_proteom) :
 		for idt, seq in dico2.items() :
 			filout.write(idt+"\n"+seq+"\n")
 	
-	#print(len(ToKeep[0])+len(ToKeep[1]))
-	#print(idt, len(idt))
-	#print(seq, len(seq))
-	#print(dico)
 	return dico2
+
 
 def sep(path_proteom) :
 	print("-----------------separateur-----------------")
@@ -145,12 +135,10 @@ def sep(path_proteom) :
 	idt_ok = []
 	for f in file :
 		idt_ok.append(reading(f))
-	#for i in idt_ok :
-	#	print("LEN IDT OK ", len(i))
+
 
 	os.chdir(path_output)
 	idt_all = []
-	#print("LEN DICO", len(dico))	
 	dico2 = {}
 	dico_all = {}
 	i = 0
@@ -167,12 +155,8 @@ def sep(path_proteom) :
 					dico_all[elem] += line.strip()
 			print(len(dico_all.keys()))
 		for idt in idt_ok[i] :
-			#print("LEN IDT", len(idt_ok[i]))
-			#print(idt)
-			#break
 			idt = ">"+idt
 			if idt in dico_all.keys() :
-				#print("oui")
 				dico2[idt] = ""
 				dico2[idt] += dico_all[idt]
 		print("LEN DICO2", len(dico2))
@@ -182,11 +166,9 @@ def sep(path_proteom) :
 		i += 1
 
 
-
 def ard2(file) :
 	print(basename(file))
 	dico = {}
-	#idt = []
 	with open(file, "r") as filin :
 		for line in filin :
 			if line.startswith('>') :
@@ -201,24 +183,50 @@ def ard2(file) :
 				aa = elem[0]
 				proba = elem[1:5]
 				if float(proba) > 0.10 :
-					#dico_linker[aa] = []
-					#dico_linker[aa].extend([proba, pos])
-					#dico_linker[aa] = [proba, pos]
-					#for cle, val in dico_linker.items() :
 					if aa in dico_linker.keys() :
-						#dico_linker[aa].append([proba, pos])
 						dico_linker[aa].extend([proba, pos])
 					else :
 						dico_linker[aa] = [proba, pos]
 			dico[idt] = dico_linker
 
 
-	#### changer les cles du dico en identifiant protéique en comparant les seq
-	#### + récupérer les positions avec les lignes et faire attention aux idt 
-	#### qui prennent des lignes
+	proteoms = glob.glob(path_tmhmm+'*.fasta_line.txt')
+	print(proteoms)
 
-	print(dico)
-	return dico
+	dico_pos = {}
+	dico_neg = {}
+	for p in proteoms :
+		with open(p, "r") as filin :
+			if basename(p) == 'New_Proteom_1196_tem_neg.fasta_line.txt' :
+				for line in filin :
+					if line.startswith('>') :
+						idt = line.strip()
+						dico_neg[idt] = ""
+					else :
+						dico_neg[idt] += line.strip()
+			elif basename(p) == 'New_Proteom_1081_tem_pos.fasta_line.txt' :
+				for line in filin :
+					if line.startswith('>') :
+						idt = line.strip()
+						dico_pos[idt] = ""
+					else :
+						dico_pos[idt] += line.strip()
+
+
+	dico_f = {}
+	if basename(file) == 'STDOUT_neg' :
+		for idt in dico_neg.keys() :
+			for linker in dico.values() :
+				dico_f[idt] = dico_neg[idt]
+				dico_f[idt] = linker
+	elif basename(file) == 'STDOUT_pos' :
+		for idt in dico_pos.keys() :
+			for linker in dico.values() :
+				dico_f[idt] = dico_pos[idt]
+				dico_f[idt] = linker
+
+
+	return dico_f
 
 
 def wolfpsort(file) :
@@ -228,17 +236,12 @@ def wolfpsort(file) :
 		for line in filin :
 			if not line.startswith('#') :
 				elem = line.split(" ")
-				#print(elem)
 				idt = elem[0]
-				#print(idt)
 				adressage = elem[1]
-				#print(adressage)
-				#print(adressage, type(adressage))
 				if adressage == 'chlo' or adressage == 'mito' :
 					dico[idt] = ""
 					dico[idt] += str(adressage)
 
-	#print(dico)
 	return dico
 
 
@@ -255,10 +258,10 @@ def targetp2(file) :
 	return dico
 
 
-def dataFrame() :
+def Data_Create() :
 
-	df_pos = pd.DataFrame()
-	df_neg = pd.DataFrame()
+	#df_pos = pd.DataFrame()
+	#df_neg = pd.DataFrame()
 
 	file_ard2 = glob.glob(path_ard2+"STDOUT_"+"*")
 	print(file_ard2)
@@ -293,6 +296,19 @@ def dataFrame() :
 
 	ard2(file_ard2[0])
 
+	dico_ard2 = {}
+	for file in file_ard2 :
+		if basename(file) == 'STDOUT_neg' :
+			dico_ard2['neg'] = {}
+		dico_ard2['neg'] = ard2(file)
+		if basename(file) == 'STDOUT_pos' :
+			dico_ard2['pos'] = {}
+		dico_ard2['pos'] = ard2(file)
+	
+
+	#print(dico_ard2)
+
+	#print(dico_ard2.keys())
 
 	#return dico_trgp2
 
@@ -322,7 +338,8 @@ if __name__ == '__main__' :
 
 	# ARD2
 	path_ard2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/ard2_outputs/"
-
+	path_tmhmm = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/tmhmm_filtred/"
+	
 	# WOLFPSORT
 	path_wpsort = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/wolfpsort_output/"
 
@@ -330,6 +347,6 @@ if __name__ == '__main__' :
 	path_trgp2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/targetp2_outputs/"
 
 
-	data_final = dataFrame()
+	data_final = Data_Create()
 
 
