@@ -258,6 +258,52 @@ def targetp2(file) :
 	return dico
 
 
+def deeploc(file) :
+#################################################
+	dico = {}
+	with open(file, "r") as filin :
+		for line in filin :
+			if not line.startswith('ID') :
+				idt = line.split()[0]
+				print(idt)
+
+
+def localizer(file) : 
+	print(basename(file))
+	dico = {}
+	non = ['Over', '#', 'Identifier', '-']
+	with open(file, "r") as filin :
+		for line in filin :
+			#print(line.split("\t")[0])
+			first = line.split(" ")[0]
+			#print(line)
+			if first not in non :
+				one = line.split("\t")[0]
+				#dico[idt] = ""
+				#print(line.split("\t")[1])
+				if one[0] not in non :
+					idt = line.split("\t")[0]
+					idt = idt.split()[0]
+					#dico[idt] = ""
+					#print(line.split("\t")[1])
+					elem = line.split("\t")[1]
+					#print(elem.split()[0])
+					if elem.split()[0] != '-' :
+						#print(line.split("\t")[1])
+						dico[idt] = ""
+						dico[idt] += elem.split()[0]
+					#else : 
+					#	dico[idt] += 'None'
+					#print(idt)
+				else :
+					break
+
+					#print(line.split("\t")[1])
+	#print(dico)
+	return dico		
+
+########## attention prendre en compte la fin
+
 def Data_Create() :
 
 	#df_pos = pd.DataFrame()
@@ -269,6 +315,9 @@ def Data_Create() :
 	#print(file_wlf)
 	file_trgp2 = glob.glob(path_trgp2+"short_output_"+"*")
 	#print(file_trgp2)
+	file_dploc = glob.glob(path_dploc+"*"+"deeploc"+"*")
+	file_loca = glob.glob(path_loca+'*'+'localizer')
+	print(file_loca)
 
 	dico_trgp2 = {}
 	for file in file_trgp2 :
@@ -294,7 +343,7 @@ def Data_Create() :
 
 	#print(dico_wlf)
 
-	ard2(file_ard2[0])
+	#ard2(file_ard2[0])
 
 	dico_ard2 = {}
 	for file in file_ard2 :
@@ -305,11 +354,18 @@ def Data_Create() :
 			dico_ard2['pos'] = {}
 		dico_ard2['pos'] = ard2(file)
 	
-
 	#print(dico_ard2)
 
-	#print(dico_ard2.keys())
-
+	#localizer(file_loca[0])
+	dico_loca = {}
+	for file in file_loca :
+		if basename(file) == 'STDOUT_neg' :
+			dico_loca['neg'] = {}
+		dico_loca['neg'] = localizer(file)
+		if basename(file) == 'STDOUT_pos' :
+			dico_loca['pos'] = {}
+		dico_loca['pos'] = localizer(file)
+	print(dico_loca)
 	#return dico_trgp2
 
 
@@ -346,6 +402,11 @@ if __name__ == '__main__' :
 	# TARGETP2
 	path_trgp2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/targetp2_outputs/"
 
+	# dploc
+	path_dploc = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_deeploc/"
+
+	# Localizer
+	path_loca = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_localizer/"
 
 	data_final = Data_Create()
 
