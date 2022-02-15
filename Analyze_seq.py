@@ -1,7 +1,15 @@
 import pandas as pd
+import sys
 import os
 from os.path import basename
 import glob
+import codecs
+import unicodedata
+import unidecode
+
+#export PYTHONIOENCODING=UTF-8
+#sys.stdout = codecs.getwriter('utf8')(sys.stdout)
+#sys.stderr = codecs.getwriter('utf8')(sys.stderr)
 
 
 def reading(fichier) :
@@ -302,8 +310,62 @@ def localizer(file) :
 	return dico		
 
 
+def radar(file) :
+	#-;ºÍ¯
+	#Cre13.g603250.t1.2
+	#new_file = convertisseur(file)
 
+	
+	dico = {}
+	with open(file, "r") as filin :
+		for line in filin :
+			print(line)
+			if line.startswith('>') :
+				idt = line
+				#print(idt)
+				dico[idt] = ""
+				#print(idt)
+	#print(dico.keys())
+	
 
+def convertisseur(file) :
+
+	#unicodeData.encode('ascii', 'ignore')
+	
+	with open(file, 'r') as filin :
+		for line in filin :
+			for elem in line :
+				#print(type(elem))
+				#elem = elem.decode(errors = 'ignore')
+				#elem.encode(errors = 'ignore')	
+				#elem.encode('utf-8').strip()
+				#elem.encode('ascii', 'ignore')
+				#print(elem)
+				print(elem)
+
+				if not ord(elem) :
+				#	elem.encode('unicode_escape')
+					elem.encode('ascii', 'ignore')
+				#	elem.encode('ascii', 'replace')
+				#	print(elem)
+					#elem.encode('utf-8').strip()
+					#del elem
+					#elem.encode(errors = 'ignore')					
+				#	print("non ascII")
+					#print(elem)
+				#if type(elem) == 'str' :
+				#	elem = unicode(elem, 'utf-8', errors = 'ignore')
+				#else :
+				#	elem = unicode(elem)
+	
+#####################ou alors juste réécrire le fichier en sautant les mauvais caractères
+	'''
+	os.chdir(path_radar)
+	with open(file, "r") as filin :
+		with open("NEW_OUTPUT_"+basename(file), "w") as filout :
+			for line in filin :
+				filout.write(line)
+	'''
 
 def Data_Create() :
 
@@ -320,7 +382,8 @@ def Data_Create() :
 	#print(file_dploc)
 	file_loca = glob.glob(path_loca+'*'+'localizer')
 	#print(file_loca)
-	file_radar = glob.
+	file_radar = glob.glob(path_radar+'*'+'radar')
+	#print(file_radar)
 
 	dico_trgp2 = {}
 	for file in file_trgp2 :
@@ -381,7 +444,11 @@ def Data_Create() :
 		if basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_deeploc.txt' :
 			dico_dploc['pos'] = {}
 			dico_dploc['pos'] = deeploc(file)	
-	print(dico_dploc)
+	#print(dico_dploc)
+
+
+	#radar(file_radar[0])
+	radar(path_pb)
 
 
 if __name__ == '__main__' :
@@ -425,7 +492,7 @@ if __name__ == '__main__' :
 
 	# RADAR
 	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/"
-
+	path_pb = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/seq_pb.rtf"
 
 	data_final = Data_Create()
 
