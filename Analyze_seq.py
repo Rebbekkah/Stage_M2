@@ -330,16 +330,22 @@ def radar(file) :
 				ligne = ligne.split()
 				debut = ligne[0].split('-')
 				pos = [debut[0], ligne[1]]
-				longr = int(ligne[1]) - int(debut[0])
+				#longr = int(ligne[1]) - int(debut[0]) ####### positions plus bonnes après avoir modif les hevauchement \
+													  ####### à revoir 
 				l.append(longr)
 				repet.append(pos)
-			#for i in range(len(repet)-1) :
-			#	if repet[i][1] > repet[i+1][0] : 
 
 
 			dico[idt] = {'pos' : repet, 'l_rep' : l}
+			#for i in range(len(repet)-1) :
+			#	print(i)
+				#if repet[i][1] > repet[i+1][0] : 
+				#if repet[i+1][0] > repet [i][0] and repet[i+1][1] < repet [i][1] :
+					#print(repet[i], repet[i+1])
+					#print(repet)
+					#print("----------")
 		
-	print(dico)
+	#print(dico)
 	#print(l)
 	#print(repet)
 
