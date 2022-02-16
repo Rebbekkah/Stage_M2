@@ -311,24 +311,35 @@ def localizer(file) :
 
 
 def radar(file) :
-	#-;ºÍ¯
-	#Cre13.g603250.t1.2
-	#new_file = convertisseur(file)
 
-	#os.chdir(path_output)	
 	idt_list = []
 	dico = {}
 	with open(file, "r", encoding = 'ascii', errors = 'ignore') as filin :
 		for line in filin :
 			if line.startswith('>') or '>' in line :
+				i = 0
 				idt_list.append(line.strip())
 				idt = line.strip()
 				dico[idt] = {}
 
 
-	#print(dico.keys())
+			if '-------' in line : 
+				#print(line)
+				i += 1
+			if i == 2 :
+				if '- ' in line :
+					print(line.strip()) 
+					#break
 
-	print(idt_list, len(idt_list))
+
+
+	'''
+	myfile = open(file, "r", encoding = 'ascii', errors = 'ignore')
+	mylist = myfile.readlines()
+	print(mylist, len(mylist))
+	print(mylist[0][1:-1])
+	#print(idt_list, len(idt_list))
+	'''
 	print(basename(file))
 	#return idt_list
 	
