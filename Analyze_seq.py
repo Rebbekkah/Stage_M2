@@ -316,25 +316,44 @@ def radar(file) :
 	#new_file = convertisseur(file)
 
 	#os.chdir(path_output)	
-	idt = []
+	idt_list = []
 	dico = {}
 	with open(file, "r", encoding = 'ascii', errors = 'ignore') as filin :
 		for line in filin :
-			#print(line)
-			if line.startswith('>') :
-				#idt = line
-				idt.append(line)
-				#print(idt)
-				#dico[idt] = ""
-				#print(idt)
+			if line.startswith('>') or '>' in line :
+				idt_list.append(line.strip())
+				idt = line.strip()
+				dico[idt] = {}
+
+
 	#print(dico.keys())
-	print(len(idt))
+
+	print(idt_list, len(idt_list))
 	print(basename(file))
+	#return idt_list
 	
 
 def verif() : 
-	pass
+	
+	fich = path_output+"output_Analyzeseq_ToKeep_tem_neg.tmhmm.txt"
+	idt_radar = radar(path_pb)
+	#print(idt_radar, len(idt_radar))
+	#print(fich, len(fich))
 
+	idt_keep = []
+
+	with open(fich, 'r') as filin :
+		for line in filin :
+			idt_keep.append(line.strip())
+
+	#print(idt_keep, len(idt_keep))
+
+	idt_not = []
+	for idt in idt_keep :
+		idt = '>'+idt
+		if idt not in idt_radar :
+			idt_not.append(idt)
+	print("-----------", idt_not, len(idt_not))
 
 
 '''
@@ -459,7 +478,7 @@ def Data_Create() :
 	#print(dico_dploc)
 
 
-	radar(file_radar[1])
+	radar(file_radar[0])
 	#radar(path_pb)
 
 
@@ -504,8 +523,9 @@ if __name__ == '__main__' :
 
 	# RADAR
 	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/"
-	path_pb = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/seq_pb.rtf"
+	path_pb = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/idt_neg.txt"
 
 	data_final = Data_Create()
+	#verif()
 
 
