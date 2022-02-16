@@ -3,13 +3,10 @@ import sys
 import os
 from os.path import basename
 import glob
-import codecs
-import unicodedata
-import unidecode
-
-#export PYTHONIOENCODING=UTF-8
-#sys.stdout = codecs.getwriter('utf8')(sys.stdout)
-#sys.stderr = codecs.getwriter('utf8')(sys.stderr)
+#import codecs
+#import unicodedata
+#import unidecode
+from operator import itemgetter
 
 
 def reading(fichier) :
@@ -313,14 +310,15 @@ def localizer(file) :
 def radar(file) :
 
 	idt_list = []
-	repet = []
-	l = []
+	#repet = []
+	#l = []
 	dico = {}
 	with open(file, "r", encoding = 'ascii', errors = 'ignore') as filin :
 		for line in filin :
 			if line.startswith('>') or '>' in line :
 				repet = []
 				l = []
+				aa_prop = []
 				idt_list.append(line.strip())
 				idt = line.strip()
 				dico[idt] = {'l_seq', 'l_rep', 'pos', 'aa_prop'}
@@ -332,19 +330,49 @@ def radar(file) :
 				pos = [debut[0], ligne[1]]
 				#longr = int(ligne[1]) - int(debut[0]) ####### positions plus bonnes après avoir modif les hevauchement \
 													  ####### à revoir 
-				l.append(longr)
+				#l.append(longr)
 				repet.append(pos)
 
 
-			dico[idt] = {'pos' : repet, 'l_rep' : l}
-			#for i in range(len(repet)-1) :
-			#	print(i)
-				#if repet[i][1] > repet[i+1][0] : 
-				#if repet[i+1][0] > repet [i][0] and repet[i+1][1] < repet [i][1] :
-					#print(repet[i], repet[i+1])
-					#print(repet)
-					#print("----------")
+			dico[idt] = {'pos' : repet, 'l_rep' : l, 'aa_prop' : aa_prop}
+		#for i in range(len(repet)-1) :
+		#	print(i)
+			#if repet[i][1] > repet[i+1][0] : 
+			#if repet[i+1][0] > repet [i][0] and repet[i+1][1] < repet [i][1] :
+				#print(repet[i], repet[i+1])
+				#print(repet)
+				#print("----------")
+
+		for dic in dico.values() :
+			rep = []
+			print("-------------")
+			for repet in dic['pos'] :
+				#print(repet, len(repet))
+				rep.append(repet)
+			print(rep, len(rep))
+			#print(rep[1])
+			for i in range(len(rep)-1) :
+				#print(rep[0][0])
+				
+			#rep.sort(reverse = False)
+			#print(rep.sort(reverse = False))
+			#print(sorted(rep, key = itemgetter(0)))
+			#print(min(rep))
+			#for i in range(len(rep)-1) : ########Ordonner rep
+			#	if rep[i][0] > rep [i+1][0] :
+			#		rep[i], rep[i+1] = rep[i+1], rep[i]
+			#print(rep)
+			#	if rep[i+1][0] > rep[i][0] and rep[i+1][1] < rep[i][1] :
+			#		print(rep[i], rep[i+1])
+				#if rep[i][1] < rep[i+1][1] and rep[i+1][0] > rep[i][0] \
+				#and rep[i+1][0] > rep[i][0] and rep[i+1][1] < rep[i][1] ::
+
+
+
 		
+
+
+
 	#print(dico)
 	#print(l)
 	#print(repet)
@@ -388,48 +416,6 @@ def verif() :
 		if idt not in idt_radar :
 			idt_not.append(idt)
 	print("-----------", idt_not, len(idt_not))
-
-
-'''
-def convertisseur(file) :
-
-	#unicodeData.encode('ascii', 'ignore')
-	
-	with open(file, 'r', encoding = 'ascii', errors = 'ignore') as filin :
-		for line in filin :
-			for elem in line :
-				#print(type(elem))
-				#elem = elem.decode(errors = 'ignore')
-				#elem.encode(errors = 'ignore')	
-				#elem.encode('utf-8').strip()
-				#elem.encode('ascii', 'ignore')
-				#print(elem)
-				print(elem)
-
-				if not ord(elem) :
-				#	elem.encode('unicode_escape')
-					elem.encode('ascii', 'ignore')
-				#	elem.encode('ascii', 'replace')
-				#	print(elem)
-					#elem.encode('utf-8').strip()
-					#del elem
-					#elem.encode(errors = 'ignore')					
-				#	print("non ascII")
-					#print(elem)
-				#if type(elem) == 'str' :
-				#	elem = unicode(elem, 'utf-8', errors = 'ignore')
-				#else :
-				#	elem = unicode(elem)
-	
-#####################ou alors juste réécrire le fichier en sautant les mauvais caractères
-	os.chdir(path_radar)
-	with open(file, "r") as filin :
-		with open("NEW_OUTPUT_"+basename(file), "w") as filout :
-			for line in filin :
-				filout.write(line)
-'''
-
-
 
 
 def Data_Create() :
