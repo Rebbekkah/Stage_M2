@@ -314,63 +314,36 @@ def radar(file) :
 
 	idt_list = []
 	repet = []
+	l = []
 	dico = {}
 	with open(file, "r", encoding = 'ascii', errors = 'ignore') as filin :
 		for line in filin :
 			if line.startswith('>') or '>' in line :
-				i = 0
-				k = 0
+				repet = []
+				l = []
 				idt_list.append(line.strip())
 				idt = line.strip()
-				dico[idt] = {}
-				print("----------------", idt)
+				dico[idt] = {'l_seq', 'l_rep', 'pos', 'aa_prop'}
+				#print("----------------", idt)
 			if '- ' in line :
-					print(line.strip())
+				ligne = line.strip()
+				ligne = ligne.split()
+				debut = ligne[0].split('-')
+				pos = [debut[0], ligne[1]]
+				longr = int(ligne[1]) - int(debut[0])
+				l.append(longr)
+				repet.append(pos)
+			#for i in range(len(repet)-1) :
+			#	if repet[i][1] > repet[i+1][0] : 
 
 
+			dico[idt] = {'pos' : repet, 'l_rep' : l}
+		
+	print(dico)
+	#print(l)
+	#print(repet)
 
 
-			'''
-			if '-------' in line : 
-				i += 1
-			if i == 2 :
-				if '- ' in line :
-					print(line.strip()) 	
-				elif '- ' not in line and k != i + 3: 
-					k = i + 3
-			elif i == k :		
-				if '- ' in line :
-					print(line.strip()) 
-				elif '- ' not in line and k != i + 3 : 	
-					k = i + 3	
-			'''
-
-
-
-
-
-			'''
-			if i == 2 :
-				#k = 1
-				if '- ' in line :
-					k = 0
-					print(line.strip()) 
-					#repet.append(line.strip())
-					#break
-			#if i >= 2 and k <= 3:
-			if k == 3 : 
-				if '- ' in line :
-					k = 0
-					print(line.strip()) 
-			elif i >= 2 and k <= 3 :
-				k += 1
-			#if k > 3 :
-			#	k = 1
-			#if k == 3 : 
-			#	if '- ' in line :
-			#		k = 0
-			#		print(line.strip()) 
-			'''
 
 
 
