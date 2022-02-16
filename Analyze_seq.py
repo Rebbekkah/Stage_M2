@@ -313,24 +313,68 @@ def localizer(file) :
 def radar(file) :
 
 	idt_list = []
+	repet = []
 	dico = {}
 	with open(file, "r", encoding = 'ascii', errors = 'ignore') as filin :
 		for line in filin :
 			if line.startswith('>') or '>' in line :
 				i = 0
+				k = 0
 				idt_list.append(line.strip())
 				idt = line.strip()
 				dico[idt] = {}
+				print("----------------", idt)
+			if '- ' in line :
+					print(line.strip())
 
 
+
+
+			'''
 			if '-------' in line : 
-				#print(line)
 				i += 1
 			if i == 2 :
 				if '- ' in line :
+					print(line.strip()) 	
+				elif '- ' not in line and k != i + 3: 
+					k = i + 3
+			elif i == k :		
+				if '- ' in line :
 					print(line.strip()) 
-					#break
+				elif '- ' not in line and k != i + 3 : 	
+					k = i + 3	
+			'''
 
+
+
+
+
+			'''
+			if i == 2 :
+				#k = 1
+				if '- ' in line :
+					k = 0
+					print(line.strip()) 
+					#repet.append(line.strip())
+					#break
+			#if i >= 2 and k <= 3:
+			if k == 3 : 
+				if '- ' in line :
+					k = 0
+					print(line.strip()) 
+			elif i >= 2 and k <= 3 :
+				k += 1
+			#if k > 3 :
+			#	k = 1
+			#if k == 3 : 
+			#	if '- ' in line :
+			#		k = 0
+			#		print(line.strip()) 
+			'''
+
+
+
+	#print(repet)
 
 
 	'''
