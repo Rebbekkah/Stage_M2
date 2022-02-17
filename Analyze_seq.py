@@ -338,9 +338,10 @@ def radar(file) :
 
 		k = 0
 		for idt, dic in dico.items() :
-			print(idt)
+			#print(idt)
 		#for dic in dico.values() :
 			to_remove = []
+			to_change = []
 			rep = []
 			nb = 0
 			for repet in dic['pos'] :
@@ -373,12 +374,20 @@ def radar(file) :
 					nb += 1
 					print(rep2)
 					print(rep2[i], rep2[i+1])
+					debut = int(rep[i+1][0])
+					fin = int(rep[i][1])
+					new = [debut, fin]
+					to_change.append(new)
 
 				if rep2[i][1] < rep2[i+1][1] and rep2[i+1][0] > rep2[i+1][0] \
 				and rep2[i][1] > rep2[i+1][0] :
 					nb += 1
 					print(rep2)
 					print(rep2[i], rep2[i+1])
+					debut = int(rep2[i][0])
+					fin = int(rep2[i+1][1])
+					new = [debut, fin]
+					to_change.append(new)
 
 			if to_remove :
 				print("REPT À SUPP ----> ", to_remove, len(to_remove))
@@ -393,6 +402,8 @@ def radar(file) :
 				print("\n============================\n")
 
 			dic['pos'] = rep2
+
+			#print(to_change)
 
 		print('nb de seq avec chevauchement :', k)
 		
