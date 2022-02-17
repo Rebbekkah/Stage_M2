@@ -391,6 +391,11 @@ def radar(file) :
 
 			if to_remove :
 				print("REPT À SUPP ----> ", to_remove, len(to_remove))
+			if to_change :
+				print("POSITIONS À MODIFIER ----> ", to_change)
+			#else :
+			#	print("type de chevauchement inexistant")
+
 			if nb != 0 :
 				print("nb de chevauchement dans la séquence :", nb)
 				k += 1
@@ -399,9 +404,16 @@ def radar(file) :
 					print(elem)
 					rep2.remove(elem)
 					print(rep2, len(rep2))
+				#for elem in to_change :
+				#	print(elem)
 				print("\n============================\n")
 
 			dic['pos'] = rep2
+
+			z = 0
+			for i in range(len(rep2)) :
+				pass
+
 
 			#print(to_change)
 
