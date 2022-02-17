@@ -349,15 +349,29 @@ def radar(file) :
 			for repet in dic['pos'] :
 				#print(repet, len(repet))
 				rep.append(repet)
+			#dico['pos'] = sorted(repet, key = itemgetter(0))
 			print(rep, len(rep))
+
 			#print(rep[1])
-			for i in range(len(rep)-1) :
-				#print(rep[0][0])
+			#for i in range(len(rep)-1) :
+			#	print(rep[0][0])
 				
 			#rep.sort(reverse = False)
 			#print(rep.sort(reverse = False))
+			rep2 = []
+			for lis in rep :
+				p = []
+				for ps in lis :
+					p.append(int(ps))
+				#print(r, type(r))
+				#r = int(r)
+				rep2.append(p)
+			print(rep2, len(rep2))
+			rep2 = sorted(rep2, key = itemgetter(0))
 			#print(sorted(rep, key = itemgetter(0)))
-			#print(min(rep))
+			print("sorted", rep2)
+			dic['pos'] = sorted(rep2, key = itemgetter(0))
+			
 			#for i in range(len(rep)-1) : ########Ordonner rep
 			#	if rep[i][0] > rep [i+1][0] :
 			#		rep[i], rep[i+1] = rep[i+1], rep[i]
@@ -366,7 +380,7 @@ def radar(file) :
 			#		print(rep[i], rep[i+1])
 				#if rep[i][1] < rep[i+1][1] and rep[i+1][0] > rep[i][0] \
 				#and rep[i+1][0] > rep[i][0] and rep[i+1][1] < rep[i][1] ::
-
+		#print(dico)
 
 
 		
