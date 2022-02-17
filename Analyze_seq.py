@@ -335,104 +335,72 @@ def radar(file) :
 
 
 			dico[idt] = {'pos' : repet, 'l_rep' : l, 'aa_prop' : aa_prop}
-		#for i in range(len(repet)-1) :
-		#	print(i)
-			#if repet[i][1] > repet[i+1][0] : 
-			#if repet[i+1][0] > repet [i][0] and repet[i+1][1] < repet [i][1] :
-				#print(repet[i], repet[i+1])
-				#print(repet)
-				#print("----------")
+
 		k = 0
-		for dic in dico.values() :
+		for idt, dic in dico.items() :
+			print(idt)
+		#for dic in dico.values() :
+			to_remove = []
 			rep = []
 			nb = 0
-			#k = 0
-			#print("-------------")
 			for repet in dic['pos'] :
-				#print(repet, len(repet))
 				rep.append(repet)
-			#dico['pos'] = sorted(repet, key = itemgetter(0))
-			#print(rep, len(rep))
-
-			#print(rep[1])
-			#for i in range(len(rep)-1) :
-			#	print(rep[0][0])
-				
-			#rep.sort(reverse = False)
-			#print(rep.sort(reverse = False))
 			rep2 = []
 			for lis in rep :
 				p = []
 				for ps in lis :
 					p.append(int(ps))
-				#print(r, type(r))
-				#r = int(r)
 				rep2.append(p)
-			#print(rep2, len(rep2))
+
 			rep2 = sorted(rep2, key = itemgetter(0))
-			#print(sorted(rep, key = itemgetter(0)))
-			#print("sorted", rep2)
 			dic['pos'] = sorted(rep2, key = itemgetter(0))
 			
-			#print("\n============================\n")
-
-			for i in range(len(rep2)-1) : ########Ordonner rep
-			#	if rep[i][0] > rep [i+1][0] :
-			#		rep[i], rep[i+1] = rep[i+1], rep[i]
-			#print(rep)
+			for i in range(len(rep2)-1) : 
 				if rep2[i+1][0] > rep2[i][0] and rep2[i+1][1] < rep2[i][1] :
-					#print("\n============================\n")
+					nb += 1
+					print(rep2, len(rep2))
+					print(rep2[i], rep2[i+1])
+					to_remove.append(rep2[i+1])
+			
+				if rep2[i][0] > rep2[i+1][0] and rep2[i][1] < rep2[i+1][0] :
 					nb += 1
 					print(rep2)
 					print(rep2[i], rep2[i+1])
+					to_remove.append(rep2[i])
+
+				if rep2[i][0] < rep2[i+1][1] and rep2[i][1] > rep2[i+1][1] \
+				and rep2[i+1][0] < rep2[i][0] :
+					nb += 1
+					print(rep2)
+					print(rep2[i], rep2[i+1])
+
+				if rep2[i][1] < rep2[i+1][1] and rep2[i+1][0] > rep2[i+1][0] \
+				and rep2[i][1] > rep2[i+1][0] :
+					nb += 1
+					print(rep2)
+					print(rep2[i], rep2[i+1])
+
+			if to_remove :
+				print("REPT À SUPP ----> ", to_remove, len(to_remove))
 			if nb != 0 :
-				print(nb)
+				print("nb de chevauchement dans la séquence :", nb)
 				k += 1
+				for elem in to_remove :
+					print("REMOVING")
+					print(elem)
+					rep2.remove(elem)
+					print(rep2, len(rep2))
 				print("\n============================\n")
-		print('nb de seq avechevauchement :', k)
-				#if rep2[i][0] > rep2[i+1][0] and rep2[i][1] < rep2[i+1][0] :
-				#	print("\n============================\n")
-				#	print(rep2)
-				#	print(rep2[i], rep2[i+1])
-				#if rep2[i][0] < rep2[i+1][1] and rep2[i][1] > rep2[i+1][1] \
-				#and rep2[i+1][0] < rep2[i][0] :
-				#	print("\n============================\n")
-				#	print(rep2)
-				#	print(rep2[i], rep2[i+1])
-				#if rep2[i][1] < rep2[i+1][1] and rep2[i+1][0] > rep2[i+1][0] \
-				#and rep2[i][1] > rep2[i+1][0] :
-				#	print("\n============================\n")
-				#	print(rep2)
-				#	print(rep2[i], rep2[i+1])
-				#if rep[i][1] < rep[i+1][1] and rep[i+1][0] > rep[i][0] \
-				#and rep[i+1][0] > rep[i][0] and rep[i+1][1] < rep[i][1] ::
+
+			dic['pos'] = rep2
+
+		print('nb de seq avec chevauchement :', k)
+		
+
 		#print(dico)
 
 
-		
-
-
-
-	#print(dico)
-	#print(l)
-	#print(repet)
-
-
-
-
-
-	#print(repet)
-
-
-	'''
-	myfile = open(file, "r", encoding = 'ascii', errors = 'ignore')
-	mylist = myfile.readlines()
-	print(mylist, len(mylist))
-	print(mylist[0][1:-1])
-	#print(idt_list, len(idt_list))
-	'''
 	print(basename(file))
-	#return idt_list
 	
 
 def verif() : 
