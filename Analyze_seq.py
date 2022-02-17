@@ -342,15 +342,17 @@ def radar(file) :
 				#print(repet[i], repet[i+1])
 				#print(repet)
 				#print("----------")
-
+		k = 0
 		for dic in dico.values() :
 			rep = []
-			print("-------------")
+			nb = 0
+			#k = 0
+			#print("-------------")
 			for repet in dic['pos'] :
 				#print(repet, len(repet))
 				rep.append(repet)
 			#dico['pos'] = sorted(repet, key = itemgetter(0))
-			print(rep, len(rep))
+			#print(rep, len(rep))
 
 			#print(rep[1])
 			#for i in range(len(rep)-1) :
@@ -366,18 +368,42 @@ def radar(file) :
 				#print(r, type(r))
 				#r = int(r)
 				rep2.append(p)
-			print(rep2, len(rep2))
+			#print(rep2, len(rep2))
 			rep2 = sorted(rep2, key = itemgetter(0))
 			#print(sorted(rep, key = itemgetter(0)))
-			print("sorted", rep2)
+			#print("sorted", rep2)
 			dic['pos'] = sorted(rep2, key = itemgetter(0))
 			
-			#for i in range(len(rep)-1) : ########Ordonner rep
+			#print("\n============================\n")
+
+			for i in range(len(rep2)-1) : ########Ordonner rep
 			#	if rep[i][0] > rep [i+1][0] :
 			#		rep[i], rep[i+1] = rep[i+1], rep[i]
 			#print(rep)
-			#	if rep[i+1][0] > rep[i][0] and rep[i+1][1] < rep[i][1] :
-			#		print(rep[i], rep[i+1])
+				if rep2[i+1][0] > rep2[i][0] and rep2[i+1][1] < rep2[i][1] :
+					#print("\n============================\n")
+					nb += 1
+					print(rep2)
+					print(rep2[i], rep2[i+1])
+			if nb != 0 :
+				print(nb)
+				k += 1
+				print("\n============================\n")
+		print('nb de seq avechevauchement :', k)
+				#if rep2[i][0] > rep2[i+1][0] and rep2[i][1] < rep2[i+1][0] :
+				#	print("\n============================\n")
+				#	print(rep2)
+				#	print(rep2[i], rep2[i+1])
+				#if rep2[i][0] < rep2[i+1][1] and rep2[i][1] > rep2[i+1][1] \
+				#and rep2[i+1][0] < rep2[i][0] :
+				#	print("\n============================\n")
+				#	print(rep2)
+				#	print(rep2[i], rep2[i+1])
+				#if rep2[i][1] < rep2[i+1][1] and rep2[i+1][0] > rep2[i+1][0] \
+				#and rep2[i][1] > rep2[i+1][0] :
+				#	print("\n============================\n")
+				#	print(rep2)
+				#	print(rep2[i], rep2[i+1])
 				#if rep[i][1] < rep[i+1][1] and rep[i+1][0] > rep[i][0] \
 				#and rep[i+1][0] > rep[i][0] and rep[i+1][1] < rep[i][1] ::
 		#print(dico)
