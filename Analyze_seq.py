@@ -439,20 +439,18 @@ def radar(file) :
 
 	for idt, dic in dico.items() :
 		prop = []
+		lgr = []
 		for rep in dic['pos'] :
 			d = rep[0]
 			f = rep[1]
 			seq_ = dic['seq'][d:f]
 			prop.append(prop_calculator(seq_))
+			l = f - d
+			lgr.append(l)
 		dic['aa_prop'] = prop
+		dic['l_rep'] = lgr
 
 
-
-	
-
-	#for i in range(len(dico.keys())) :
-	#for idt, dic in dico.items() :
-	#for i in range(len(dico.keys())) :
 
 
 
