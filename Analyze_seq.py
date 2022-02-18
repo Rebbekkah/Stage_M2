@@ -449,12 +449,13 @@ def radar(file) :
 			lgr.append(l)
 		dic['aa_prop'] = prop
 		dic['l_rep'] = lgr
+		del dic['seq']
 
 
 
 
 
-	print(dico)
+	#print(dico)
 
 
 	print(basename(file))
