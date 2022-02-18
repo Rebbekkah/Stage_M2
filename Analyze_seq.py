@@ -597,7 +597,7 @@ def Data_Create() :
 	#print(dico_dploc)
 
 
-	#radar(file_radar[0])
+	radar(file_radar[0])
 	#radar(path_pb)
 	dico_radar = {}
 	for file in file_radar :
@@ -608,8 +608,8 @@ def Data_Create() :
 			dico_radar['pos'] = {}
 			dico_radar['pos'] = radar(file)
 
-
-	print(file_trgp2, len(file_trgp2), dico_trgp2.keys())
+	#print(dico_radar)
+	#print(file_trgp2, len(file_trgp2), dico_trgp2.keys())
 
 	return dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, dico_radar
 
@@ -630,7 +630,7 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 		idt_all.append(idt)
 
 	idt_all = np.array(idt_all)
-	print(idt_all, len(idt_all))
+	#print(idt_all, len(idt_all))
 
 
 	col = ['type', 'trp2', 'wolfpsort', 'ard2', 'localizer', 'deeploc', \
@@ -652,7 +652,7 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 	#print(type(df.index))
 	#print(df.index)
 	
-	print(dico_ard2.keys())
+	#print(dico_ard2.keys())
 	for tem, dic in dico_ard2.items() :
 		idt_l = []
 		for idt, val in dic.items() :
@@ -689,18 +689,34 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 	for tem, dic in dico_ard2.items() :
 		for idt, res in dic.items() :
 			if idt in idt_all : 
-				#df.loc[idt, 'ard2'] = {}
 				df.loc[idt, 'ard2'] = [res]	
 
 	#print(df['ard2'])
 	
 
-	print(dico_loca)
+	#print(dico_loca)
 	for tem, dic in dico_loca.items() :
 		for idt, res in dic.items() :
+			idt = ">"+idt
 			if idt in idt_all : 
-				#df.loc[idt, 'ard2'] = {}
-				df.loc[idt, 'ard2'] = [res]	
+				df.loc[idt, 'localizer'] = res
+
+
+	#print(dico_dploc)
+	for tem, dic in dico_dploc.items() :
+		for idt, res in dic.items() :
+			idt = ">"+idt
+			if idt in idt_all : 
+				df.loc[idt, 'deeploc'] = [res]
+
+
+
+	print(dico_radar)
+	for tem, dic in dico_radar.items() :
+		for idt, res in dic.items() :
+			if idt in idt_all : 
+				df.loc[idt, 'radar'] = [res]
+
 
 
 	print(df)
