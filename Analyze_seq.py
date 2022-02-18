@@ -319,9 +319,10 @@ def radar(file) :
 				repet = []
 				l = []
 				aa_prop = []
+				#seq = ""
 				idt_list.append(line.strip())
 				idt = line.strip()
-				dico[idt] = {'l_seq', 'l_rep', 'pos', 'aa_prop'}
+				dico[idt] = {'l_seq', 'l_rep', 'pos', 'aa_prop', 'seq'}
 				#print("----------------", idt)
 			if '- ' in line :
 				ligne = line.strip()
@@ -334,7 +335,7 @@ def radar(file) :
 				repet.append(pos)
 
 
-			dico[idt] = {'pos' : repet, 'l_rep' : l, 'aa_prop' : aa_prop}
+			dico[idt] = {'pos' : repet, 'l_rep' : l, 'aa_prop' : aa_prop, 'seq' : ""}
 
 		k = 0
 		for idt, dic in dico.items() :
@@ -343,6 +344,7 @@ def radar(file) :
 			to_remove = []
 			to_change = []
 			rep = []
+			to_modif = []
 			nb = 0
 			for repet in dic['pos'] :
 				rep.append(repet)
@@ -377,6 +379,8 @@ def radar(file) :
 					debut = int(rep[i+1][0])
 					fin = int(rep[i][1])
 					new = [debut, fin]
+					to_modif.append(rep2[i], rep2[i+1])
+					#new .append([debut, fin])
 					to_change.append(new)
 
 				if rep2[i][1] < rep2[i+1][1] and rep2[i+1][0] > rep2[i+1][0] \
@@ -387,6 +391,8 @@ def radar(file) :
 					debut = int(rep2[i][0])
 					fin = int(rep2[i+1][1])
 					new = [debut, fin]
+					to_modif.append(rep2[i], rep2[i+1])
+					#new.append([debut, fin])
 					to_change.append(new)
 
 			if to_remove :
@@ -410,20 +416,90 @@ def radar(file) :
 
 			dic['pos'] = rep2
 
-			z = 0
+			'''
 			for i in range(len(rep2)) :
-				pass
-
-
+				#print(rep2[i])
+				if [rep2[i], rep2[i+1]] in to_modif :
+					rep2.remove(rep2[i+1])
+					rep2.remove(rep2[i])
+			rep2.append(to_change)
+			rep2 = sorted(rep2, key = itemgetter(0))
+			dic['pos'] = sorted(rep2, key = itemgetter(0))
+			'''
 			#print(to_change)
 
 		print('nb de seq avec chevauchement :', k)
 		
 
-		#print(dico)
+	dico_all = Proteom_all(path_output)
+
+	for idt, dic in dico.items() :
+		if idt in dico_all.keys() :
+			dic['seq'] += dico_all[idt]
+
+	for idt, dic in dico.items() :
+		prop = []
+		for rep in dic['pos'] :
+			d = rep[0]
+			f = rep[1]
+			seq_ = dic['seq'][d:f]
+			prop.append(prop_calculator(seq_))
+		dic['aa_prop'] = prop
+
+
+
+	
+
+	#for i in range(len(dico.keys())) :
+	#for idt, dic in dico.items() :
+	#for i in range(len(dico.keys())) :
+
+
+
+	print(dico)
 
 
 	print(basename(file))
+
+
+
+def Proteom_all(path) :
+
+	dico = {}
+	with open(path+"/tmhmm_filtred/New_Proteom_All.txt", "r") as filin :
+		for line in filin : 
+			if line.startswith('>') :
+				idt = line.strip()
+				dico[idt] = ""
+			else :
+				dico[idt] += line.strip()
+
+	return dico
+
+
+def prop_calculator(sequence) :
+
+	dico = {}
+	for letter in sequence :
+		if letter not in dico.keys() :
+			dico[letter] = 1
+		else :
+			dico[letter] += 1
+
+	total_aa = sum(dico.values()) #ou len(sequence)
+
+	freq_dico = {}
+	for cle, value in dico.items() :
+		if cle not in freq_dico.keys() :
+			freq_dico[cle] = value/total_aa
+
+
+	for aa in list_of_aa :
+		if aa not in freq_dico :
+			freq_dico[aa] = 0
+
+
+	return freq_dico
 	
 
 def verif() : 
@@ -543,7 +619,7 @@ if __name__ == '__main__' :
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
-
+	#path_all = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/tmhmm_filtred/New_Proteom_All.txt"
 	#read = reading(path)
 
 
