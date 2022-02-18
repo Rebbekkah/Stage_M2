@@ -1,16 +1,54 @@
+"""Code that parses and analyze the different outputs of softwares
+   and returns a dataframe for each proteins and their results
+
+Softwares : 
+	- TMHMM
+	- ARD2
+	- DEEPLOC
+	- LOCALIZER
+	- RADAR
+	- WOLFPSORT
+
+------------------------------------------------------------------
+Rebecca GOULANCOURT
+M2 BIOLOGIE - INFORMATIQUE
+Université de Paris 2021 - 2022
+Stage M2 - supervisor : Ingrid Lafontaine
+------------------------------------------------------------------
+
+"""
+
+# Modules
 import pandas as pd
 import numpy as np
 import sys
 import os
 from os.path import basename
 import glob
-#import codecs
-#import unicodedata
-#import unidecode
 from operator import itemgetter
 
 
 def reading(fichier) :
+	''' Function that reads the output of the TMHMM software and decides
+		wether the protein id is to keep for the rest of the analysis
+
+	Parameters
+	----------
+	fichier : str
+		Output file
+
+	Writes
+	------
+	output_Analyzeseq_ToKeep.txt : txt file
+		File where each line contain an protein id to keep
+
+	Returns
+	-------
+	id_to_keep : list
+		List of protein identifiers that doesn't have transmembrane domain
+		(after the 68 amino acid)
+
+	'''
 	print("File :", basename(fichier))
 	with open(fichier, "r") as filin :
 		id_list_ok = []
@@ -69,6 +107,22 @@ def reading(fichier) :
 
 
 def listing(path, pattern) :
+	''' Funtion that perform the reading function on many files
+
+	Parameters
+	----------
+	path : str
+		Path to where the tmhmm outputs are located
+
+	pattern : str
+		Pattern to recognize the tmhmm files 
+
+	Returns
+	-------
+	prot : list
+		List of the id to keep for each file, 1 element of the list = 1 file
+
+	'''
 
 	fich = glob.glob(path+pattern)
 	print(fich)
@@ -83,6 +137,23 @@ def listing(path, pattern) :
 
 
 def proteome_maker(ToKeep, path_proteom) :
+	''' Production of the new proteom from the id that were selected thru 
+		the reading funtion ('meta proteom' that concatenate all ids from the files)
+
+	Parameters
+	----------
+	ToKeep : list
+		List of protein identifiers that we kept
+
+	path_proteom : str
+		Path to the initial proteoms that contains id and their sequences
+
+	Returns
+	-------
+	dico2 : dict
+		Dictionnary of the metaproteom (key = id, value = sequence)
+
+	'''
 	print("-----------------proteom maker-----------------")
 	proteom = glob.glob(path_proteom+"*.fasta_line")
 
@@ -132,6 +203,24 @@ def proteome_maker(ToKeep, path_proteom) :
 
 
 def sep(path_proteom) :
+	''' Function that separates the meta proteom in the positive and
+		negative proteom that we had initially
+
+	Parameters
+	----------
+	path_proteom : str
+		Path to where the proteoms are located
+
+	Returns
+	-------
+	None
+
+	Writes
+	------
+	New_Proteom.txt : txt file
+		File of the new proteoms (negative and positive sets)
+
+	'''
 	print("-----------------separateur-----------------")
 	proteom = glob.glob(path_proteom+"*.fasta_line")
 	proteom = proteom[::-1]
@@ -173,7 +262,20 @@ def sep(path_proteom) :
 
 
 def ard2(file) :
-	#print(basename(file))
+	''' Read and parses ard2 output that we had on our new proteoms
+		(proteom of proteins without transmembrane domains)
+	
+	Parameters
+	----------
+	file : str
+		Output ard2 file to perform the analysis
+
+	Returns
+	-------
+	dico_f : dict
+		Dictionnary 
+
+	'''
 	dico = {}
 	with open(file, "r") as filin :
 		for line in filin :
@@ -456,6 +558,19 @@ def radar(file) :
 
 
 def Proteom_all(path) :
+	''' Function that read the new meta proteom that we'll use in other functions 
+	
+	Parameters
+	----------
+	path : str
+		Path to the New_Proteom_All.txt file
+
+	Returns
+	-------
+	dico : dict
+		Dictionnary of the metaproteom (key = id, value = sequence)
+
+	'''
 
 	dico = {}
 	with open(path+"/tmhmm_filtred/New_Proteom_All.txt", "r") as filin :
@@ -470,6 +585,21 @@ def Proteom_all(path) :
 
 
 def prop_calculator(sequence) :
+	''' Calculator of the amino acid proportion in a sequence
+	
+	Parameters
+	----------
+	sequence : str
+		Sequence on which we want to calculates its amino acid frequency
+
+	Returns
+	-------
+	freq_dico : dict
+		Dictionnary of the frequency (key = amino acid, value = its proportion
+		within the sequence)
+
+	'''
+
 
 	dico = {}
 	for letter in sequence :
@@ -518,9 +648,20 @@ def verif() :
 
 
 def Data_Create() :
+	''' Function that reads each outputs of each softwares and perform 
+		the corresponding function to parse it
 
-	#df_pos = pd.DataFrame()
-	#df_neg = pd.DataFrame()
+	Parameters
+	----------
+	None
+
+	Returns
+	-------
+	dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, dico_radar : dict
+		Dictionnaries of dictionnary (key = negative/positive set, 
+		value = results of the parsing (values) for each prot id (keys)
+
+	'''
 
 	file_ard2 = glob.glob(path_ard2+"STDOUT_"+"*")
 	#print(file_ard2)
@@ -618,6 +759,23 @@ def Data_Create() :
 
 def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 	dico_radar) :
+	''' Construction of the dataframe that contains all the results for
+		each sequence (index = sequence, columns = results of the parsing
+		for a software)
+		The 'type' column correspond to the type of the set 
+		(0 --> positive/ 1 --> negative)
+
+	Parameters
+	----------
+	dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, dico_radar : dict
+		Same dictionnaries returned in the Data_Create() function
+
+	Returns
+	-------
+	df : Dataframe
+		Dataframe of the parsing results for each sequence
+
+	'''
 
 	#df = pd.DataFrame({'type' : [], 'trp2' : [], 'wolfpsort' : [], 'ard2' : [], 'localizer' : [], 'deeploc' : [], \
 	#	'radar' : []})
@@ -720,6 +878,8 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 
 
 	print(df)
+
+	return df
 
 
 
