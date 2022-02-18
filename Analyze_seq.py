@@ -451,15 +451,7 @@ def radar(file) :
 		dic['l_rep'] = lgr
 		del dic['seq']
 
-
-
-
-
-	#print(dico)
-
-
-	print(basename(file))
-
+	return dico
 
 
 def Proteom_all(path) :
@@ -604,8 +596,19 @@ def Data_Create() :
 	#print(dico_dploc)
 
 
-	radar(file_radar[0])
+	#radar(file_radar[0])
 	#radar(path_pb)
+	dico_radar = {}
+	for file in file_radar :
+		if basename(file) == 'New_Proteom_1196_tem_neg.fasta_line.txt_radar' :
+			dico_radar['neg'] = {}
+			dico_radar['neg'] = radar(file)
+		if basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_radar' :
+			dico_radar['pos'] = {}
+			dico_radar['pos'] = radar(file)
+
+
+	return dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, dico_radar
 
 
 if __name__ == '__main__' :
