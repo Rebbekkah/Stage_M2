@@ -609,6 +609,8 @@ def Data_Create() :
 			dico_radar['pos'] = radar(file)
 
 
+	print(file_trgp2, len(file_trgp2), dico_trgp2.keys())
+
 	return dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, dico_radar
 
 
@@ -646,13 +648,22 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 	#	df.append(idt_all[i])
 	print(df, df.shape)
 
-	idt_l = []
-	for tem, dic in dico_trgp2.items() :
+	#idt_l = []
+	#print(dico_trgp2.keys())
+	print(dico_ard2.keys())
+	for tem, dic in dico_ard2.items() :
 		print(tem)
+		idt_l = []
 		for idt, val in dic.items() :
 			#print(idt)
 			idt_l.append(idt)
+		if tem == 'neg' :
+			for i in range(len(df.index)) :
+				print(df.loc[i])
+				if df.loc[i] in idt_l :
+					df['type'].replace(0, 1)
 	#print(idt_l, len(idt_l))
+	
 
 
 
