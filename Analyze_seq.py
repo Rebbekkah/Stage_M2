@@ -636,6 +636,8 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 	col = ['type', 'trp2', 'wolfpsort', 'ard2', 'localizer', 'deeploc', \
 	'radar']
 	df = pd.DataFrame(0, index = idt_all, columns = col)
+	#df = pd.DataFrame(0, index = 0:len(idt_all), columns = col)
+	#df = pd.DataFrame(columns = col)
 
 	#print(len(idt_all))
 	#df.index = [0:len(idt_all)]
@@ -646,24 +648,62 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 	#for i in range(len(idt_all)) :
 		#df.loc[i] = idt_all[i]
 	#	df.append(idt_all[i])
-	print(df, df.shape)
-
-	#idt_l = []
-	#print(dico_trgp2.keys())
+	#print(df, df.shape)
+	#print(type(df.index))
+	#print(df.index)
+	
 	print(dico_ard2.keys())
 	for tem, dic in dico_ard2.items() :
-		print(tem)
 		idt_l = []
 		for idt, val in dic.items() :
-			#print(idt)
 			idt_l.append(idt)
 		if tem == 'neg' :
-			for i in range(len(df.index)) :
-				print(df.loc[i])
-				if df.loc[i] in idt_l :
-					df['type'].replace(0, 1)
-	#print(idt_l, len(idt_l))
+			for idt in df.index :
+				idt = str(idt)
+				if idt in idt_l :
+					df.loc[idt, 'type'] = 1
+	#print(df[df['type'] == 1].index.tolist())
+	#print(df[df['type'] == 0].index.tolist())
 	
+	#print(df)
+
+	for tem, dic in dico_trgp2.items() :
+		for idt, res in dic.items() :
+			idt = ">"+idt
+			if idt in idt_all : 
+				df.loc[idt, 'trp2'] = res
+
+	#print(df.index, len(df.index))
+	#print(dico_trgp2)
+	
+	#print(dico_wlf)
+
+	for tem, dic in dico_wlf.items() :
+		for idt, res in dic.items() :
+			idt = ">"+idt
+			if idt in idt_all : 
+				df.loc[idt, 'wolfpsort'] = res
+
+
+	#print(dico_ard2)
+	for tem, dic in dico_ard2.items() :
+		for idt, res in dic.items() :
+			if idt in idt_all : 
+				#df.loc[idt, 'ard2'] = {}
+				df.loc[idt, 'ard2'] = [res]	
+
+	#print(df['ard2'])
+	
+
+	print(dico_loca)
+	for tem, dic in dico_loca.items() :
+		for idt, res in dic.items() :
+			if idt in idt_all : 
+				#df.loc[idt, 'ard2'] = {}
+				df.loc[idt, 'ard2'] = [res]	
+
+
+	print(df)
 
 
 
