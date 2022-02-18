@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import sys
 import os
 from os.path import basename
@@ -611,6 +612,54 @@ def Data_Create() :
 	return dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, dico_radar
 
 
+
+
+def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
+	dico_radar) :
+
+	#df = pd.DataFrame({'type' : [], 'trp2' : [], 'wolfpsort' : [], 'ard2' : [], 'localizer' : [], 'deeploc' : [], \
+	#	'radar' : []})
+
+
+	dico_all = Proteom_all(path_output)
+	idt_all = []
+
+	for idt in dico_all.keys() :
+		idt_all.append(idt)
+
+	idt_all = np.array(idt_all)
+	print(idt_all, len(idt_all))
+
+
+	col = ['type', 'trp2', 'wolfpsort', 'ard2', 'localizer', 'deeploc', \
+	'radar']
+	df = pd.DataFrame(0, index = idt_all, columns = col)
+
+	#print(len(idt_all))
+	#df.index = [0:len(idt_all)]
+
+	#df.append(idt_all, ignore_index = True)
+	#print(df.shape)
+
+	#for i in range(len(idt_all)) :
+		#df.loc[i] = idt_all[i]
+	#	df.append(idt_all[i])
+	print(df, df.shape)
+
+	idt_l = []
+	for tem, dic in dico_trgp2.items() :
+		print(tem)
+		for idt, val in dic.items() :
+			#print(idt)
+			idt_l.append(idt)
+	#print(idt_l, len(idt_l))
+
+
+
+
+
+
+
 if __name__ == '__main__' :
 
 	#path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/tests/proteome_diatom.tmhmm"
@@ -654,7 +703,9 @@ if __name__ == '__main__' :
 	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/"
 	path_pb = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/idt_neg.txt"
 
-	data_final = Data_Create()
+	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
+	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
+
 	#verif()
 
 
