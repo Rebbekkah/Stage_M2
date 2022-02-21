@@ -305,7 +305,7 @@ def ard2(file) :
 
 				if not not l :
 					p = max(l)
-					#print(p)
+					#print(window, p)
 
 					for elem in window :
 						if p == elem[1] :
@@ -313,8 +313,13 @@ def ard2(file) :
 								dico_linker[elem[0]].extend([elem[1:]])
 							else :
 								dico_linker[elem[0]] = [elem[1:]]
+
+
 				window = []
 			dico[idt] = dico_linker
+
+	#print(dico)
+	#print("-----------------------------------------")
 
 
 	proteoms = glob.glob(path_tmhmm+'*.fasta_line.txt')
@@ -338,19 +343,30 @@ def ard2(file) :
 					else :
 						dico_pos[idt] += line.strip()
 
-
+	
 	dico_f = {}
 	if basename(file) == 'STDOUT_neg' :
 		for idt in dico_neg.keys() :
-			for linker in dico.values() :
-				dico_f[idt] = dico_neg[idt]
-				dico_f[idt] = linker
+			#print(idt)
+			dico_f[idt] = {}
+			print(dico_f)
+			for key, linker in dico.items() :
+				#print("--------------")
+				#print(basename(file))
+				#print(linker)
+				#dico_f[idt] = {}
+				#print(dico_f)
+				dico_f[idt] = dico[key]
 	elif basename(file) == 'STDOUT_pos' :
+		print("------------------------------")
 		for idt in dico_pos.keys() :
-			for linker in dico.values() :
-				dico_f[idt] = dico_pos[idt]
-				dico_f[idt] = linker
+			for key, linker in dico.items() :
+				#dico_f[idt] = dico_pos[idt]
+				#dico_f[idt] = linker
+				dico_f[idt] = dico[key]
 
+	print(dico_f)
+	print(basename(file))
 
 	'''
 	for i in range(len(window)-1) :
@@ -1025,11 +1041,14 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 
 
 def Tsne(dataframe) :
-
 	pass
 
 	#for col in dataframe.columns :
 	#	print(col)
+
+	#print(dataframe['ard2'])
+
+
 
 
 
