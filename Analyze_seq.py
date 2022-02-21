@@ -278,34 +278,112 @@ def ard2(file) :
 	'''
 
 	dico = {}
-	keep = []
 	with open(file, 'r') as filin :
 		for line in filin :
 			if line.startswith('>') :
+				#print(line)
 				idt = line.split()[0]
 				dico[idt] = ""
+				dico_linker = {}
 				start = 0
 				pos = 0
-				end = 7
 				window = []
+				to_keep = []
 			else :
 				pos += 1
+				start += 1
 				elem = line.split("\t")[0]
 				elem = elem.split()[0]
 				aa = elem[0]
 				proba = float(elem[1:5])
 				window.append([aa, proba, pos])
+				#print(len(window))
 
-			if pos > 6 :
-				pos = 0
-				window = []
-			elif len(window) == 6 :
+			if len(window) == 6 :
 				print("-------------")
-				#print(window)
+				print(window, len(window))
+				l = []
+
+				for elem in window :
+					if elem[1] > 0.1 :
+						l.append(elem[1])
+				if not not l :
+					p = max(l)
+					print(p)
+				for elem in window :
+					if p == elem[1] :
+						dico_linker = elem[1:]
+
+
+			if start >= 6 :
+				start = 0
+				window = []
+
+
+
+
+
+	'''
+	for i in range(len(window)-1) :
+		p = window[i][1]
+		#print(p)
+		if p > 0.1 :
+			k = window[i]
+			if window[i+1][1] > p :
+				k = window[i+1]
+			#print(k[1:])
+			to_keep.append(k)
+#print(to_keep, len(to_keep))
+for i in range(len(to_keep)) :
+	if to_keep[i][0] in dico_linker.keys() :
+		dico_linker[to_keep[i][0]].extend([k[1:]])
+	else :
+		dico_linker[to_keep[i][0]] = [k[1:]]
+dico[idt] = dico_linker
+	'''
+				#l = []
 				#for l in window :
-				for i in range(len(window)-1) :
-						if window[i][1] > 0.1 and window[i+1][1] > window[i][1] : 
-							print(window[i], window[i+1])
+				#for i in range(len(window)-1) :
+				#	l.append(window[i][1])
+				#print(l)
+				#p = max(l)
+				#print(p)
+				#for i in range(len(window)) :
+				#	if window[i][1] == p and p > 0.1 :
+				#		to_keep.append(window[i])
+				#	else :
+				#		continue
+			#print(to_keep, len(to_keep))
+			#dico[idt] = to_keep
+	#print(dico)
+	print(basename(file))
+	#print(dico)
+
+
+
+
+					
+
+
+
+	'''
+	#if window[i][1] > 0.1 :
+	#	p = window[i][1] 
+	#if window[i][1] > 0.1 or window[i+1][1] > window[i][1] : 
+	if window[i][1] > 0.1 :
+		#print(window[i], window[i+1])
+		#print(window)
+		#to_keep.append(window[i])
+		to_keep = window[i]
+		#keep.append(to_keep)
+	else :
+		to_keep = 0
+	if window[i+1][1] > window[i][1] :
+		to_keep = window[i+1]
+		#to_keep.append(window[i+1])
+	if to_keep != 0 :
+		keep.append(to_keep)
+	'''
 
 	'''
 	if l[1] > 0.1 :
@@ -314,7 +392,7 @@ def ard2(file) :
 			keep.append(l)
 	'''
 
-	print(keep, len(keep))
+	#print(keep, len(keep))
 
 	'''
 	dico = {}
