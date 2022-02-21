@@ -284,13 +284,10 @@ def ard2(file) :
 				idt = line.split()[0]
 				dico[idt] = ""
 				dico_linker = {}
-				start = 0
 				pos = 0
 				window = []
-				to_keep = []
 			else :
 				pos += 1
-				start += 1
 				elem = line.split("\t")[0]
 				elem = elem.split()[0]
 				aa = elem[0]
@@ -316,12 +313,44 @@ def ard2(file) :
 								dico_linker[elem[0]].extend([elem[1:]])
 							else :
 								dico_linker[elem[0]] = [elem[1:]]
-				start = 0
 				window = []
 			dico[idt] = dico_linker
 
-	print(dico)
-	print(basename(file))
+
+	proteoms = glob.glob(path_tmhmm+'*.fasta_line.txt')
+
+	dico_pos = {}
+	dico_neg = {}
+	for p in proteoms :
+		with open(p, "r") as filin :
+			if basename(p) == 'New_Proteom_1196_tem_neg.fasta_line.txt' :
+				for line in filin :
+					if line.startswith('>') :
+						idt = line.strip()
+						dico_neg[idt] = ""
+					else :
+						dico_neg[idt] += line.strip()
+			elif basename(p) == 'New_Proteom_1081_tem_pos.fasta_line.txt' :
+				for line in filin :
+					if line.startswith('>') :
+						idt = line.strip()
+						dico_pos[idt] = ""
+					else :
+						dico_pos[idt] += line.strip()
+
+
+	dico_f = {}
+	if basename(file) == 'STDOUT_neg' :
+		for idt in dico_neg.keys() :
+			for linker in dico.values() :
+				dico_f[idt] = dico_neg[idt]
+				dico_f[idt] = linker
+	elif basename(file) == 'STDOUT_pos' :
+		for idt in dico_pos.keys() :
+			for linker in dico.values() :
+				dico_f[idt] = dico_pos[idt]
+				dico_f[idt] = linker
+
 
 	'''
 	for i in range(len(window)-1) :
@@ -990,6 +1019,7 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 		for idt, res in dic.items() :
 			if idt in idt_all : 
 				df.loc[idt, 'radar'] = [res]
+
 
 	return df
 
