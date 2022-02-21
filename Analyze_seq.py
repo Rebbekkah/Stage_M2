@@ -276,6 +276,47 @@ def ard2(file) :
 		Dictionnary of the amino acid linker and its probability ( > 0.10)
 
 	'''
+
+	dico = {}
+	keep = []
+	with open(file, 'r') as filin :
+		for line in filin :
+			if line.startswith('>') :
+				idt = line.split()[0]
+				dico[idt] = ""
+				start = 0
+				pos = 0
+				end = 7
+				window = []
+			else :
+				pos += 1
+				elem = line.split("\t")[0]
+				elem = elem.split()[0]
+				aa = elem[0]
+				proba = float(elem[1:5])
+				window.append([aa, proba, pos])
+
+			if pos > 6 :
+				pos = 0
+				window = []
+			elif len(window) == 6 :
+				print("-------------")
+				#print(window)
+				#for l in window :
+				for i in range(len(window)-1) :
+						if window[i][1] > 0.1 and window[i+1][1] > window[i][1] : 
+							print(window[i], window[i+1])
+
+	'''
+	if l[1] > 0.1 :
+		p = l[1]
+		if l[1] >= p :
+			keep.append(l)
+	'''
+
+	print(keep, len(keep))
+
+	'''
 	dico = {}
 	with open(file, "r") as filin :
 		for line in filin :
@@ -331,10 +372,9 @@ def ard2(file) :
 			for linker in dico.values() :
 				dico_f[idt] = dico_pos[idt]
 				dico_f[idt] = linker
+	'''
 
-
-
-''' ###############################
+	'''
 	for tem, dic in dico_f.items() :
 		for idt, liste in dic.items() :
 			l = []
@@ -343,15 +383,18 @@ def ard2(file) :
 					if liste[i+2] == liste[i]+1 :
 						print(liste)
 						if int(liste[i-1]) > int(liste[i+1]) : 
+							pass
 							l.append(liste[i-1])
 							l.append(liste[i])
 							liste.remove(liste[i+1], liste[i+2])
 						elif int(liste[i+1]) > int(liste[i-1]) :
+							pass
 							l.append(liste[i+1])
 							l.append(liste[i+2])
 							liste.remove(liste[i-1], liste[i])					
 
-''' ###############################
+	'''
+
 
 	return dico_f
 
@@ -880,9 +923,16 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 			if idt in idt_all : 
 				df.loc[idt, 'radar'] = [res]
 
-	print(df)
-
 	return df
+
+
+def Tsne(dataframe) :
+
+	pass
+
+	#for col in dataframe.columns :
+	#	print(col)
+
 
 
 if __name__ == '__main__' :
@@ -925,4 +975,4 @@ if __name__ == '__main__' :
 
 	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
-
+	tsne = Tsne(final_results)
