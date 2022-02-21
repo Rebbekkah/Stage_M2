@@ -281,7 +281,6 @@ def ard2(file) :
 	with open(file, 'r') as filin :
 		for line in filin :
 			if line.startswith('>') :
-				#print(line)
 				idt = line.split()[0]
 				dico[idt] = ""
 				dico_linker = {}
@@ -297,31 +296,32 @@ def ard2(file) :
 				aa = elem[0]
 				proba = float(elem[1:5])
 				window.append([aa, proba, pos])
-				#print(len(window))
 
 			if len(window) == 6 :
-				print("-------------")
-				print(window, len(window))
+				#print("-------------")
+				#print(window, len(window))
 				l = []
 
 				for elem in window :
 					if elem[1] > 0.1 :
 						l.append(elem[1])
+
 				if not not l :
 					p = max(l)
-					print(p)
-				for elem in window :
-					if p == elem[1] :
-						dico_linker = elem[1:]
+					#print(p)
 
-
-			if start >= 6 :
+					for elem in window :
+						if p == elem[1] :
+							if elem[0] in dico_linker.keys() :
+								dico_linker[elem[0]].extend([elem[1:]])
+							else :
+								dico_linker[elem[0]] = [elem[1:]]
 				start = 0
 				window = []
+			dico[idt] = dico_linker
 
-
-
-
+	print(dico)
+	print(basename(file))
 
 	'''
 	for i in range(len(window)-1) :
@@ -355,16 +355,6 @@ dico[idt] = dico_linker
 				#		continue
 			#print(to_keep, len(to_keep))
 			#dico[idt] = to_keep
-	#print(dico)
-	print(basename(file))
-	#print(dico)
-
-
-
-
-					
-
-
 
 	'''
 	#if window[i][1] > 0.1 :
