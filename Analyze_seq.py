@@ -333,6 +333,26 @@ def ard2(file) :
 				dico_f[idt] = linker
 
 
+
+''' ###############################
+	for tem, dic in dico_f.items() :
+		for idt, liste in dic.items() :
+			l = []
+			for i in range(len(liste)-2) :
+				if type(liste[i]) == type(0) :
+					if liste[i+2] == liste[i]+1 :
+						print(liste)
+						if int(liste[i-1]) > int(liste[i+1]) : 
+							l.append(liste[i-1])
+							l.append(liste[i])
+							liste.remove(liste[i+1], liste[i+2])
+						elif int(liste[i+1]) > int(liste[i-1]) :
+							l.append(liste[i+1])
+							l.append(liste[i+2])
+							liste.remove(liste[i-1], liste[i])					
+
+''' ###############################
+
 	return dico_f
 
 
@@ -507,21 +527,21 @@ def radar(file) :
 			for i in range(len(rep2)-1) : 
 				if rep2[i+1][0] > rep2[i][0] and rep2[i+1][1] < rep2[i][1] :
 					nb += 1
-					print(rep2, len(rep2))
-					print(rep2[i], rep2[i+1])
+					#print(rep2, len(rep2))
+					#print(rep2[i], rep2[i+1])
 					to_remove.append(rep2[i+1])
 			
 				if rep2[i][0] > rep2[i+1][0] and rep2[i][1] < rep2[i+1][0] :
 					nb += 1
-					print(rep2)
-					print(rep2[i], rep2[i+1])
+					#print(rep2)
+					#print(rep2[i], rep2[i+1])
 					to_remove.append(rep2[i])
 
 				if rep2[i][0] < rep2[i+1][1] and rep2[i][1] > rep2[i+1][1] \
 				and rep2[i+1][0] < rep2[i][0] :
 					nb += 1
-					print(rep2)
-					print(rep2[i], rep2[i+1])
+					#print(rep2)
+					#print(rep2[i], rep2[i+1])
 					debut = int(rep[i+1][0])
 					fin = int(rep[i][1])
 					new = [debut, fin]
@@ -531,30 +551,31 @@ def radar(file) :
 				if rep2[i][1] < rep2[i+1][1] and rep2[i+1][0] > rep2[i+1][0] \
 				and rep2[i][1] > rep2[i+1][0] :
 					nb += 1
-					print(rep2)
-					print(rep2[i], rep2[i+1])
+					#print(rep2)
+					#print(rep2[i], rep2[i+1])
 					debut = int(rep2[i][0])
 					fin = int(rep2[i+1][1])
 					new = [debut, fin]
 					to_modif.append(rep2[i], rep2[i+1])
 					to_change.append(new)
 
+			'''
 			if to_remove :
 				print("REPT À SUPP ----> ", to_remove, len(to_remove))
 			if to_change :
 				print("POSITIONS À MODIFIER ----> ", to_change)
 			#else :
 			#	print("type de chevauchement inexistant")
-
+			'''
 			if nb != 0 :
-				print("nb de chevauchement dans la séquence :", nb)
+				#print("nb de chevauchement dans la séquence :", nb)
 				k += 1
 				for elem in to_remove :
-					print("REMOVING")
-					print(elem)
+				#	print("REMOVING")
+				#	print(elem)
 					rep2.remove(elem)
-					print(rep2, len(rep2))
-				print("\n============================\n")
+				#	print(rep2, len(rep2))
+				#print("\n============================\n")
 
 			dic['pos'] = rep2
 
@@ -788,7 +809,7 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 		each sequence (index = sequence, columns = results of the parsing
 		for a software)
 		The 'type' column correspond to the type of the set 
-		(0 --> positive/ 1 --> negative)
+		(0 --> positive samples/ 1 --> negative samples)
 
 	Parameters
 	----------
@@ -858,8 +879,6 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 		for idt, res in dic.items() :
 			if idt in idt_all : 
 				df.loc[idt, 'radar'] = [res]
-
-
 
 	print(df)
 
