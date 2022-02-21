@@ -273,7 +273,7 @@ def ard2(file) :
 	Returns
 	-------
 	dico_f : dict
-		Dictionnary 
+		Dictionnary of the amino acid linker and its probability ( > 0.10)
 
 	'''
 	dico = {}
@@ -299,7 +299,6 @@ def ard2(file) :
 
 
 	proteoms = glob.glob(path_tmhmm+'*.fasta_line.txt')
-	#print(proteoms)
 
 	dico_pos = {}
 	dico_neg = {}
@@ -338,7 +337,20 @@ def ard2(file) :
 
 
 def wolfpsort(file) :
+	''' Read and parses wolfpsort output that we had on our new proteoms
+		(proteom of proteins without transmembrane domains)
+	
+	Parameters
+	----------
+	file : str
+		Output wolfpsort file to perform the analysis
 
+	Returns
+	-------
+	dico : dict
+		Dictionnary of the adressing for each protein
+
+	'''
 	dico = {}
 	with open(file, "r") as filin :
 		for line in filin :
@@ -354,7 +366,20 @@ def wolfpsort(file) :
 
 
 def targetp2(file) :
+	''' Read and parses targetp2 output that we had on our new proteoms
+		(proteom of proteins without transmembrane domains)
+	
+	Parameters
+	----------
+	file : str
+		Output targetp2 file to perform the analysis
 
+	Returns
+	-------
+	dico : dict
+		Dictionnary of the adressing for each protein
+
+	'''
 	dico = {}
 	with open(file, "r") as filin :
 		for line in filin :
@@ -386,8 +411,20 @@ def deeploc(file) :
 
 
 def localizer(file) : 
+	''' Read and parses localizer output that we had on our new proteoms
+		(proteom of proteins without transmembrane domains)
+	
+	Parameters
+	----------
+	file : str
+		Output localizer file to perform the analysis
 
-	#print(basename(file))
+	Returns
+	-------
+	dico : dict
+		Dictionnary of the adressing for each protein
+
+	'''
 	dico = {}
 	non = ['Over', '#', 'Identifier', '-']
 	with open(file, "r") as filin :
@@ -411,10 +448,23 @@ def localizer(file) :
 
 
 def radar(file) :
+	''' Read and parses radar output that we had on our new proteoms
+		(proteom of proteins without transmembrane domains)
+	
+	Parameters
+	----------
+	file : str
+		Output radar file to perform the analysis
+
+	Returns
+	-------
+	dico : dict
+		Dictionnary of the postion, length and proportion of amino acid
+		of a found repetition in the sequence for each protein
+
+	'''
 
 	idt_list = []
-	#repet = []
-	#l = []
 	dico = {}
 	with open(file, "r", encoding = 'ascii', errors = 'ignore') as filin :
 		for line in filin :
@@ -422,19 +472,14 @@ def radar(file) :
 				repet = []
 				l = []
 				aa_prop = []
-				#seq = ""
 				idt_list.append(line.strip())
 				idt = line.strip()
 				dico[idt] = {'l_seq', 'l_rep', 'pos', 'aa_prop', 'seq'}
-				#print("----------------", idt)
 			if '- ' in line :
 				ligne = line.strip()
 				ligne = ligne.split()
 				debut = ligne[0].split('-')
 				pos = [debut[0], ligne[1]]
-				#longr = int(ligne[1]) - int(debut[0]) ####### positions plus bonnes après avoir modif les hevauchement \
-													  ####### à revoir 
-				#l.append(longr)
 				repet.append(pos)
 
 
@@ -442,8 +487,6 @@ def radar(file) :
 
 		k = 0
 		for idt, dic in dico.items() :
-			#print(idt)
-		#for dic in dico.values() :
 			to_remove = []
 			to_change = []
 			rep = []
@@ -483,7 +526,6 @@ def radar(file) :
 					fin = int(rep[i][1])
 					new = [debut, fin]
 					to_modif.append(rep2[i], rep2[i+1])
-					#new .append([debut, fin])
 					to_change.append(new)
 
 				if rep2[i][1] < rep2[i+1][1] and rep2[i+1][0] > rep2[i+1][0] \
@@ -495,7 +537,6 @@ def radar(file) :
 					fin = int(rep2[i+1][1])
 					new = [debut, fin]
 					to_modif.append(rep2[i], rep2[i+1])
-					#new.append([debut, fin])
 					to_change.append(new)
 
 			if to_remove :
@@ -513,8 +554,6 @@ def radar(file) :
 					print(elem)
 					rep2.remove(elem)
 					print(rep2, len(rep2))
-				#for elem in to_change :
-				#	print(elem)
 				print("\n============================\n")
 
 			dic['pos'] = rep2
@@ -625,19 +664,27 @@ def prop_calculator(sequence) :
 	
 
 def verif() : 
+	''' Verify if all the protein ids has been parsed (some errors in radar files
+	may make the parsing incomplete or wrong, linked to the text editor)
+	
+	Parameters
+	----------
+	None
+
+	Returns
+	-------
+	None
+
+	'''
 	
 	fich = path_output+"output_Analyzeseq_ToKeep_tem_neg.tmhmm.txt"
 	idt_radar = radar(path_pb)
-	#print(idt_radar, len(idt_radar))
-	#print(fich, len(fich))
 
 	idt_keep = []
 
 	with open(fich, 'r') as filin :
 		for line in filin :
 			idt_keep.append(line.strip())
-
-	#print(idt_keep, len(idt_keep))
 
 	idt_not = []
 	for idt in idt_keep :
@@ -664,17 +711,11 @@ def Data_Create() :
 	'''
 
 	file_ard2 = glob.glob(path_ard2+"STDOUT_"+"*")
-	#print(file_ard2)
 	file_wlf = glob.glob(path_wpsort+"*.wolfpsort")
-	#print(file_wlf)
 	file_trgp2 = glob.glob(path_trgp2+"short_output_"+"*")
-	#print(file_trgp2)
 	file_dploc = glob.glob(path_dploc+"*"+"deeploc"+"*")
-	#print(file_dploc)
 	file_loca = glob.glob(path_loca+'*'+'localizer')
-	#print(file_loca)
 	file_radar = glob.glob(path_radar+'*'+'radar')
-	#print(file_radar)
 
 	dico_trgp2 = {}
 	for file in file_trgp2 :
@@ -684,10 +725,7 @@ def Data_Create() :
 		if basename(file) == 'short_output_pos' :
 			dico_trgp2['pos'] = {}
 			dico_trgp2['pos'] = targetp2(file)
-	#print("------------------")
-	#print(dico_trgp2, len(dico_trgp2))
-	
-	#wolfpsort(file_wlf[0])
+
 
 	dico_wlf = {}
 	for file in file_wlf :
@@ -698,9 +736,6 @@ def Data_Create() :
 			dico_wlf['pos'] = {}
 			dico_wlf['pos'] = wolfpsort(file)
 
-	#print(dico_wlf)
-
-	#ard2(file_ard2[0])
 
 	dico_ard2 = {}
 	for file in file_ard2 :
@@ -711,9 +746,7 @@ def Data_Create() :
 			dico_ard2['pos'] = {}
 			dico_ard2['pos'] = ard2(file)
 	
-	#print(dico_ard2)
 
-	#localizer(file_loca[0])
 	dico_loca = {}
 	for file in file_loca : 
 		if basename(file) == 'New_Proteom_1196_tem_neg.fasta_line.txt_localizer' :
@@ -722,10 +755,7 @@ def Data_Create() :
 		if basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_localizer' :
 			dico_loca['pos'] = {}
 			dico_loca['pos'] = localizer(file)
-	#print(dico_loca)
-	#return dico_trgp2
 
-	#deeploc(file_dploc[0])
 	
 	dico_dploc = {}
 	for file in file_dploc :
@@ -735,11 +765,8 @@ def Data_Create() :
 		if basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_deeploc.txt' :
 			dico_dploc['pos'] = {}
 			dico_dploc['pos'] = deeploc(file)	
-	#print(dico_dploc)
 
 
-	radar(file_radar[0])
-	#radar(path_pb)
 	dico_radar = {}
 	for file in file_radar :
 		if basename(file) == 'New_Proteom_1196_tem_neg.fasta_line.txt_radar' :
@@ -749,8 +776,6 @@ def Data_Create() :
 			dico_radar['pos'] = {}
 			dico_radar['pos'] = radar(file)
 
-	#print(dico_radar)
-	#print(file_trgp2, len(file_trgp2), dico_trgp2.keys())
 
 	return dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, dico_radar
 
@@ -777,10 +802,6 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 
 	'''
 
-	#df = pd.DataFrame({'type' : [], 'trp2' : [], 'wolfpsort' : [], 'ard2' : [], 'localizer' : [], 'deeploc' : [], \
-	#	'radar' : []})
-
-
 	dico_all = Proteom_all(path_output)
 	idt_all = []
 
@@ -788,29 +809,12 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 		idt_all.append(idt)
 
 	idt_all = np.array(idt_all)
-	#print(idt_all, len(idt_all))
-
 
 	col = ['type', 'trp2', 'wolfpsort', 'ard2', 'localizer', 'deeploc', \
 	'radar']
 	df = pd.DataFrame(0, index = idt_all, columns = col)
-	#df = pd.DataFrame(0, index = 0:len(idt_all), columns = col)
-	#df = pd.DataFrame(columns = col)
 
-	#print(len(idt_all))
-	#df.index = [0:len(idt_all)]
 
-	#df.append(idt_all, ignore_index = True)
-	#print(df.shape)
-
-	#for i in range(len(idt_all)) :
-		#df.loc[i] = idt_all[i]
-	#	df.append(idt_all[i])
-	#print(df, df.shape)
-	#print(type(df.index))
-	#print(df.index)
-	
-	#print(dico_ard2.keys())
 	for tem, dic in dico_ard2.items() :
 		idt_l = []
 		for idt, val in dic.items() :
@@ -820,10 +824,6 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 				idt = str(idt)
 				if idt in idt_l :
 					df.loc[idt, 'type'] = 1
-	#print(df[df['type'] == 1].index.tolist())
-	#print(df[df['type'] == 0].index.tolist())
-	
-	#print(df)
 
 	for tem, dic in dico_trgp2.items() :
 		for idt, res in dic.items() :
@@ -831,45 +831,29 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 			if idt in idt_all : 
 				df.loc[idt, 'trp2'] = res
 
-	#print(df.index, len(df.index))
-	#print(dico_trgp2)
-	
-	#print(dico_wlf)
-
 	for tem, dic in dico_wlf.items() :
 		for idt, res in dic.items() :
 			idt = ">"+idt
 			if idt in idt_all : 
 				df.loc[idt, 'wolfpsort'] = res
 
-
-	#print(dico_ard2)
 	for tem, dic in dico_ard2.items() :
 		for idt, res in dic.items() :
 			if idt in idt_all : 
 				df.loc[idt, 'ard2'] = [res]	
 
-	#print(df['ard2'])
-	
-
-	#print(dico_loca)
 	for tem, dic in dico_loca.items() :
 		for idt, res in dic.items() :
 			idt = ">"+idt
 			if idt in idt_all : 
 				df.loc[idt, 'localizer'] = res
 
-
-	#print(dico_dploc)
 	for tem, dic in dico_dploc.items() :
 		for idt, res in dic.items() :
 			idt = ">"+idt
 			if idt in idt_all : 
 				df.loc[idt, 'deeploc'] = [res]
 
-
-
-	print(dico_radar)
 	for tem, dic in dico_radar.items() :
 		for idt, res in dic.items() :
 			if idt in idt_all : 
@@ -882,23 +866,13 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 	return df
 
 
-
-
-
-
-
 if __name__ == '__main__' :
 
-	#path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/tests/proteome_diatom.tmhmm"
-	path = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/tests_small/"
-	path_small_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/tests_small/"
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/"
 	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
-	#path_all = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/tmhmm_filtred/New_Proteom_All.txt"
-	#read = reading(path)
 
 
 
@@ -932,7 +906,4 @@ if __name__ == '__main__' :
 
 	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
-
-	#verif()
-
 
