@@ -345,27 +345,57 @@ def ard2(file) :
 
 	
 	dico_f = {}
+	link = []
 	if basename(file) == 'STDOUT_neg' :
+
 		for idt in dico_neg.keys() :
 			#print(idt)
+			#link = []
 			dico_f[idt] = {}
-			print(dico_f)
-			for key, linker in dico.items() :
-				#print("--------------")
-				#print(basename(file))
-				#print(linker)
-				#dico_f[idt] = {}
-				#print(dico_f)
-				dico_f[idt] = dico[key]
+			#dico_f[idt] = dico[]
+			#print(dico_f)
+		#print(dico_f)
+
+
+		for linker in dico.values() :
+			link.append(linker)
+
+		for index, key in enumerate(dico_f) :
+			#print(key)
+			dico_f[key] = link[index]
+
+		#for linker in dico.values() :
+		#	print(linker)
+		
+
+		print(dico_f, len(dico_f.keys()))
+
+		'''
+		for key, linker in dico.items() :
+			#print("--------------")
+			#print(basename(file))
+			#print(linker)
+			#dico_f[idt] = {}
+			#print(dico_f)
+			#dico_f[idt] = dico[key]
+			#dico_f[idt] = linker
+			link.append(linker)
+			dico_f[idt] = 
+		'''
 	elif basename(file) == 'STDOUT_pos' :
 		print("------------------------------")
 		for idt in dico_pos.keys() :
 			for key, linker in dico.items() :
+				#print(idt)
+				#print(linker)
 				#dico_f[idt] = dico_pos[idt]
 				#dico_f[idt] = linker
-				dico_f[idt] = dico[key]
+				dico_f[idt] = linker
 
-	print(dico_f)
+	#print(dico_f)
+	#print(dico.keys())
+
+	#print("---------", len(dico.keys()), len(dico_neg.keys()))
 	print(basename(file))
 
 	'''
