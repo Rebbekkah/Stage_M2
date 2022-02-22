@@ -347,196 +347,26 @@ def ard2(file) :
 	dico_f = {}
 	link = []
 	if basename(file) == 'STDOUT_neg' :
-
 		for idt in dico_neg.keys() :
-			#print(idt)
-			#link = []
 			dico_f[idt] = {}
-			#dico_f[idt] = dico[]
-			#print(dico_f)
-		#print(dico_f)
-
 
 		for linker in dico.values() :
 			link.append(linker)
 
 		for index, key in enumerate(dico_f) :
-			#print(key)
 			dico_f[key] = link[index]
 
-		#for linker in dico.values() :
-		#	print(linker)
 		
-
-		print(dico_f, len(dico_f.keys()))
-
-		'''
-		for key, linker in dico.items() :
-			#print("--------------")
-			#print(basename(file))
-			#print(linker)
-			#dico_f[idt] = {}
-			#print(dico_f)
-			#dico_f[idt] = dico[key]
-			#dico_f[idt] = linker
-			link.append(linker)
-			dico_f[idt] = 
-		'''
 	elif basename(file) == 'STDOUT_pos' :
 		print("------------------------------")
 		for idt in dico_pos.keys() :
-			for key, linker in dico.items() :
-				#print(idt)
-				#print(linker)
-				#dico_f[idt] = dico_pos[idt]
-				#dico_f[idt] = linker
-				dico_f[idt] = linker
+			dico_f[idt] = {}
 
-	#print(dico_f)
-	#print(dico.keys())
+		for linker in dico.values() :
+			link.append(linker)
 
-	#print("---------", len(dico.keys()), len(dico_neg.keys()))
-	print(basename(file))
-
-	'''
-	for i in range(len(window)-1) :
-		p = window[i][1]
-		#print(p)
-		if p > 0.1 :
-			k = window[i]
-			if window[i+1][1] > p :
-				k = window[i+1]
-			#print(k[1:])
-			to_keep.append(k)
-#print(to_keep, len(to_keep))
-for i in range(len(to_keep)) :
-	if to_keep[i][0] in dico_linker.keys() :
-		dico_linker[to_keep[i][0]].extend([k[1:]])
-	else :
-		dico_linker[to_keep[i][0]] = [k[1:]]
-dico[idt] = dico_linker
-	'''
-				#l = []
-				#for l in window :
-				#for i in range(len(window)-1) :
-				#	l.append(window[i][1])
-				#print(l)
-				#p = max(l)
-				#print(p)
-				#for i in range(len(window)) :
-				#	if window[i][1] == p and p > 0.1 :
-				#		to_keep.append(window[i])
-				#	else :
-				#		continue
-			#print(to_keep, len(to_keep))
-			#dico[idt] = to_keep
-
-	'''
-	#if window[i][1] > 0.1 :
-	#	p = window[i][1] 
-	#if window[i][1] > 0.1 or window[i+1][1] > window[i][1] : 
-	if window[i][1] > 0.1 :
-		#print(window[i], window[i+1])
-		#print(window)
-		#to_keep.append(window[i])
-		to_keep = window[i]
-		#keep.append(to_keep)
-	else :
-		to_keep = 0
-	if window[i+1][1] > window[i][1] :
-		to_keep = window[i+1]
-		#to_keep.append(window[i+1])
-	if to_keep != 0 :
-		keep.append(to_keep)
-	'''
-
-	'''
-	if l[1] > 0.1 :
-		p = l[1]
-		if l[1] >= p :
-			keep.append(l)
-	'''
-
-	#print(keep, len(keep))
-
-	'''
-	dico = {}
-	with open(file, "r") as filin :
-		for line in filin :
-			if line.startswith('>') :
-				pos = 0
-				idt = line.split()[0]
-				dico[idt] = ""
-				dico_linker = {} 
-			else :
-				pos += 1
-				elem = line.split("\t")[0]
-				elem = elem.split()[0]
-				aa = elem[0]
-				proba = elem[1:5]
-				if float(proba) > 0.10 :
-					if aa in dico_linker.keys() :
-						dico_linker[aa].extend([proba, pos])
-					else :
-						dico_linker[aa] = [proba, pos]
-			dico[idt] = dico_linker
-
-
-	proteoms = glob.glob(path_tmhmm+'*.fasta_line.txt')
-
-	dico_pos = {}
-	dico_neg = {}
-	for p in proteoms :
-		with open(p, "r") as filin :
-			if basename(p) == 'New_Proteom_1196_tem_neg.fasta_line.txt' :
-				for line in filin :
-					if line.startswith('>') :
-						idt = line.strip()
-						dico_neg[idt] = ""
-					else :
-						dico_neg[idt] += line.strip()
-			elif basename(p) == 'New_Proteom_1081_tem_pos.fasta_line.txt' :
-				for line in filin :
-					if line.startswith('>') :
-						idt = line.strip()
-						dico_pos[idt] = ""
-					else :
-						dico_pos[idt] += line.strip()
-
-
-	dico_f = {}
-	if basename(file) == 'STDOUT_neg' :
-		for idt in dico_neg.keys() :
-			for linker in dico.values() :
-				dico_f[idt] = dico_neg[idt]
-				dico_f[idt] = linker
-	elif basename(file) == 'STDOUT_pos' :
-		for idt in dico_pos.keys() :
-			for linker in dico.values() :
-				dico_f[idt] = dico_pos[idt]
-				dico_f[idt] = linker
-	'''
-
-	'''
-	for tem, dic in dico_f.items() :
-		for idt, liste in dic.items() :
-			l = []
-			for i in range(len(liste)-2) :
-				if type(liste[i]) == type(0) :
-					if liste[i+2] == liste[i]+1 :
-						print(liste)
-						if int(liste[i-1]) > int(liste[i+1]) : 
-							pass
-							l.append(liste[i-1])
-							l.append(liste[i])
-							liste.remove(liste[i+1], liste[i+2])
-						elif int(liste[i+1]) > int(liste[i-1]) :
-							pass
-							l.append(liste[i+1])
-							l.append(liste[i+2])
-							liste.remove(liste[i-1], liste[i])					
-
-	'''
+		for index, key in enumerate(dico_f) :
+			dico_f[key] = link[index]
 
 
 	return dico_f
