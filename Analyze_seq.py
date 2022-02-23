@@ -906,11 +906,6 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 
 def Modification(dataframe) :
 
-
-	#for col in dataframe :
-	#	print(dataframe[col], type(dataframe[col]))
-
-
 	dataframe['type'] = dataframe['type'].astype(float)
 
 	possible = []
@@ -966,30 +961,28 @@ def Modification(dataframe) :
 				maxi = 0
 				med = 0
 
-			dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
+			#dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
+			dataframe['ard2'].iloc[index] = float(nb)
 
 
 	for index, elem in enumerate(dataframe['radar']) :
-		print(elem, type(elem))
-		#print(dataframe['radar'].iloc[index])
 		if type(elem) != type(['liste']) :
 			print("-------->", elem, index)
 			print(dataframe['radar'].iloc[index])
 			dataframe['radar'].iloc[index] = [elem]
 		else :
 			for dic in elem :
-				#print(dic, type(dic))
 				prop_rep = float(dic['rep_prop'])
-				#print(prop_rep, type(prop_rep))
-				#prop_aa = dic['aa_prop']
 				dataframe['radar'].iloc[index] = prop_rep
 		
 	for col in dataframe :
 		print(dataframe[col], type(dataframe[col]))
 
 
+	return(dataframe)
 
-def Tsne() :
+
+def Tsne(dataframe) :
 
 	arr_list = []
 	for data in dataframe :
@@ -1000,12 +993,29 @@ def Tsne() :
 		#print(data, len(data))
 	print(arr_list, len(arr_list))
 
+	print("--------------------- avant loop -----")
 
 	tsne = []
+	i = 0
 	for array in arr_list :
+		print("--------------------- pendant loop -----")
+		print(array, type(array), array.shape, len(array))
+		for i in range(len(array)) :
+			if type(array[i]) == type([1]) :
+				print(array, array[i])
+				array[i] = np.asarray(array[i])
+		print("_____oui____")
+		#array = np.asarray(array)
+		#print("_____oui2____")
+		#print(array)
 		array = array.reshape(-1, 1)
+		#print(array)
+		#print(i)
 		tsne.append(tsne_data(array))
+		#i += 1
 
+
+	print("--------------------- après loop -----")
 
 	label = list(dataframe.columns)
 	print(label, type(label))
@@ -1073,4 +1083,9 @@ if __name__ == '__main__' :
 
 	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
-	tsne = Modification(final_results)
+	df = Modification(final_results)
+	tsne = Tsne(df)
+
+
+
+
