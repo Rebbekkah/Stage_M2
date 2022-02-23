@@ -23,6 +23,7 @@ import pandas as pd
 import numpy as np
 import sys
 import os
+import statistics
 from os.path import basename
 import glob
 from operator import itemgetter
@@ -631,7 +632,7 @@ def radar(file) :
 			dic['rep_prop'] = 0
 		del dic['seq']
 
-	print(dico)
+	#print(dico)
 	return dico
 
 
@@ -916,7 +917,6 @@ def Modification(dataframe) :
 	for res in dataframe['trp2'] :
 		if res not in possible :
 			possible.append(res)
-	#print(possible)
 
 
 	for index, poss in enumerate(possible) :
@@ -950,17 +950,43 @@ def Modification(dataframe) :
 	for index, elem in enumerate(dataframe['ard2']) :
 		nb = 0
 		for dic in elem :
+			l = []
+			#print(dic)
 			for aa, link in dic.items() :
-				nb += len(link) 
-		dataframe['ard2'].iloc[index] = nb
+				#print(link)
+				nb += len(link)
+				for i in range(len(link)) :
+					l.append(link[i][0])
+			if l :
+				mini = min(l)
+				maxi = max(l)
+				med = statistics.median(l)
+			else :
+				mini = 0
+				maxi = 0
+				med = 0
+
+			dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
 
 
-	#for index, elem in enumerate(dataframe['radar']) :
-		#print(elem)
+	for index, elem in enumerate(dataframe['radar']) :
+		print(elem, type(elem))
+		#print(dataframe['radar'].iloc[index])
+		if type(elem) != type(['liste']) :
+			print("-------->", elem, index)
+			print(dataframe['radar'].iloc[index])
+			dataframe['radar'].iloc[index] = [elem]
+		else :
+			for dic in elem :
+				#print(dic, type(dic))
+				prop_rep = float(dic['rep_prop'])
+				#print(prop_rep, type(prop_rep))
+				#prop_aa = dic['aa_prop']
+				dataframe['radar'].iloc[index] = prop_rep
+		
+	for col in dataframe :
+		print(dataframe[col], type(dataframe[col]))
 
-
-	#for col in dataframe :
-		#print(dataframe[col], type(dataframe[col]))
 
 
 def Tsne() :
