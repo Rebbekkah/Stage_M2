@@ -504,7 +504,7 @@ def radar(file) :
 				aa_prop = []
 				idt_list.append(line.strip())
 				idt = line.strip()
-				dico[idt] = {'l_seq', 'l_rep', 'pos', 'aa_prop', 'seq'}
+				dico[idt] = {'l_seq', 'l_rep', 'pos', 'rep_prop', 'aa_prop', 'seq'}
 			if '- ' in line :
 				ligne = line.strip()
 				ligne = ligne.split()
@@ -513,7 +513,8 @@ def radar(file) :
 				repet.append(pos)
 
 
-			dico[idt] = {'pos' : repet, 'l_rep' : l, 'aa_prop' : aa_prop, 'seq' : ""}
+			dico[idt] = {'pos' : repet, 'l_rep' : l, 'aa_prop' : aa_prop, \
+			'seq' : ""}
 
 		k = 0
 		for idt, dic in dico.items() :
@@ -622,8 +623,15 @@ def radar(file) :
 			lgr.append(l)
 		dic['aa_prop'] = prop
 		dic['l_rep'] = lgr
+		#print(len(dic['seq']))
+		#print(sum(lgr))
+		if sum(lgr) != 0 and len(dic['seq']) != 0 :
+			dic['rep_prop'] = sum(lgr)/len(dic['seq'])
+		else :
+			dic['rep_prop'] = 0
 		del dic['seq']
 
+	print(dico)
 	return dico
 
 
@@ -895,31 +903,26 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 	return df
 
 
-def Tsne(dataframe) :
+def Modification(dataframe) :
 
-	#for col in dataframe.columns :
-	#	print(col)
-	for col in dataframe :
-	#	print(index)
-		print(dataframe[col], type(dataframe[col]))
+
+	#for col in dataframe :
+	#	print(dataframe[col], type(dataframe[col]))
 
 
 	dataframe['type'] = dataframe['type'].astype(float)
-	#print(dataframe['type'])
 
 	possible = []
 	for res in dataframe['trp2'] :
 		if res not in possible :
 			possible.append(res)
-	print(possible)
+	#print(possible)
 
 
-	#print(dataframe['trp2'])
 	for index, poss in enumerate(possible) :
 		for elem in dataframe['trp2'] :
 			if elem == poss :
 				dataframe.replace(elem, float(index), inplace = True)
-	#print(dataframe['trp2'])
 
 	for elem in dataframe['wolfpsort'] :
 		if elem == 'chlo' :
@@ -928,15 +931,40 @@ def Tsne(dataframe) :
 			dataframe.replace(elem, float(2), inplace = True)
 		else : 
 			dataframe.replace(elem, float(0), inplace = True)
-	#print(dataframe['wolfpsort'])
 
-	
+	for elem in dataframe['localizer'] :
+		if elem == 'Y' :
+			dataframe.replace(elem, float(1), inplace = True)
+		else :
+			dataframe.replace(elem, float(0), inplace = True)
 
 
+	for index, elem in enumerate(dataframe['deeploc']) :
+		probability = []
+		for key, prob in elem[0].items() :
+			probability.append(float(prob))
+		p = max(probability)
+		dataframe['deeploc'].iloc[index] = p
 
 
+	for index, elem in enumerate(dataframe['ard2']) :
+		nb = 0
+		for dic in elem :
+			for aa, link in dic.items() :
+				nb += len(link) 
+		dataframe['ard2'].iloc[index] = nb
 
-	'''
+
+	#for index, elem in enumerate(dataframe['radar']) :
+		#print(elem)
+
+
+	#for col in dataframe :
+		#print(dataframe[col], type(dataframe[col]))
+
+
+def Tsne() :
+
 	arr_list = []
 	for data in dataframe :
 		#print(dataframe[data])
@@ -962,7 +990,7 @@ def Tsne(dataframe) :
 	plt.legend(label, prop = {'size' : 5.7})
 	plt.title("Tsne of negative and positiv sets", fontsize = 15)
 	plt.show()
-	'''	
+
 
 
 def tsne_data(to_data) :
@@ -1019,4 +1047,4 @@ if __name__ == '__main__' :
 
 	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
-	tsne = Tsne(final_results)
+	tsne = Modification(final_results)
