@@ -26,6 +26,9 @@ import os
 from os.path import basename
 import glob
 from operator import itemgetter
+import seaborn as sns
+from sklearn.manifold import TSNE
+from matplotlib import pyplot as plt
 
 
 def reading(fichier) :
@@ -295,17 +298,13 @@ def ard2(file) :
 				window.append([aa, proba, pos])
 
 			if len(window) == 6 :
-				#print("-------------")
-				#print(window, len(window))
 				l = []
-
 				for elem in window :
 					if elem[1] > 0.1 :
 						l.append(elem[1])
 
 				if not not l :
 					p = max(l)
-					#print(window, p)
 
 					for elem in window :
 						if p == elem[1] :
@@ -317,9 +316,6 @@ def ard2(file) :
 
 				window = []
 			dico[idt] = dico_linker
-
-	#print(dico)
-	#print("-----------------------------------------")
 
 
 	proteoms = glob.glob(path_tmhmm+'*.fasta_line.txt')
@@ -358,7 +354,6 @@ def ard2(file) :
 
 		
 	elif basename(file) == 'STDOUT_pos' :
-		print("------------------------------")
 		for idt in dico_pos.keys() :
 			dico_f[idt] = {}
 
@@ -367,7 +362,6 @@ def ard2(file) :
 
 		for index, key in enumerate(dico_f) :
 			dico_f[key] = link[index]
-
 
 	return dico_f
 
@@ -897,18 +891,91 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 				df.loc[idt, 'radar'] = [res]
 
 
+	print(df)
 	return df
 
 
 def Tsne(dataframe) :
-	pass
 
 	#for col in dataframe.columns :
 	#	print(col)
+	for col in dataframe :
+	#	print(index)
+		print(dataframe[col], type(dataframe[col]))
 
-	#print(dataframe['ard2'])
+
+	dataframe['type'] = dataframe['type'].astype(float)
+	#print(dataframe['type'])
+
+	possible = []
+	for res in dataframe['trp2'] :
+		if res not in possible :
+			possible.append(res)
+	print(possible)
 
 
+	#print(dataframe['trp2'])
+	for index, poss in enumerate(possible) :
+		for elem in dataframe['trp2'] :
+			if elem == poss :
+				dataframe.replace(elem, float(index), inplace = True)
+	#print(dataframe['trp2'])
+
+	for elem in dataframe['wolfpsort'] :
+		if elem == 'chlo' :
+			dataframe.replace(elem, float(1), inplace = True)
+		elif elem == 'mito' :
+			dataframe.replace(elem, float(2), inplace = True)
+		else : 
+			dataframe.replace(elem, float(0), inplace = True)
+	#print(dataframe['wolfpsort'])
+
+	
+
+
+
+
+
+	'''
+	arr_list = []
+	for data in dataframe :
+		#print(dataframe[data])
+		x = dataframe[data]
+		data = np.array(x)
+		arr_list.append(data)
+		#print(data, len(data))
+	print(arr_list, len(arr_list))
+
+
+	tsne = []
+	for array in arr_list :
+		array = array.reshape(-1, 1)
+		tsne.append(tsne_data(array))
+
+
+	label = list(dataframe.columns)
+	print(label, type(label))
+	
+	print("--------------TSNE ON NEG/POS SETS PERFORMING--------------")
+	for data in tsne :
+		sns.scatterplot(x = 'x', y = 'y', data = data)
+	plt.legend(label, prop = {'size' : 5.7})
+	plt.title("Tsne of negative and positiv sets", fontsize = 15)
+	plt.show()
+	'''	
+
+
+def tsne_data(to_data) :
+
+	tsne = TSNE(n_components = 2, random_state = 0)
+
+	X_2d = tsne.fit_transform(to_data)
+
+	data = pd.DataFrame()
+	data['x'] = X_2d[:,0]
+	data['y'] = X_2d[:,1]
+
+	return data
 
 
 
