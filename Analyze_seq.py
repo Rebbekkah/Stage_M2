@@ -1031,7 +1031,7 @@ def Tsne(dataframe) :
 
 def tsne_data(to_data) :
 
-	tsne = TSNE(n_components = 2, random_state = 0)
+	tsne = TSNE(n_components = 2, random_state = 0, perplexity = 50) #### OR default perplex = 30
 
 	X_2d = tsne.fit_transform(to_data)
 
