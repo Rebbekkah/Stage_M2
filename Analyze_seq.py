@@ -322,6 +322,7 @@ def ard2(file) :
 
 	proteoms = glob.glob(path_tmhmm+'*.fasta_line.txt')
 
+	dico_else = {}
 	dico_pos = {}
 	dico_neg = {}
 	for p in proteoms :
@@ -340,8 +341,15 @@ def ard2(file) :
 						dico_pos[idt] = ""
 					else :
 						dico_pos[idt] += line.strip()
+			else : 
+				for line in filin :
+					if line.startswith('>') :
+						idt = line.strip()
+						dico_else[idt] = ""
+					else :
+						dico_else[idt] += line.strip()
 
-	
+	###################################################
 	dico_f = {}
 	link = []
 	if basename(file) == 'STDOUT_neg' :
@@ -357,6 +365,16 @@ def ard2(file) :
 		
 	elif basename(file) == 'STDOUT_pos' :
 		for idt in dico_pos.keys() :
+			dico_f[idt] = {}
+
+		for linker in dico.values() :
+			link.append(linker)
+
+		for index, key in enumerate(dico_f) :
+			dico_f[key] = link[index]
+
+	else : 
+		for idt in dico_else.keys() :
 			dico_f[idt] = {}
 
 		for linker in dico.values() :
@@ -763,9 +781,11 @@ def Data_Create() :
 		if basename(file) == 'short_output_neg' :
 			dico_trgp2['neg'] = {}
 			dico_trgp2['neg'] = targetp2(file)
-		if basename(file) == 'short_output_pos' :
+		elif basename(file) == 'short_output_pos' :
 			dico_trgp2['pos'] = {}
 			dico_trgp2['pos'] = targetp2(file)
+		else : 
+			dico_trp2[basename(file)] = targetp2(file)
 
 
 	dico_wlf = {}
@@ -773,9 +793,11 @@ def Data_Create() :
 		if basename(file) == 'output_neg.wolfpsort' :
 			dico_wlf['neg'] = {}
 			dico_wlf['neg'] = wolfpsort(file)
-		if basename(file) == 'output_pos.wolfpsort' :
+		elif basename(file) == 'output_pos.wolfpsort' :
 			dico_wlf['pos'] = {}
 			dico_wlf['pos'] = wolfpsort(file)
+		else : 
+			dico_wlf[basename(file)] = wolfpsort(file)
 
 
 	dico_ard2 = {}
@@ -783,29 +805,35 @@ def Data_Create() :
 		if basename(file) == 'STDOUT_neg' :
 			dico_ard2['neg'] = {}
 			dico_ard2['neg'] = ard2(file)
-		if basename(file) == 'STDOUT_pos' :
+		elif basename(file) == 'STDOUT_pos' :
 			dico_ard2['pos'] = {}
 			dico_ard2['pos'] = ard2(file)
-	
+		else : 
+			dico_ard2[basename(file)] = ard2(file)	
+
 
 	dico_loca = {}
 	for file in file_loca : 
 		if basename(file) == 'New_Proteom_1196_tem_neg.fasta_line.txt_localizer' :
 			dico_loca['neg'] = {}
 			dico_loca['neg'] = localizer(file)
-		if basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_localizer' :
+		elif basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_localizer' :
 			dico_loca['pos'] = {}
 			dico_loca['pos'] = localizer(file)
-
+		else : 
+			dico_loca[basename(file)] = localizer(file)
 	
+
 	dico_dploc = {}
 	for file in file_dploc :
 		if basename(file) == 'New_Proteom_1196_tem_neg.fasta_line.txt_deeploc.txt' :
 			dico_dploc['neg'] = {}
 			dico_dploc['neg'] = deeploc(file)
-		if basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_deeploc.txt' :
+		elif basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_deeploc.txt' :
 			dico_dploc['pos'] = {}
 			dico_dploc['pos'] = deeploc(file)	
+		else : 
+			dico_dploc[basename(file)] = deeploc(file)
 
 
 	dico_radar = {}
@@ -813,9 +841,11 @@ def Data_Create() :
 		if basename(file) == 'New_Proteom_1196_tem_neg.fasta_line.txt_radar' :
 			dico_radar['neg'] = {}
 			dico_radar['neg'] = radar(file)
-		if basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_radar' :
+		elif basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_radar' :
 			dico_radar['pos'] = {}
 			dico_radar['pos'] = radar(file)
+		else : 
+			dico_radar[basename(file)] = radar(file)
 
 
 	return dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, dico_radar
