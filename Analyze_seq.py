@@ -349,7 +349,6 @@ def ard2(file) :
 					else :
 						dico_else[idt] += line.strip()
 
-	###################################################
 	dico_f = {}
 	link = []
 	if basename(file) == 'STDOUT_neg' :
@@ -993,7 +992,7 @@ def Modification(dataframe) :
 				med = 0
 
 			#dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
-			dataframe['ard2'].iloc[index] = float(nb)
+			dataframe['ard2'].iloc[index] = float(med)
 
 
 	for index, elem in enumerate(dataframe['radar']) :
@@ -1010,7 +1009,24 @@ def Modification(dataframe) :
 		print(dataframe[col], type(dataframe[col]))
 
 
-	return(dataframe)
+	return dataframe
+
+
+
+def splitting(df) :
+
+	df_pos = df[df['type'] == float(0)]
+	df_neg = df[df['type'] == float(1)]
+
+	print(df_pos, "\n--------------------\n", df_neg)
+	print("----------")
+	print(df['type'])
+
+
+
+	return df_pos, df_neg
+
+
 
 
 def Tsne(dataframe) :
@@ -1073,18 +1089,19 @@ def tsne_data(to_data) :
 
 if __name__ == '__main__' :
 
-	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/"
+	#path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/"
+	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/"
 	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
-	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
-
+	#path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
+	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
 
 
 	os.chdir(path_output)
 
 	# TMHMM
-	proteins = listing(path_proteom, '*/*/*.tmhmm')
+	#proteins = listing(path_proteom, '*/*/*.tmhmm')
 	#new_proteom = proteome_maker(proteins, path_proteom)
 	#separateur = sep(new_proteom, path_proteom)
 	#separateur = sep(path_proteom)
@@ -1109,11 +1126,12 @@ if __name__ == '__main__' :
 	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/"
 	path_pb = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/idt_neg.txt"
 
-	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
-	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
-	#df = Modification(final_results)
+	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
+	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
+	df = Modification(final_results)
 	#tsne = Tsne(df)
 
 
-
-
+	df_pos, df_neg = splitting(df)
+	#print(df_pos)
+	#print(df_neg)
