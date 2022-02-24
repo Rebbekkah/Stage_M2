@@ -128,6 +128,7 @@ def listing(path, pattern) :
 
 	'''
 
+	os.chdir(glob.glob(path_output+'TMHMM/files/'))
 	fich = glob.glob(path+pattern)
 	print(fich)
 	prot = []
@@ -993,12 +994,10 @@ def Tsne(dataframe) :
 		#print(data, len(data))
 	print(arr_list, len(arr_list))
 
-	print("--------------------- avant loop -----")
 
 	tsne = []
 	i = 0
 	for array in arr_list :
-		print("--------------------- pendant loop -----")
 		print(array, type(array), array.shape, len(array))
 		for i in range(len(array)) :
 			if type(array[i]) == type([1]) :
@@ -1015,7 +1014,6 @@ def Tsne(dataframe) :
 		#i += 1
 
 
-	print("--------------------- après loop -----")
 
 	label = list(dataframe.columns)
 	print(label, type(label))
@@ -1045,18 +1043,18 @@ def tsne_data(to_data) :
 
 if __name__ == '__main__' :
 
-	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/"
+	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/"
 	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
-	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
+	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
 
 
 
 	os.chdir(path_output)
 
 	# TMHMM
-	#proteins = listing(path_proteom, '*.tmhmm')
+	proteins = listing(path_proteom, '*/*/*.tmhmm')
 	#new_proteom = proteome_maker(proteins, path_proteom)
 	#separateur = sep(new_proteom, path_proteom)
 	#separateur = sep(path_proteom)
@@ -1081,10 +1079,10 @@ if __name__ == '__main__' :
 	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/"
 	path_pb = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/idt_neg.txt"
 
-	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
-	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
-	df = Modification(final_results)
-	tsne = Tsne(df)
+	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
+	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
+	#df = Modification(final_results)
+	#tsne = Tsne(df)
 
 
 
