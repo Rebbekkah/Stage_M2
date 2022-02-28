@@ -930,13 +930,19 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 				df.loc[idt, 'radar'] = [res]
 
 
+	print("---------df1")
 	print(df)
 	return df
 
 
 def Modification(dataframe) :
 
-	dataframe['type'] = dataframe['type'].astype(float)
+	dico_all = Proteom_all(path_output)
+	#for col in dataframe :
+	#	print(dataframe[col], type(dataframe[col]))	
+
+	for elem in dataframe['type'] :
+		dataframe.replace(elem, float(elem), inplace = True)
 
 	possible = []
 	for res in dataframe['trp2'] :
@@ -950,10 +956,8 @@ def Modification(dataframe) :
 				dataframe.replace(elem, float(index), inplace = True)
 
 	for elem in dataframe['wolfpsort'] :
-		if elem == 'chlo' :
+		if elem == 'chlo' or elem == 'mito' :
 			dataframe.replace(elem, float(1), inplace = True)
-		elif elem == 'mito' :
-			dataframe.replace(elem, float(2), inplace = True)
 		else : 
 			dataframe.replace(elem, float(0), inplace = True)
 
@@ -969,8 +973,10 @@ def Modification(dataframe) :
 		for key, prob in elem[0].items() :
 			probability.append(float(prob))
 		p = max(probability)
-		dataframe['deeploc'].iloc[index] = p
-
+		if p == 0 :
+			dataframe['deeploc'].iloc[index] = p
+		else : 
+			dataframe['deeploc'].iloc[index] = float(1)
 
 	for index, elem in enumerate(dataframe['ard2']) :
 		nb = 0
@@ -992,7 +998,14 @@ def Modification(dataframe) :
 				med = 0
 
 			#dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
-			dataframe['ard2'].iloc[index] = float(med)
+			#print(dataframe.index[index])
+			for idt, seq in dico_all.items() :
+				if idt == dataframe.index[index] :
+					s = seq
+
+			prop = nb/len(s)
+			#dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
+			dataframe['ard2'].iloc[index] = prop
 
 
 	for index, elem in enumerate(dataframe['radar']) :
@@ -1005,9 +1018,12 @@ def Modification(dataframe) :
 				prop_rep = float(dic['rep_prop'])
 				dataframe['radar'].iloc[index] = prop_rep
 		
-	for col in dataframe :
-		print(dataframe[col], type(dataframe[col]))
+	#for col in dataframe :
+	#	print(dataframe[col], type(dataframe[col]))
 
+	#print("---------df2")
+	#print(dataframe)
+	print(dataframe['radar'])
 
 	return dataframe
 
@@ -1015,13 +1031,15 @@ def Modification(dataframe) :
 
 def splitting(df) :
 
-	df_pos = df[df['type'] == float(0)]
-	df_neg = df[df['type'] == float(1)]
 
-	print(df_pos, "\n--------------------\n", df_neg)
-	print("----------")
-	print(df['type'])
+	df_pos = df[df['type'] == 0]
+	df_neg = df[df['type'] == 1]
 
+
+	print("-----df pos")
+	print(df_pos)
+	print("-----df neg")
+	print(df_neg)
 
 
 	return df_pos, df_neg
@@ -1133,5 +1151,5 @@ if __name__ == '__main__' :
 
 
 	df_pos, df_neg = splitting(df)
-	#print(df_pos)
-	#print(df_neg)
+	#tsne = Tsne(df_neg)
+
