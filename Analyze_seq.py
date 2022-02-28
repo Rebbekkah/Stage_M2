@@ -30,6 +30,7 @@ from operator import itemgetter
 import seaborn as sns
 from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
+import scipy.stats.distributions as dist
 
 
 def reading(fichier) :
@@ -1104,6 +1105,45 @@ def tsne_data(to_data) :
 	return data
 
 
+def Prop_Test(df1, df2, fold) :
+	###############################attention aux na (0.00 à vérifier)
+	m_df1 = df1['ard2'].mean()
+	m_df2 = df2['ard2'].mean()
+	total = m_df1 + m_df2
+	print("Moyenne prop linker des df :", m_df1, m_df2)
+
+	# Vérification des conditions d'application 
+	assert len(df1)*m_df1 > 10, "Condition non validée"
+	assert len(df2)*m_df2 > 10, "Condition non validée"
+	assert len(df1)*(1-m_df1) > 10, "Condition non validée"
+	assert len(df2)*(1-m_df2) > 10, "Condition non validée"
+
+	print("Conditions de validité passées")
+
+	# Calcul de l'érreur standard résiduelle
+	variance = total*(1-total) 
+	std_error = np.sqrt(variance*(1/len(df1) + 1/len(df2)))
+	print("Erreur standard = ", std_error)
+
+	# Calculation of the statistic test
+	best = m_df1 - m_df2
+	print("Estimation :", best)
+	hyp_estimation = 0
+	test_stat = (best - hyp_estimation)/std_error
+	print("Résultat du test statistique : ", test_stat)
+	print("Difference : ", test_stat - best)
+
+	# Calcul de la pvalue
+	pvalue = 2*dist.norm.cdf(-np.abs(test_stat))
+	print("Pvalue = ", pvalue)
+
+	if pvalue <= fold : 
+		print("Pvalue < 0.05 --> pas de différence significative")
+	else : 
+		print("Pvalue > 0.05 --> existe une différence significative")
+
+
+
 
 if __name__ == '__main__' :
 
@@ -1151,5 +1191,5 @@ if __name__ == '__main__' :
 
 
 	df_pos, df_neg = splitting(df)
-	#tsne = Tsne(df_neg)
+	test_of_proportion = Prop_Test(df_pos, df_neg, 0.05)
 
