@@ -103,10 +103,11 @@ def reading(fichier) :
 			id_to_delete.append(idt)
 	print("TO DELETE : ", id_to_delete)
 	
-	os.chdir(path_output)
-	with open("output_Analyzeseq_ToKeep_"+basename(fichier)+".txt", "w") as filout :
-		for idt in id_to_keep :
-			filout.write(idt+"\n")
+	#os.chdir(path_output)
+	#with open("output_Analyzeseq_ToKeep_"+basename(fichier)+".txt", "w") as filout :
+	#	for idt in id_to_keep :
+	#		filout.write(idt+"\n")
+
 
 	return id_to_keep
 
@@ -129,7 +130,6 @@ def listing(path, pattern) :
 
 	'''
 
-	os.chdir(glob.glob(path_output+'TMHMM/files/'))
 	fich = glob.glob(path+pattern)
 	print(fich)
 	prot = []
@@ -142,7 +142,7 @@ def listing(path, pattern) :
 
 
 
-def proteome_maker(ToKeep, path_proteom) :
+def proteome_maker(ToKeep, path_proteom, pattern) :
 	''' Production of the new proteom from the id that were selected thru 
 		the reading funtion ('meta proteom' that concatenate all ids from the files)
 
@@ -161,9 +161,9 @@ def proteome_maker(ToKeep, path_proteom) :
 
 	'''
 	print("-----------------proteom maker-----------------")
-	proteom = glob.glob(path_proteom+"*.fasta_line")
+	proteom = glob.glob(path_proteom+pattern)
+	print(proteom, len(proteom))
 
-	os.chdir(path_output)
 	dico = {}
 	dico2 = {}
 	for p in proteom :
@@ -208,7 +208,7 @@ def proteome_maker(ToKeep, path_proteom) :
 	return dico2
 
 
-def sep(path_proteom) :
+def sep(path_proteom, pattern1, pattern2, pattern3) :
 	''' Function that separates the meta proteom in the positive and
 		negative proteom that we had initially
 
@@ -228,17 +228,19 @@ def sep(path_proteom) :
 
 	'''
 	print("-----------------separateur-----------------")
-	proteom = glob.glob(path_proteom+"*.fasta_line")
-	proteom = proteom[::-1]
-	file = glob.glob(path_proteom+"*.tmhmm")
-	print(proteom, "\n", file)
+	proteom = glob.glob(path_proteom+pattern1)
+	proteom.sort()
+	print(proteom, len(proteom))
+	#proteom = proteom[::-1]
+	file = glob.glob(path_proteom+pattern2)
+	file.sort()
+	print(file, len(file))
 
 	idt_ok = []
 	for f in file :
 		idt_ok.append(reading(f))
 
-
-	os.chdir(path_output)
+	os.chdir(path_output+pattern3)
 	idt_all = []
 	dico2 = {}
 	dico_all = {}
@@ -1085,7 +1087,7 @@ def Tsne(dataframe) :
 	label = list(dataframe.columns)
 	print(label, type(label))
 	
-	print("--------------TSNE ON NEG/POS SETS PERFORMING--------------")
+	#print("--------------TSNE ON NEG/POS SETS PERFORMING--------------")
 	for data in tsne :
 		sns.scatterplot(x = 'x', y = 'y', data = data)
 	plt.legend(label, prop = {'size' : 5.7})
@@ -1151,21 +1153,21 @@ def Prop_Test(df1, df2, fold) :
 if __name__ == '__main__' :
 
 	#path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/"
-	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/"
-	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script"
+	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/"
+	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Analyze_seq/"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 	#path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
-	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
+	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
 
 
-	os.chdir(path_output)
+	os.chdir(path_output+'TMHMM/files/')
 
 	# TMHMM
-	#proteins = listing(path_proteom, '*/*/*.tmhmm')
-	#new_proteom = proteome_maker(proteins, path_proteom)
+	proteins = listing(path_output, 'TMHMM/*.tmhmm')
+	new_proteom = proteome_maker(proteins, path_proteom, '*/*.f'+'*a')
 	#separateur = sep(new_proteom, path_proteom)
-	#separateur = sep(path_proteom)
+	separateur = sep(path_proteom, '*/*.f'+'*a', 'outputs/TMHMM/*.tmhmm', 'TMHMM/files/New_proteom/')
 
 	# ARD2
 	path_ard2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/ard2_outputs/"
@@ -1187,14 +1189,14 @@ if __name__ == '__main__' :
 	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/"
 	path_pb = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/idt_neg.txt"
 
-	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
-	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
-	df = Modification(final_results)
+	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
+	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
+	#df = Modification(final_results)
 	#tsne = Tsne(df)
 
 
-	df_pos, df_neg = splitting(df)
+	#df_pos, df_neg = splitting(df)
 	#tsne = Tsne(df_pos)
-	tsne = Tsne(df_neg)
+	#tsne = Tsne(df_neg)
 	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05)
 
