@@ -980,51 +980,53 @@ def Modification(dataframe) :
 			dataframe['deeploc'].iloc[index] = float(1)
 
 	for index, elem in enumerate(dataframe['ard2']) :
-		nb = 0
+		k = 0
 		for dic in elem :
 			l = []
-			#print(dic)
 			for aa, link in dic.items() :
-				#print(link)
-				nb += len(link)
-				for i in range(len(link)) :
-					l.append(link[i][0])
-			if l :
-				mini = min(l)
-				maxi = max(l)
-				med = statistics.median(l)
+				for lst in link :
+					l.append(lst)
+			for i in range(len(l)-1) :
+				if l[i+1][1] - l[i][1] > 30 :
+					k += 1
+			if k >= 3 : 
+				dataframe['ard2'].iloc[index] = float(1)
 			else :
-				mini = 0
-				maxi = 0
-				med = 0
-
-			#dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
-			#print(dataframe.index[index])
-			for idt, seq in dico_all.items() :
-				if idt == dataframe.index[index] :
-					s = seq
-
-			prop = nb/len(s)
-			#dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
-			dataframe['ard2'].iloc[index] = prop
+				dataframe['ard2'].iloc[index] = float(0)
 
 
 	for index, elem in enumerate(dataframe['radar']) :
+		nb = 0
+		#print(elem)
 		if type(elem) != type(['liste']) :
-			print("-------->", elem, index)
-			print(dataframe['radar'].iloc[index])
+			#print("-------->", elem, index)
+			#print(dataframe['radar'].iloc[index])
 			dataframe['radar'].iloc[index] = [elem]
 		else :
 			for dic in elem :
-				prop_rep = float(dic['rep_prop'])
-				dataframe['radar'].iloc[index] = prop_rep
-		
-	#for col in dataframe :
-	#	print(dataframe[col], type(dataframe[col]))
+				#print(dic['l_rep'], len(dic['l_rep']))
+				if len(dic['l_rep']) == 0 :
+					dataframe['radar'].iloc[index] = 0
+				else : 
+					for item in dic['l_rep'] :
+						if item >= 29 and item <= 46 :
+							nb += 1
+					for idt, seq in dico_all.items() :
+						if idt == dataframe['radar'].index[index] :
+							s = len(seq)
+				prop = nb/s
+
+				if prop != 0 :
+					dataframe['radar'].iloc[index] = float(1)
+				else : 
+					dataframe['radar'].iloc[index] = float(0)
+
+
+	for col in dataframe :
+		print(dataframe[col], type(dataframe[col]))
 
 	#print("---------df2")
 	#print(dataframe)
-	print(dataframe['radar'])
 
 	return dataframe
 
@@ -1106,11 +1108,12 @@ def tsne_data(to_data) :
 
 
 def Prop_Test(df1, df2, fold) :
-	###############################attention aux na (0.00 à vérifier)
+
 	m_df1 = df1['ard2'].mean()
 	m_df2 = df2['ard2'].mean()
 	total = m_df1 + m_df2
 	print("Moyenne prop linker des df :", m_df1, m_df2)
+	print("H0 : même proportion", "\n", "H1 : proportions différentes")
 
 	# Vérification des conditions d'application 
 	assert len(df1)*m_df1 > 10, "Condition non validée"
@@ -1191,5 +1194,7 @@ if __name__ == '__main__' :
 
 
 	df_pos, df_neg = splitting(df)
-	test_of_proportion = Prop_Test(df_pos, df_neg, 0.05)
+	#tsne = Tsne(df_pos)
+	tsne = Tsne(df_neg)
+	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05)
 
