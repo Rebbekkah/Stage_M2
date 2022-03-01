@@ -1164,29 +1164,29 @@ if __name__ == '__main__' :
 	os.chdir(path_output+'TMHMM/files/')
 
 	# TMHMM
-	proteins = listing(path_output, 'TMHMM/*.tmhmm')
-	new_proteom = proteome_maker(proteins, path_proteom, '*/*.f'+'*a')
+	#proteins = listing(path_output, 'TMHMM/*.tmhmm')
+	#new_proteom = proteome_maker(proteins, path_proteom, '*/*.f'+'*a')
 	#separateur = sep(new_proteom, path_proteom)
-	separateur = sep(path_proteom, '*/*.f'+'*a', 'outputs/TMHMM/*.tmhmm', 'TMHMM/files/New_proteom/')
+	#separateur = sep(path_proteom, '*/*.f'+'*a', 'outputs/TMHMM/*.tmhmm', 'TMHMM/files/New_proteom/')
 
 	# ARD2
-	path_ard2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/ard2_outputs/"
+	path_ard2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/ARD2/"
 	path_tmhmm = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/tmhmm_filtred/"
 	
 	# WOLFPSORT
-	path_wpsort = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/wolfpsort_output/"
+	path_wpsort = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/WOLFPSORT/"
 
 	# TARGETP2
-	path_trgp2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/targetp2_outputs/"
+	path_trgp2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/TRP2/"
 
 	# DEEPLOC
-	path_dploc = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/outputs_deeploc/"
+	path_dploc = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/DEEPLOC/"
 
 	# LOCALIZER
-	path_loca = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_localizer/"
+	path_loca = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/LOCALIZER/"
 
 	# RADAR
-	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/"
+	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/RADAR/"
 	path_pb = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/idt_neg.txt"
 
 	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
