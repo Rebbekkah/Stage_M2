@@ -1214,13 +1214,59 @@ def Prop_Test(df1, df2, fold, col) :
 		print("Pvalue > 0.05 --> existe une différence significative")
 
 
-def Sep_long_proteom(pattern1, pattern2, fold, proteom_name) :
+def Sep_long_proteom(pattern, fold, proteom_name) :
 	
-	proteom = glob.glob(path_output+pattern1)
-	for p in proteom :
-		print("-", basename(p))
+	proteom = glob.glob(path_output+pattern)
 	print(len(proteom))
 
+	os.chdir(path_output+'TMHMM/sep_prot/')
+
+	for p in proteom :
+		dico = {}
+		print("-", basename(p))
+		with open(p, 'r') as filin :
+			for line in filin :
+				if line.startswith('>') :
+					idt = line.strip()
+					dico[idt] = ""
+				else :
+					dico[idt] += line.strip()
+		print(len(dico.keys()))
+		if len(dico.keys()) > fold :
+			print("File too big ----->", basename(p), len(dico.keys()))
+			new_dic = {}
+			i = 0
+			k = 0
+			for idt in dico.keys() :
+				#new_dic = {}
+				if i <= fold :
+					with open('sep_proteom_'+basename(p)+'_'+str(k)+'.txt', 'w') as filout :
+						for idt, seq in new_dic.items() :
+							filout.write(idt+"\n"+seq+"\n")
+
+
+
+
+				'''
+				if i <= fold :
+					new_dic[idt] = dico[idt]
+					i += 1
+			#print(len(new_dic.keys()))
+				else :
+					i = 0
+					k += 1
+					with open('sep_proteom_'+basename(p)+'_'+str(k)+'.txt', 'w') as filout :
+						for idt, seq in new_dic.items() :
+							filout.write(idt+"\n"+seq+"\n")
+					print(len(new_dic.keys()))
+					new_dic = {}
+				'''
+
+
+
+
+
+	'''
 	yes = 0
 	for p in proteom :
 		if proteom_name == basename(p) :
@@ -1229,9 +1275,11 @@ def Sep_long_proteom(pattern1, pattern2, fold, proteom_name) :
 
 	if yes != 0 :
 		with open(path_output+pattern2+proteom_name, 'r') as filin :
-			
+	'''
 
 
+def concat(file) :
+	pass
 
 
 
@@ -1252,8 +1300,8 @@ if __name__ == '__main__' :
 	#proteins = listing(path_output, 'TMHMM/*.tmhmm')
 	#new_proteom = proteome_maker(proteins, path_proteom, '*/*.f'+'*a')
 	#separateur = sep(path_proteom, '*/*.f'+'*a', 'outputs/TMHMM/*.tmhmm', 'TMHMM/files/New_proteom/')
-	Long_prot_sep = Sep_long_proteom('TMHMM/files/New_proteom_small/*.txt', 32000, \
-		'New_Proteom_Fracy1_GeneModels_AllModels_20090218_aa.fasta.txt', 'TMHMM/files/New_proteom_small/')
+	Long_prot_sep = Sep_long_proteom('TMHMM/New_proteom_all/*.txt', int(32000), \
+		'New_Proteom_Fracy1_GeneModels_AllModels_20090218_aa.fasta.txt')
 
 
 	# ARD2
