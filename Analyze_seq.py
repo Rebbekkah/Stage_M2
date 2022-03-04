@@ -203,9 +203,10 @@ def proteome_maker(ToKeep, path_proteom, pattern) :
 
 	with open("New_Proteom_All.txt", "w") as filout :
 		for idt, seq in dico2.items() :
-			filout.write(idt+"\n"+seq+"\n")
+			if len(seq) > 120 :
+				filout.write(idt+"\n"+seq+"\n")
 	
-	return dico2
+	#return dico2
 
 
 def sep(path_proteom, pattern1, pattern2, pattern3) :
@@ -1214,12 +1215,12 @@ def Prop_Test(df1, df2, fold, col) :
 		print("Pvalue > 0.05 --> existe une différence significative")
 
 
-def Sep_long_proteom(pattern, fold, proteom_name) :
+def Sep_long_proteom(pattern1, pattern2, fold, proteom_name) :
 	
-	proteom = glob.glob(path_output+pattern)
+	proteom = glob.glob(path_output+pattern1)
 	print(len(proteom))
 
-	os.chdir(path_output+'TMHMM/sep_prot/')
+	os.chdir(path_output+pattern2)
 
 	for p in proteom :
 		dico = {}
@@ -1237,38 +1238,30 @@ def Sep_long_proteom(pattern, fold, proteom_name) :
 			new_dic = {}
 			i = 0
 			k = 0
+			id_list = []
+			for idt, seq in dico.items() :
+				id_list.append(idt)
+				print(len(seq))
 			for idt in dico.keys() :
-				#new_dic = {}
-				if i < fold :
+				if i <= fold :
 					new_dic[idt] = dico[idt]
 					i += 1
-			#print(len(new_dic.keys()))
-				elif :
+					if idt == id_list[-1] :
+						k += 1
+						with open('sep_proteom_'+basename(p)+'_'+str(k)+'.txt', 'w') as filout :
+							for idt, seq in new_dic.items() :
+								filout.write(idt+"\n"+seq+"\n")
+						print(len(new_dic.keys()))
+				elif i > fold :
 					i = 0
 					k += 1
+					new_dic[idt] = dico[idt]
 					with open('sep_proteom_'+basename(p)+'_'+str(k)+'.txt', 'w') as filout :
 						for idt, seq in new_dic.items() :
 							filout.write(idt+"\n"+seq+"\n")
 					print(len(new_dic.keys()))
 					new_dic = {}
-				else : 
-					pass
-
-
-
-
-
-
-	'''
-	yes = 0
-	for p in proteom :
-		if proteom_name == basename(p) :
-			print("Proteom in list")
-			yes += 1
-
-	if yes != 0 :
-		with open(path_output+pattern2+proteom_name, 'r') as filin :
-	'''
+					#i += 1
 
 
 def concat(file) :
@@ -1279,43 +1272,40 @@ def concat(file) :
 if __name__ == '__main__' :
 
 	#path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/"
-	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/"
+	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
+	path_output = path_proteom+"outputs/"
 	#to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Analyze_seq/"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
-
-	#path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
-	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
 
 
 	os.chdir(path_output+'TMHMM/files/')
 
 	# TMHMM
-	#proteins = listing(path_output, 'TMHMM/*.tmhmm')
-	#new_proteom = proteome_maker(proteins, path_proteom, '*/*.f'+'*a')
-	#separateur = sep(path_proteom, '*/*.f'+'*a', 'outputs/TMHMM/*.tmhmm', 'TMHMM/files/New_proteom/')
-	Long_prot_sep = Sep_long_proteom('TMHMM/New_proteom_all/*.txt', int(32000), \
-		'New_Proteom_Fracy1_GeneModels_AllModels_20090218_aa.fasta.txt')
+	proteins = listing(path_output, 'TMHMM/old/*.tmhmm')
+	new_proteom = proteome_maker(proteins, path_proteom, '*/*.f'+'*a')
+	separateur = sep(path_proteom, '*/*.f'+'*a', 'outputs/TMHMM/old/*.tmhmm', 'TMHMM/New_proteom_all/')
+	#Long_prot_sep = Sep_long_proteom('TMHMM/New_proteom_all/*.txt', 'TMHMM/sep_prot/', int(32000), \
+	#	'New_Proteom_Fracy1_GeneModels_AllModels_20090218_aa.fasta.txt')
 
 
 	# ARD2
-	path_ard2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/ARD2/"
+	path_ard2 = path_output+"ARD2/"
 	path_tmhmm = path_output+"TMHMM/files/"
 	
 	# WOLFPSORT
-	path_wpsort = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/WOLFPSORT/"
+	path_wpsort = path_output+"WOLFPSORT/"
 
 	# TARGETP2
-	path_trgp2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/TRP2/"
+	path_trgp2 = path_output+"TRP2/"
 
 	# DEEPLOC
-	path_dploc = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/DEEPLOC/"
+	path_dploc = path_output+"DEEPLOC/"
 
 	# LOCALIZER
-	path_loca = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/LOCALIZER/"
+	path_loca = path_output+"LOCALIZER/"
 
 	# RADAR
-	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/RADAR/"
-	path_pb = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/idt_neg.txt"
+	path_radar = path_output+"RADAR/"
 
 	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
 	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
