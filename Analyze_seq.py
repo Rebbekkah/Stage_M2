@@ -1184,7 +1184,7 @@ def Prop_Test(df1, df2, fold, col) :
 	print("Moyenne prop linker des df :", m_df1, m_df2)
 	print("H0 : même proportion", "\n", "H1 : proportions différentes")
 
-	# Vérification des conditions d'application 
+	# Conditions of application
 	assert len(df1)*m_df1 > 10, "Condition non validée"
 	assert len(df2)*m_df2 > 10, "Condition non validée"
 	assert len(df1)*(1-m_df1) > 10, "Condition non validée"
@@ -1192,7 +1192,7 @@ def Prop_Test(df1, df2, fold, col) :
 
 	print("Conditions de validité passées")
 
-	# Calcul de l'érreur standard résiduelle
+	# Computation of the residual standard error
 	variance = total*(1-total) 
 	std_error = np.sqrt(variance*(1/len(df1) + 1/len(df2)))
 	print("Erreur standard = ", std_error)
@@ -1205,7 +1205,7 @@ def Prop_Test(df1, df2, fold, col) :
 	print("Résultat du test statistique : ", test_stat)
 	print("Difference : ", test_stat - best)
 
-	# Calcul de la pvalue
+	# Computation of pvalue
 	pvalue = 2*dist.norm.cdf(-np.abs(test_stat))
 	print("Pvalue = ", pvalue)
 
@@ -1271,10 +1271,8 @@ def concat(file) :
 
 if __name__ == '__main__' :
 
-	#path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/"
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
 	path_output = path_proteom+"outputs/"
-	#to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Analyze_seq/"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 
