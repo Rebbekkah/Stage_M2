@@ -1239,11 +1239,11 @@ def Sep_long_proteom(pattern, fold, proteom_name) :
 			k = 0
 			for idt in dico.keys() :
 				#new_dic = {}
-				if i <= fold :
+				if i < fold :
 					new_dic[idt] = dico[idt]
 					i += 1
 			#print(len(new_dic.keys()))
-				else :
+				elif :
 					i = 0
 					k += 1
 					with open('sep_proteom_'+basename(p)+'_'+str(k)+'.txt', 'w') as filout :
@@ -1251,6 +1251,8 @@ def Sep_long_proteom(pattern, fold, proteom_name) :
 							filout.write(idt+"\n"+seq+"\n")
 					print(len(new_dic.keys()))
 					new_dic = {}
+				else : 
+					pass
 
 
 
