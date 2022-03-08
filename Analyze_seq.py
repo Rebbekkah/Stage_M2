@@ -330,6 +330,7 @@ def ard2(file) :
 	dico_neg = {}
 	for p in proteoms :
 		with open(p, "r") as filin :
+			
 			if basename(p) == 'New_Proteom_1196_tem_neg.fasta_line.txt' :
 				for line in filin :
 					if line.startswith('>') :
@@ -344,16 +345,19 @@ def ard2(file) :
 						dico_pos[idt] = ""
 					else :
 						dico_pos[idt] += line.strip()
+			'''
 			else : 
-				for line in filin :
-					if line.startswith('>') :
-						idt = line.strip()
-						dico_else[idt] = ""
-					else :
-						dico_else[idt] += line.strip()
-
+			
+			for line in filin :
+				if line.startswith('>') :
+					idt = line.strip()
+					dico_else[idt] = ""
+				else :
+					dico_else[idt] += line.strip()
+			'''
 	dico_f = {}
 	link = []
+	
 	if basename(file) == 'STDOUT_neg' :
 		for idt in dico_neg.keys() :
 			dico_f[idt] = {}
@@ -374,17 +378,20 @@ def ard2(file) :
 
 		for index, key in enumerate(dico_f) :
 			dico_f[key] = link[index]
-
+	
+	'''
 	else : 
+	
+	if basename(file) == 'STDOUT' :
 		for idt in dico_else.keys() :
 			dico_f[idt] = {}
 
 		for linker in dico.values() :
 			link.append(linker)
-
+	
 		for index, key in enumerate(dico_f) :
 			dico_f[key] = link[index]
-
+	'''
 	return dico_f
 
 
@@ -406,14 +413,50 @@ def wolfpsort(file) :
 	dico = {}
 	with open(file, "r") as filin :
 		for line in filin :
+			l_mc = []
+			l_tot = []
 			if not line.startswith('#') :
+				elem = line.split(" ")
+				elem[-1] = elem[-1].strip()
+				idt = elem[0]
+				print(elem, len(elem), "\n", idt)
+				for i in range(len(elem)) :
+					if elem[i][-1] == ',' :
+						elem[i] = elem[i][:-1]
+				print(elem, len(elem))
+				if len(elem)%2 == type(int(1)) :
+					print("____________ATTENTION____________")
+					print(elem)
+				
+
+				for i in range(2, len(elem), 2) :
+					l_tot.append(float(elem[i]))
+
+				for i in range(len(elem)-1) :
+					if elem[i] == 'chlo' or elem[i] == 'mito' :
+						#print(elem[i], elem[i+1])
+						l_mc.append(float(elem[i+1]))
+				print(l_tot)
+				print(l_mc)
+				score_tot = sum(l_tot)
+				score_mc = sum(l_mc)
+				ratio = score_mc/score_tot
+				print(score_tot, score_mc, ratio)
+				print("---------")
+
+				dico[idt] = 0
+				dico[idt] += ratio
+				'''
 				elem = line.split(" ")
 				idt = elem[0]
 				adressage = elem[1]
 				if adressage == 'chlo' or adressage == 'mito' :
 					dico[idt] = ""
 					dico[idt] += str(adressage)
+				'''
 
+
+	#print(dico)
 	return dico
 
 
@@ -670,7 +713,8 @@ def Proteom_all(path) :
 	'''
 
 	dico = {}
-	with open(path+"TMHMM/files/New_Proteom_All.txt", "r") as filin :
+	#with open(path+"TMHMM/files/New_Proteom_All.txt", "r") as filin :
+	with open(path+"tmhmm_filtred/New_Proteom_All.txt", "r") as filin :
 		for line in filin : 
 			if line.startswith('>') :
 				idt = line.strip()
@@ -886,46 +930,53 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 	df = pd.DataFrame(0, index = idt_all, columns = col)
 
 
-	for tem, dic in dico_ard2.items() :
+
+	for prote, dic in dico_ard2.items() :
 		idt_l = []
+		#i = 0
 		for idt, val in dic.items() :
 			idt_l.append(idt)
-		if tem == 'neg' :
+		if prote == 'neg' :
 			for idt in df.index :
 				idt = str(idt)
 				if idt in idt_l :
 					df.loc[idt, 'type'] = 1
+		#else : 
+		#	for idt in df.index :
+		#		df.loc[idt, 'type'] = i
+		#		i += 1
+				
 
-	for tem, dic in dico_trgp2.items() :
+	for prote, dic in dico_trgp2.items() :
 		for idt, res in dic.items() :
 			idt = ">"+idt
 			if idt in idt_all : 
 				df.loc[idt, 'trp2'] = res
 
-	for tem, dic in dico_wlf.items() :
+	for prote, dic in dico_wlf.items() :
 		for idt, res in dic.items() :
 			idt = ">"+idt
 			if idt in idt_all : 
 				df.loc[idt, 'wolfpsort'] = res
 
-	for tem, dic in dico_ard2.items() :
+	for prote, dic in dico_ard2.items() :
 		for idt, res in dic.items() :
 			if idt in idt_all : 
 				df.loc[idt, 'ard2'] = [res]	
 
-	for tem, dic in dico_loca.items() :
+	for prote, dic in dico_loca.items() :
 		for idt, res in dic.items() :
 			idt = ">"+idt
 			if idt in idt_all : 
 				df.loc[idt, 'localizer'] = res
 
-	for tem, dic in dico_dploc.items() :
+	for prote, dic in dico_dploc.items() :
 		for idt, res in dic.items() :
 			idt = ">"+idt
 			if idt in idt_all : 
 				df.loc[idt, 'deeploc'] = [res]
 
-	for tem, dic in dico_radar.items() :
+	for prote, dic in dico_radar.items() :
 		for idt, res in dic.items() :
 			if idt in idt_all : 
 				df.loc[idt, 'radar'] = [res]
@@ -933,6 +984,9 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 
 	print("---------df1")
 	print(df)
+	print("------------------------DICO WOLFPSORT------------------------")
+	print(dico_wlf)
+	print("------------------------END DICO WOLFPSORT------------------------")
 	return df
 
 
@@ -963,8 +1017,8 @@ def Modification(dataframe) :
 	'''
 
 	dico_all = Proteom_all(path_output)
-	#for col in dataframe :
-	#	print(dataframe[col], type(dataframe[col]))	
+	for col in dataframe :
+		print(dataframe[col], type(dataframe[col]))	
 
 	for elem in dataframe['type'] :
 		dataframe.replace(elem, float(elem), inplace = True)
@@ -1044,8 +1098,8 @@ def Modification(dataframe) :
 	for col in dataframe :
 		print(dataframe[col], type(dataframe[col]))
 
-	#print("---------df2")
-	#print(dataframe)
+	print("---------df2")
+	print(dataframe)
 
 	return dataframe
 
@@ -1215,7 +1269,7 @@ def Prop_Test(df1, df2, fold, col) :
 		print("Pvalue > 0.05 --> existe une différence significative")
 
 
-def Sep_long_proteom(pattern1, pattern2, fold, proteom_name) :
+def Sep_long_proteom(pattern1, pattern2, fold) :
 	
 	proteom = glob.glob(path_output+pattern1)
 	print(len(proteom))
@@ -1241,7 +1295,9 @@ def Sep_long_proteom(pattern1, pattern2, fold, proteom_name) :
 			id_list = []
 			for idt, seq in dico.items() :
 				id_list.append(idt)
-				print(len(seq))
+				if len(seq) < 120 :
+					print("!!!!LEN(SEQ) < 120!!!!")
+					print(idt, len(seq))
 			for idt in dico.keys() :
 				if i <= fold :
 					new_dic[idt] = dico[idt]
@@ -1271,19 +1327,64 @@ def concat(file) :
 
 if __name__ == '__main__' :
 
+	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/"
+	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script"
+	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
+
+	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
+
+
+
+	os.chdir(path_output)
+
+	# TMHMM
+	#proteins = listing(path_proteom, '*.tmhmm')
+	#new_proteom = proteome_maker(proteins, path_proteom)
+	#separateur = sep(new_proteom, path_proteom)
+	#separateur = sep(path_proteom)
+
+	# ARD2
+	path_ard2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/ard2_outputs/"
+	path_tmhmm = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/tmhmm_filtred/"
+	
+	# WOLFPSORT
+	path_wpsort = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/wolfpsort_output/"
+	path_wpsort_essai = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/wolfpsort_output/output_pos.wolfpsort"
+	wolfpsort(path_wpsort_essai)
+
+	# TARGETP2
+	path_trgp2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/targetp2_outputs/"
+
+	# DEEPLOC
+	path_dploc = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/outputs_deeploc/"
+
+	# LOCALIZER
+	path_loca = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_localizer/"
+
+	# RADAR
+	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/"
+	path_pb = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/idt_neg.txt"
+
+	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
+	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
+	#df = Modification(final_results)
+	#tsne = Tsne(df)
+
+
+	'''
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
 	path_output = path_proteom+"outputs/"
+	print(path_output)
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
 
 	os.chdir(path_output+'TMHMM/files/')
 
 	# TMHMM
-	proteins = listing(path_output, 'TMHMM/old/*.tmhmm')
-	new_proteom = proteome_maker(proteins, path_proteom, '*/*.f'+'*a')
-	separateur = sep(path_proteom, '*/*.f'+'*a', 'outputs/TMHMM/old/*.tmhmm', 'TMHMM/New_proteom_all/')
-	#Long_prot_sep = Sep_long_proteom('TMHMM/New_proteom_all/*.txt', 'TMHMM/sep_prot/', int(32000), \
-	#	'New_Proteom_Fracy1_GeneModels_AllModels_20090218_aa.fasta.txt')
+	#proteins = listing(path_output, 'TMHMM/old/*.tmhmm')
+	#new_proteom = proteome_maker(proteins, path_proteom, '*/*.f'+'*a')
+	#separateur = sep(path_proteom, '*/*.f'+'*a', 'outputs/TMHMM/old/*.tmhmm', 'TMHMM/New_proteom_all/')
+	#Long_prot_sep = Sep_long_proteom('TMHMM/New_proteom_all/*.txt', 'TMHMM/sep_prot/', int(32000))
 
 
 	# ARD2
@@ -1305,11 +1406,11 @@ if __name__ == '__main__' :
 	# RADAR
 	path_radar = path_output+"RADAR/"
 
-	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
-	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
+	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
+	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	#df = Modification(final_results)
 	#tsne = Tsne(df)
-
+	'''
 
 	#df_pos, df_neg = splitting(df)
 	#tsne = Tsne(df_pos)
