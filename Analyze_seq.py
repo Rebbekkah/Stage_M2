@@ -419,14 +419,14 @@ def wolfpsort(file) :
 				elem = line.split(" ")
 				elem[-1] = elem[-1].strip()
 				idt = elem[0]
-				print(elem, len(elem), "\n", idt)
+				#print(elem, len(elem), "\n", idt)
 				for i in range(len(elem)) :
 					if elem[i][-1] == ',' :
 						elem[i] = elem[i][:-1]
-				print(elem, len(elem))
+				#print(elem, len(elem))
 				if len(elem)%2 == type(int(1)) :
 					print("____________ATTENTION____________")
-					print(elem)
+					print(elem, len(elem))
 				
 
 				for i in range(2, len(elem), 2) :
@@ -436,27 +436,18 @@ def wolfpsort(file) :
 					if elem[i] == 'chlo' or elem[i] == 'mito' :
 						#print(elem[i], elem[i+1])
 						l_mc.append(float(elem[i+1]))
-				print(l_tot)
-				print(l_mc)
+				#print(l_tot)
+				#print(l_mc)
 				score_tot = sum(l_tot)
 				score_mc = sum(l_mc)
 				ratio = score_mc/score_tot
-				print(score_tot, score_mc, ratio)
-				print("---------")
+				#print(score_tot, score_mc, ratio)
+				#print("---------")
 
 				dico[idt] = 0
 				dico[idt] += ratio
-				'''
-				elem = line.split(" ")
-				idt = elem[0]
-				adressage = elem[1]
-				if adressage == 'chlo' or adressage == 'mito' :
-					dico[idt] = ""
-					dico[idt] += str(adressage)
-				'''
 
 
-	#print(dico)
 	return dico
 
 
@@ -1017,6 +1008,7 @@ def Modification(dataframe) :
 	'''
 
 	dico_all = Proteom_all(path_output)
+	
 	for col in dataframe :
 		print(dataframe[col], type(dataframe[col]))	
 
@@ -1057,6 +1049,38 @@ def Modification(dataframe) :
 		else : 
 			dataframe['deeploc'].iloc[index] = float(1)
 
+
+	for index, elem in enumerate(dataframe['ard2']) :
+		nb = 0
+		#print(elem)
+		for dic in elem :
+			l = []
+			#print(dic)
+			for aa, link in dic.items() :
+				#print(link)
+				nb += len(link)
+				for i in range(len(link)) :
+					l.append(link[i][0])
+			if l :
+				mini = min(l)
+				maxi = max(l)
+				med = statistics.median(l)
+			else :
+				mini = 0
+				maxi = 0
+				med = 0
+
+			#dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
+			#print(dataframe.index[index])
+			for idt, seq in dico_all.items() :
+				if idt == dataframe.index[index] :
+					s = seq
+
+			prop = nb/len(s)
+			#dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
+			dataframe['ard2'].iloc[index] = prop
+
+	'''
 	for index, elem in enumerate(dataframe['ard2']) :
 		k = 0
 		for dic in elem :
@@ -1071,6 +1095,7 @@ def Modification(dataframe) :
 				dataframe['ard2'].iloc[index] = float(1)
 			else :
 				dataframe['ard2'].iloc[index] = float(0)
+	'''
 
 
 	for index, elem in enumerate(dataframe['radar']) :
