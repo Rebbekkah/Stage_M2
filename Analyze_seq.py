@@ -1440,6 +1440,45 @@ def Plotting_by_col(df, to_plot) :
 
 
 
+def Plotting_pos_neg(df, df_pos, def_neg, col, to_plot) :
+
+	if col == 'ard2' :
+		nb = []
+		med = []
+		for index, elem in enumerate(df_pos['ard2']) :
+				#df['ard2'].iloc[index] = elem[0]
+				nb.append(elem[0])
+				med.append(elem[2])
+		plt.scatter(nb)
+		nb = []
+		med = []
+		for index, elem in enumerate(df_neg['ard2']) :
+				#df['ard2'].iloc[index] = elem[0]
+				nb.append(elem[0])
+				med.append(elem[2])
+		sns.plot(nb)
+		#sns.scatterplot(data = df, x = med, y = nb)
+		#sns.scatterplot(data = df, x = df[col],)
+	else :	
+		#pass
+		sns.scatterplot(data = df_pos, x = range(len(df_pos)), y = df_pos[col], color = 'darkred')
+		sns.scatterplot(data = df_neg, x = range(len(df_neg)), y = df_neg[col])
+		#sns.scatterplot(x = df_neg[col], y = df_pos[col], hue = df['type'])
+		plt.legend()
+		plt.xticks([])
+
+		#sns.scatterplot(x = df_pos[col], y = df_neg[col], hue = 'type')
+		#plt.plot(df[col])
+		#plt.scatter(df_pos[col])
+		#plt.scatter(df_neg[col])
+		#sns.scatterplot(x = df_pos[col], y = df_neg[col], hue = df['type'])
+	#sns.scatterplot(df[col])
+	plt.show()
+#x = np.arange(0, 1, 0.1)
+
+
+
+
 if __name__ == '__main__' :
 
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/"
@@ -1465,7 +1504,7 @@ if __name__ == '__main__' :
 	# WOLFPSORT
 	path_wpsort = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/wolfpsort_output/"
 	path_wpsort_essai = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/wolfpsort_output/output_pos.wolfpsort"
-	wolfpsort(path_wpsort_essai)
+	#wolfpsort(path_wpsort_essai)
 
 	# TARGETP2
 	path_trgp2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/targetp2_outputs/"
@@ -1484,7 +1523,8 @@ if __name__ == '__main__' :
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	df_f = Modification(final_results)
 	df_pos, df_neg = splitting(df_f)
-	Plotting_by_col(df_pos, 2)
+	#Plotting_by_col(df_neg, 2)
+	Plotting_pos_neg(df_f, df_pos, df_neg, 'radar', 0)
 	#tsne = Tsne(df)
 
 
