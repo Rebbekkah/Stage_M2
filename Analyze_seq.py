@@ -1446,25 +1446,27 @@ def Plotting_pos_neg(df, df_pos, def_neg, col, to_plot) :
 		nb = []
 		med = []
 		for index, elem in enumerate(df_pos['ard2']) :
-				#df['ard2'].iloc[index] = elem[0]
+				df_pos['ard2'].iloc[index] = elem[to_plot]
 				nb.append(elem[0])
 				med.append(elem[2])
-		plt.scatter(nb)
+		sns.scatterplot(data = df_pos, x = range(len(df_pos)), y = df_pos[col], color = 'darkred', label = 'pos')
 		nb = []
 		med = []
+
 		for index, elem in enumerate(df_neg['ard2']) :
-				#df['ard2'].iloc[index] = elem[0]
+				df_neg['ard2'].iloc[index] = elem[to_plot]
 				nb.append(elem[0])
 				med.append(elem[2])
-		sns.plot(nb)
+		sns.scatterplot(data = df_neg, x = range(len(df_neg)), y = df_neg[col], label = 'neg')
 		#sns.scatterplot(data = df, x = med, y = nb)
 		#sns.scatterplot(data = df, x = df[col],)
 	else :	
 		#pass
-		sns.scatterplot(data = df_pos, x = range(len(df_pos)), y = df_pos[col], color = 'darkred')
-		sns.scatterplot(data = df_neg, x = range(len(df_neg)), y = df_neg[col])
+		sns.scatterplot(data = df_pos, x = range(len(df_pos)), y = df_pos[col], color = 'darkred', label = 'pos')
+		sns.scatterplot(data = df_neg, x = range(len(df_neg)), y = df_neg[col], label = 'neg')
 		#sns.scatterplot(x = df_neg[col], y = df_pos[col], hue = df['type'])
 		plt.legend()
+		plt.title("Scatterplot of the distribution between positive and negative samples")
 		plt.xticks([])
 
 		#sns.scatterplot(x = df_pos[col], y = df_neg[col], hue = 'type')
@@ -1473,6 +1475,9 @@ def Plotting_pos_neg(df, df_pos, def_neg, col, to_plot) :
 		#plt.scatter(df_neg[col])
 		#sns.scatterplot(x = df_pos[col], y = df_neg[col], hue = df['type'])
 	#sns.scatterplot(df[col])
+	plt.title("Scatterplot of the distribution between positive and negative samples")
+	plt.xticks([])
+
 	plt.show()
 #x = np.arange(0, 1, 0.1)
 
@@ -1524,7 +1529,7 @@ if __name__ == '__main__' :
 	df_f = Modification(final_results)
 	df_pos, df_neg = splitting(df_f)
 	#Plotting_by_col(df_neg, 2)
-	Plotting_pos_neg(df_f, df_pos, df_neg, 'radar', 0)
+	Plotting_pos_neg(df_f, df_pos, df_neg, 'ard2', 0)
 	#tsne = Tsne(df)
 
 
