@@ -1362,7 +1362,7 @@ def Plotting_by_col(df, to_plot) :
 	#for index, elem in enumerate(df['ard2']) :
 	#	df['ard2'].iloc[index] = elem[to_plot]
 
-	print(df['ard2'])
+	#print(df['ard2'])
 
 	sns.set(style = "darkgrid")
 
@@ -1375,6 +1375,7 @@ def Plotting_by_col(df, to_plot) :
 	for elem in df['radar'] :
 		if type(elem) != type(float(1)) :
 			print(elem, type(elem))
+
 
 	for column in df.columns :
 		#values = [0:1]
@@ -1442,47 +1443,60 @@ def Plotting_by_col(df, to_plot) :
 
 def Plotting_pos_neg(df, df_pos, def_neg, col, to_plot) :
 
+	#plt.figure()
+	#plt.subplots(2, 2)
+
 	if col == 'ard2' :
-		nb = []
-		med = []
+		nb_pos = []
+		med_pos = []
 		for index, elem in enumerate(df_pos['ard2']) :
 				df_pos['ard2'].iloc[index] = elem[to_plot]
-				nb.append(elem[0])
-				med.append(elem[2])
+				nb_pos.append(elem[0])
+				med_pos.append(elem[2])
 		sns.scatterplot(data = df_pos, x = range(len(df_pos)), y = df_pos[col], color = 'darkred', label = 'pos')
-		nb = []
-		med = []
+		
+		nb_neg = []
+		med_neg = []
 
 		for index, elem in enumerate(df_neg['ard2']) :
 				df_neg['ard2'].iloc[index] = elem[to_plot]
-				nb.append(elem[0])
-				med.append(elem[2])
+				nb_neg.append(elem[0])
+				med_neg.append(elem[2])
 		sns.scatterplot(data = df_neg, x = range(len(df_neg)), y = df_neg[col], label = 'neg')
-		#sns.scatterplot(data = df, x = med, y = nb)
-		#sns.scatterplot(data = df, x = df[col],)
-	else :	
-		#pass
+		if to_plot == 0 :
+			plt.suptitle('with number of linker')
+		elif to_plot == 2 :
+			plt.suptitle('with median of linker')
+	else :
 		sns.scatterplot(data = df_pos, x = range(len(df_pos)), y = df_pos[col], color = 'darkred', label = 'pos')
 		sns.scatterplot(data = df_neg, x = range(len(df_neg)), y = df_neg[col], label = 'neg')
-		#sns.scatterplot(x = df_neg[col], y = df_pos[col], hue = df['type'])
 		plt.legend()
-		plt.title("Scatterplot of the distribution between positive and negative samples")
-		plt.xticks([])
-
-		#sns.scatterplot(x = df_pos[col], y = df_neg[col], hue = 'type')
-		#plt.plot(df[col])
-		#plt.scatter(df_pos[col])
-		#plt.scatter(df_neg[col])
-		#sns.scatterplot(x = df_pos[col], y = df_neg[col], hue = df['type'])
-	#sns.scatterplot(df[col])
 	plt.title("Scatterplot of the distribution between positive and negative samples")
 	plt.xticks([])
 
 	plt.show()
-#x = np.arange(0, 1, 0.1)
 
+	for index, elem in enumerate(df['ard2']) :
+		df['ard2'].iloc[index] = elem[to_plot]
+	sns.boxplot(x = df['type'], y = df[col], hue = df['type'])
+	plt.legend()
+	plt.title('Boxplot on all sequences')
 
+	if col == 'ard2' :
+		if to_plot == 0 :
+			plt.suptitle('with number of linker')
+		elif to_plot == 2 :
+			plt.suptitle('with median of linker')
+	plt.show()
 
+	if nb_pos or nb_neg :
+		sns.scatterplot(x = med_pos, y = nb_pos, color = 'darkred', label = 'pos')
+		sns.scatterplot(x = med_neg, y = nb_neg, label = 'neg')
+		plt.xlabel("median")
+		plt.ylabel("number")
+		plt.title("Scatterplot for linkers")
+		plt.legend()
+		plt.show()
 
 if __name__ == '__main__' :
 
