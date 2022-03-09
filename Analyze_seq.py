@@ -975,9 +975,9 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 
 	print("---------df1")
 	print(df)
-	print("------------------------DICO WOLFPSORT------------------------")
-	print(dico_wlf)
-	print("------------------------END DICO WOLFPSORT------------------------")
+	#print("------------------------DICO WOLFPSORT------------------------")
+	#print(dico_wlf)
+	#print("------------------------END DICO WOLFPSORT------------------------")
 	return df
 
 
@@ -1025,19 +1025,20 @@ def Modification(dataframe) :
 		for elem in dataframe['trp2'] :
 			if elem == poss :
 				dataframe.replace(elem, float(index), inplace = True)
-
+	'''
 	for elem in dataframe['wolfpsort'] :
 		if elem == 'chlo' or elem == 'mito' :
 			dataframe.replace(elem, float(1), inplace = True)
 		else : 
 			dataframe.replace(elem, float(0), inplace = True)
+	'''
 
 	for elem in dataframe['localizer'] :
 		if elem == 'Y' :
 			dataframe.replace(elem, float(1), inplace = True)
 		else :
 			dataframe.replace(elem, float(0), inplace = True)
-
+	
 
 	for index, elem in enumerate(dataframe['deeploc']) :
 		probability = []
@@ -1072,13 +1073,13 @@ def Modification(dataframe) :
 
 			#dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
 			#print(dataframe.index[index])
-			for idt, seq in dico_all.items() :
-				if idt == dataframe.index[index] :
-					s = seq
+			#for idt, seq in dico_all.items() :
+			#	if idt == dataframe.index[index] :
+			#		s = seq
 
-			prop = nb/len(s)
-			#dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
-			dataframe['ard2'].iloc[index] = prop
+			#prop = nb/len(s)
+			dataframe['ard2'].iloc[index] = [nb, mini, med, maxi]
+			#dataframe['ard2'].iloc[index] = prop
 
 	'''
 	for index, elem in enumerate(dataframe['ard2']) :
@@ -1114,10 +1115,17 @@ def Modification(dataframe) :
 						if idt == dataframe['radar'].index[index] :
 							s = len(seq)
 				prop = nb/s
-				if prop != 0 :
-					dataframe['radar'].iloc[index] = float(1)
-				else : 
-					dataframe['radar'].iloc[index] = float(0)
+				dataframe['radar'].iloc[index] = prop
+				#if prop != 0 :
+				#	dataframe['radar'].iloc[index] = float(1)
+				#else : 
+				#	dataframe['radar'].iloc[index] = float(0)
+
+
+	for index, elem in enumerate(dataframe['radar']) :
+		if type(elem) != type(float(1)) :
+			print(elem, type(elem))
+			dataframe['radar'].iloc[index] = float(elem[0])
 
 
 	for col in dataframe :
@@ -1349,6 +1357,88 @@ def concat(file) :
 	pass
 
 
+def Plotting_by_col(df, to_plot) :
+
+	#for index, elem in enumerate(df['ard2']) :
+	#	df['ard2'].iloc[index] = elem[to_plot]
+
+	print(df['ard2'])
+
+	sns.set(style = "darkgrid")
+
+	#for elem in df['ard2'] :
+		#print(elem[to_plot])
+	#	sns.histplot(data = df, x = elem[to_plot], y = df.index)
+	#plt.show()
+
+
+	for elem in df['radar'] :
+		if type(elem) != type(float(1)) :
+			print(elem, type(elem))
+
+	for column in df.columns :
+		#values = [0:1]
+		plt.figure()
+		print("--------------", column, "--------------")
+		if column != 'ard2' :
+			#sns.histplot(df[column])
+			sns.countplot(df[column])
+			#if column == 'trp2' : 
+				#plt.legend(['NoTP', 'cTP', 'mTP', 'LuTP'])
+				#plt.legend()
+			if column == 'wolfpsort' :
+				#values = list(range(2))
+				#plt.xticks(ticks = values)
+				#plt.xlim([0, 1])
+				#plt.xlim(np.arange(0, 1, step = 0.001))
+				plt.xticks(np.arange(0, 1, step = 0.002))
+				plt.ylim(0, 100)
+				#plt.xticks(rotation = 'vertical')
+			if column == 'radar' :
+				#plt.xlim([0, 1])
+				#plt.bar(x = column, col = 'darkred', height = )
+				#sns.countplot(df[column], color = 'darkred')
+				plt.xticks(np.arange(0, 1, step = 0.002))
+				#plt.xticks(rotation = 'vertical')
+				#plt.yticks(np.arange(0, 1))
+				#plt.xlim(0, 1, step = 0.002)
+				plt.ylim(0, 10)
+
+		elif column == 'ard2' : 
+			for index, elem in enumerate(df['ard2']) :
+				df['ard2'].iloc[index] = elem[to_plot]
+			#sns.histplot(df[column])
+			sns.countplot(df[column])
+			#plt.xlim([0, 1])
+			plt.xticks(np.arange(0, 1, step = 0.001))
+			#plt.xlim(0, 2)
+			#plt.xticks(rotation = 'vertical')
+
+		plt.legend(column, prop = {'size' : 5.7})
+
+		if df is df_pos :
+			plt.title("Histogram of the distribution of postitive samples", fontsize = 15)
+		elif df is df_neg : 
+			plt.title("Histogram of the distribution of negative samples", fontsize = 15)
+		else :
+			plt.title("Histogram of the distribution of samples", fontsize = 15)
+
+		plt.show()
+
+
+
+	#sns.set(style = "darkgrid")
+
+	#sns.histplot(data = df, x = col, kde = True)
+	#plt.show()
+
+	'''
+	plt.hist(df['ard2'], hist = True, kde = False, \
+		hist_kws = {'edgecolor' : 'black'})
+	plt.show()
+	'''
+
+
 
 if __name__ == '__main__' :
 
@@ -1390,9 +1480,11 @@ if __name__ == '__main__' :
 	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/"
 	path_pb = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/idt_neg.txt"
 
-	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
-	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
-	#df = Modification(final_results)
+	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
+	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
+	df_f = Modification(final_results)
+	df_pos, df_neg = splitting(df_f)
+	Plotting_by_col(df_pos, 2)
 	#tsne = Tsne(df)
 
 
@@ -1433,11 +1525,11 @@ if __name__ == '__main__' :
 
 	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
-	#df = Modification(final_results)
-	#tsne = Tsne(df)
+	#df_f = Modification(final_results)
+	#tsne = Tsne(df_f)
 	'''
 
-	#df_pos, df_neg = splitting(df)
+	#df_pos, df_neg = splitting(df_f)
 	#tsne = Tsne(df_pos)
 	#tsne = Tsne(df_neg)
 	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'ard2')
