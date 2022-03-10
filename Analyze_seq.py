@@ -1048,7 +1048,7 @@ def Modification(dataframe) :
 		if p == 0 :
 			dataframe['deeploc'].iloc[index] = p
 		else : 
-			dataframe['deeploc'].iloc[index] = float(1)
+			dataframe['deeploc'].iloc[index] = p
 
 
 	for index, elem in enumerate(dataframe['ard2']) :
@@ -1278,7 +1278,7 @@ def Prop_Test(df1, df2, fold, col, to_plot) :
 	m_df2 = df2[col].mean()
 	total = m_df1 + m_df2
 	print("Moyenne prop linker des df :", m_df1, m_df2)
-	print("H0 : même proportion", "\n", "H1 : proportions différentes")
+	print("H0 : même proportion\n", "H1 : proportions différentes")
 
 	# Conditions of application
 	assert len(df1)*m_df1 > 10, "Condition non validée"
@@ -1551,8 +1551,9 @@ if __name__ == '__main__' :
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	df_f = Modification(final_results)
 	df_pos, df_neg = splitting(df_f)
-	#Plotting_by_col(df_neg, 2)
-	Plotting_pos_neg(df_f, df_pos, df_neg, 'ard2', 0)
+	#Plotting_by_col(df_pos, 2)
+	#Plotting_pos_neg(df_f, df_pos, df_neg, 'ard2', 2)
+	test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'ard2', 2)
 	#tsne = Tsne(df)
 
 
