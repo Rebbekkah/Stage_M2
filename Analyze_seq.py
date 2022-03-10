@@ -1045,10 +1045,11 @@ def Modification(dataframe) :
 		for key, prob in elem[0].items() :
 			probability.append(float(prob))
 		p = max(probability)
-		if p == 0 :
-			dataframe['deeploc'].iloc[index] = p
-		else : 
-			dataframe['deeploc'].iloc[index] = p
+		dataframe['deeploc'].iloc[index] = p
+		#if p == 0 :
+		#	dataframe['deeploc'].iloc[index] = p
+		#else : 
+		#	dataframe['deeploc'].iloc[index] = p
 
 
 	for index, elem in enumerate(dataframe['ard2']) :
@@ -1250,6 +1251,50 @@ def tsne_data(to_data) :
 	data['y'] = X_2d[:,1]
 
 	return data
+
+
+def Tsne_all(pos, neg, to_plot) :
+
+	print("---------------TSNE POS/NEG---------------")
+	arr_list = []
+	tsne = []
+	list_df = [pos, neg]
+	for df in list_df :
+		if df is pos :
+			print("df pos")
+			print(df)
+		elif df is neg :
+			print("df neg")
+			print(df)
+
+		for index, elem in enumerate(df['ard2']) :
+			df['ard2'].iloc[index] = elem[to_plot] 
+
+		df = np.array(df)
+		print(df, len(df), type(df))
+
+		#for arr in df :
+		#	print(arr, len(arr), type(arr))
+
+
+		tsne.append(tsne_data(df))
+		label = list(pos.columns)
+		print(label, type(label))
+
+	
+		print("--------------TSNE PERFORMING--------------")
+		for data in tsne :
+			sns.scatterplot(x = 'x', y = 'y', data = data)
+	if list_df[0] == pos :
+		plt.legend([pos, neg], prop = {'size' : 5.7})
+	elif list_df[0] == neg :
+		plt.legend([neg, pos], prop = {'size' : 5.7})
+	plt.title("Tsne of positive set", fontsize = 15)
+	plt.show()
+	
+
+
+
 
 
 def Prop_Test(df1, df2, fold, col, to_plot) :
@@ -1553,9 +1598,9 @@ if __name__ == '__main__' :
 	df_pos, df_neg = splitting(df_f)
 	#Plotting_by_col(df_pos, 2)
 	#Plotting_pos_neg(df_f, df_pos, df_neg, 'ard2', 2)
-	test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'ard2', 2)
+	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'ard2', 2)
 	#tsne = Tsne(df)
-
+	Tsne_all(df_pos, df_neg, 2)
 
 	'''
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
