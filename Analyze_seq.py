@@ -1170,7 +1170,7 @@ def splitting(df) :
 
 
 
-def Tsne(dataframe) :
+def Tsne_by_tools(dataframe) :
 	''' Perform a tsne on the modified dataframe 
 
 	Parameters
@@ -1218,7 +1218,10 @@ def Tsne(dataframe) :
 	for data in tsne :
 		sns.scatterplot(x = 'x', y = 'y', data = data)
 	plt.legend(label, prop = {'size' : 5.7})
-	plt.title("Tsne of negative and positiv sets", fontsize = 15)
+	if dataframe is df_pos :
+		plt.title("Tsne of positive set", fontsize = 15)
+	if dataframe is df_neg :
+		plt.title("Tsne of negative set", fontsize = 15)
 	plt.show()
 
 
@@ -1249,7 +1252,7 @@ def tsne_data(to_data) :
 	return data
 
 
-def Prop_Test(df1, df2, fold, col) :
+def Prop_Test(df1, df2, fold, col, to_plot) :
 	''' Calculates and computes a proportion test between two dataframes
 
 	Parameters
@@ -1264,6 +1267,12 @@ def Prop_Test(df1, df2, fold, col) :
 		Column name of the results to be performed
 
 	'''
+
+	if col == 'ard2' :
+		for index, elem in enumerate(df1[col]) :
+				df1['ard2'].iloc[index] = elem[to_plot]
+		for index, elem in enumerate(df2[col]) :
+				df2['ard2'].iloc[index] = elem[to_plot]
 
 	m_df1 = df1[col].mean()
 	m_df2 = df2[col].mean()
