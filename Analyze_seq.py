@@ -1259,6 +1259,7 @@ def Tsne_all(pos, neg, to_plot) :
 	arr_list = []
 	tsne = []
 	list_df = [pos, neg]
+
 	for df in list_df :
 		if df is pos :
 			print("df pos")
@@ -1285,11 +1286,11 @@ def Tsne_all(pos, neg, to_plot) :
 		print("--------------TSNE PERFORMING--------------")
 		for data in tsne :
 			sns.scatterplot(x = 'x', y = 'y', data = data)
-	if list_df[0] == pos :
-		plt.legend([pos, neg], prop = {'size' : 5.7})
-	elif list_df[0] == neg :
-		plt.legend([neg, pos], prop = {'size' : 5.7})
-	plt.title("Tsne of positive set", fontsize = 15)
+	if list_df[0] is pos :
+		plt.legend(['pos', 'neg'], prop = {'size' : 5.7})
+	elif list_df[0] is neg :
+		plt.legend(['neg', 'pos'], prop = {'size' : 5.7})
+	plt.title("Tsne on positive and negative sets", fontsize = 15)
 	plt.show()
 	
 
@@ -1334,7 +1335,9 @@ def Prop_Test(df1, df2, fold, col, to_plot) :
 	print("Conditions de validité passées")
 
 	# Computation of the residual standard error
-	variance = total*(1-total) 
+	variance = (total*(1-total))
+	#variance = abs(total*(1-total))
+
 	std_error = np.sqrt(variance*(1/len(df1) + 1/len(df2)))
 	print("Erreur standard = ", std_error)
 
@@ -1598,9 +1601,9 @@ if __name__ == '__main__' :
 	df_pos, df_neg = splitting(df_f)
 	#Plotting_by_col(df_pos, 2)
 	#Plotting_pos_neg(df_f, df_pos, df_neg, 'ard2', 2)
-	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'ard2', 2)
+	test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'radar', 2)
 	#tsne = Tsne(df)
-	Tsne_all(df_pos, df_neg, 2)
+	#Tsne_all(df_pos, df_neg, 2)
 
 	'''
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
