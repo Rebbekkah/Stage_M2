@@ -1425,8 +1425,28 @@ def Sep_long_proteom(pattern1, pattern2, fold) :
 					#i += 1
 
 
-def concat(file) :
-	pass
+def add_df(df) :
+	
+	df['acc'] = 0
+	list_idt = df.index
+
+	print(df)
+	print(list_idt)
+	fich = glob.glob(path_output+'/acc/Acc_output_*')
+	for f in fich :
+		print(basename(f))
+		with open(f, 'r') as filin :
+			#df_acc = pd.read_csv(f, sep = '\t')
+			for line in filin :
+				lt = []
+				lt.append(line.strip())
+				lt.split('\t')
+				print(lt, len(lt))
+				break
+
+			#print(df_acc)
+		if basename(f) == 'Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt' :
+			pass
 
 
 def Plotting_by_col(df, to_plot) :
@@ -1612,8 +1632,9 @@ if __name__ == '__main__' :
 
 	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
-	df_f = Modification(final_results)
-	df_pos, df_neg = splitting(df_f)
+	df = Modification(final_results)
+	df_f = add_df(df)
+	#df_pos, df_neg = splitting(df_f)
 	#Plotting_by_col(df_pos, 2)
 	#Plotting_pos_neg(df_f, df_pos, df_neg, 'ard2', 2)
 	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'radar', 2)
