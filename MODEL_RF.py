@@ -50,28 +50,66 @@ def app_test_val(df, len_app_test, len_val, len_app, len_test) :
 
 
 def Optimal_parameters(train) :
-	rf = RandomForestClassifier(max_features='auto', oob_score=True, random_state=1, n_jobs=-1)
+
+	rf = RandomForestClassifier(max_features = 'auto', oob_score = True, random_state = 1, n_jobs = -1)
 
 	param_grid = { "criterion" : ["gini", "entropy"], "min_samples_leaf" : [1, 5, 10],\
 	 "min_samples_split" : [2, 4, 10, 12, 16], "n_estimators": [50, 100, 400, 700, 1000]}
 
-	gs = GridSearchCV(estimator=rf, param_grid=param_grid, scoring='accuracy', cv=3, n_jobs=-1)
+	gs = GridSearchCV(estimator = rf, param_grid = param_grid, scoring = 'accuracy', cv = 3, n_jobs = -1)
 
 	gs = gs.fit(train.iloc[:, 1:], train.iloc[:, 0])
 
-	print(gs.bestscore)
-	print(gs.bestparams)
+	print(gs.best_score_)
+	print(gs.best_params_)
 	print(gs.cvresults)
 
 
 
 def model() :
-	pass
+	
+	rf = RandomForestClassifier(criterion = 'gini', 
+							 n_estimators = 700,
+							 min_samples_split = 10,
+							 min_samples_leaf = 1,
+							 max_features = 'auto',
+							 oob_score = True,
+							 random_state = 1,
+							 n_jobs = -1,
+							 verbose = 1)
+
+	'''
+	rf = RandomForestClassifier(criterion = 'gini', 
+							 n_estimators = 700,
+							 min_samples_split = 10,
+							 min_samples_leaf = 1,
+							 max_features = 'auto',
+							 oob_score = True,
+							 random_state = 1,
+							 n_jobs = -1)
+	'''
+
+	return rf
 
 
+def Model_app(rf, train) :
+
+	res = rf.fit(train.iloc[:, 1:], train.iloc[:, 0])
+	score = rf.oob_score_
+	imp = rf.feature_importances_
+	print("%.4f" % score)
+
+	return res, score, imp
 
 
+def Importance(rf, train, important) :
 
+	df_desc = pd.concat((pd.DataFrame(train.iloc[:, 1:].columns, columns = ['variable']),
+		pd.DataFrame(important, columns = ['importance'])), 
+		axis = 1).sort_values(by = 'importance', ascending = False)
+
+	print(df_desc)
+	return df_desc
 
 
 
@@ -86,7 +124,10 @@ if __name__ == '__main__' :
 	
 	df = data_reading('dataframe_all.csv')
 	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
-	Optimal_parameters(app)
+	#Optimal_parameters(app)
+	random_forest = model()
+	model_res_app, score_app, importance = Model_app(random_forest, app)
+	Importance(random_forest, app, importance)
 
 
 
