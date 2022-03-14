@@ -26,23 +26,28 @@ def app_test_val(df, len_app_test, len_val, len_app, len_test) :
 	len2 = len_val*len(df_shuffled)
 
 	val_data = df_shuffled.iloc[:int(len2), :]
+	df_shuffled = df_shuffled.iloc[int(len2):, :]
 	print("--------------VAL DF--------------")
 	print(val_data)
+	print("--------------NEW DF SHUFFLED--------------")
+	print(df_shuffled)
 
-	app_test = df_shuffled.iloc[int(len2):, :]
+
+	#app_test = df_shuffled.iloc[int(len2):, :]
+	app_test = df_shuffled
 	print("--------------APP_TEST DF--------------")
 	print(app_test)
 
 	len3 = len_app*len(app_test)
 	len4 = len_test*len(app_test)
 
-	df_test = app_test.iloc[:int(len3), :]
-	print("--------------TEST DF--------------")
-	print(df_test)
-
-	df_app = app_test.iloc[int(len3):, :]
+	df_app = app_test.iloc[:int(len3), :]
 	print("--------------APP DF--------------")
 	print(df_app)
+
+	df_test = app_test.iloc[int(len3):, :]
+	print("--------------TEST DF--------------")
+	print(df_test)
 
 
 	return df_shuffled, val_data, df_app, df_test
@@ -92,14 +97,24 @@ def model() :
 	return rf
 
 
-def Model_app(rf, train) :
+def Model_(rf, train, test) :
 
 	res = rf.fit(train.iloc[:, 1:], train.iloc[:, 0])
 	score = rf.oob_score_
 	imp = rf.feature_importances_
 	print("%.4f" % score)
 
-	return res, score, imp
+	print(test)
+	print(train)
+	pred = rf.predict(test)
+	pred = pd.DataFrame(pred, columns = ['type'])
+	pred = pd.condat((test.iloc[:, 0], predictions), axis = 1)
+	print("--------PRED\n", pred)
+
+	return res, score, imp, pred
+
+
+
 
 
 def Importance(rf, train, important) :
@@ -126,7 +141,7 @@ if __name__ == '__main__' :
 	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
 	#Optimal_parameters(app)
 	random_forest = model()
-	model_res_app, score_app, importance = Model_app(random_forest, app)
+	model_res_app, score_app, importance, predictions = Model_(random_forest, app, test)
 	Importance(random_forest, app, importance)
 
 
