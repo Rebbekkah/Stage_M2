@@ -104,16 +104,17 @@ def Model_(rf, train, test) :
 	imp = rf.feature_importances_
 	print("%.4f" % score)
 
-	print(test)
+	print(test.iloc[:, 0], type(test.iloc[:, 0]))
 	print(train)
-	pred = rf.predict(test)
-	pred = pd.DataFrame(pred, columns = ['type'])
-	pred = pd.condat((test.iloc[:, 0], predictions), axis = 1)
-	print("--------PRED\n", pred)
+	pred = rf.predict(test.iloc[:, 1:])
+	df_pred = pd.DataFrame(pred, columns = ['pred'])
+	df_pred.index = test.index
+	df_pred = pd.concat([test.iloc[:, 0], df_pred], axis = 1)
+	print("--------PRED\n", df_pred)
 
-	return res, score, imp, pred
+	df_pred.to_csv('Predictions_res.csv', sep = '\t', header = True, index = True)
 
-
+	return res, score, imp, df_pred
 
 
 
@@ -124,11 +125,13 @@ def Importance(rf, train, important) :
 		axis = 1).sort_values(by = 'importance', ascending = False)
 
 	print(df_desc)
+	df_desc.to_csv('Importance_desc.csv', sep = '\t', header = True, index = True)
+
 	return df_desc
 
 
-
-
+def Perf_calculator(pred) :
+	pass
 
 
 
@@ -136,13 +139,14 @@ def Importance(rf, train, important) :
 if __name__ == '__main__' :
 
 	path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/'
-	
+
 	df = data_reading('dataframe_all.csv')
 	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
 	#Optimal_parameters(app)
 	random_forest = model()
 	model_res_app, score_app, importance, predictions = Model_(random_forest, app, test)
-	Importance(random_forest, app, importance)
+	df_imp = Importance(random_forest, app, importance)
+	Perf_calculator(predictions)
 
 
 
