@@ -68,15 +68,15 @@ def Optimal_parameters(train) :
 
 	print(gs.best_score_)
 	print(gs.best_params_)
-	print(gs.cvresults)
+	print(gs.cv_results_)
 
 
 
 def model() :
 	
 	rf = RandomForestClassifier(criterion = 'gini', 
-							 n_estimators = 700,
-							 min_samples_split = 10,
+							 n_estimators = 500,
+							 min_samples_split = 30,
 							 min_samples_leaf = 1,
 							 max_features = 'auto',
 							 oob_score = True,
@@ -140,10 +140,11 @@ def Importance(rf, train, important) :
 	return df_desc
 
 
-def Perf_calculator(pred, pred_val) :
-	
+def Perf_calculator(pred_test, pred_val) :
 
-	predictions = [pred, pred_val]
+	predictions = [pred_test, pred_val]
+	index_wp = []
+	index_bp = []
 
 	for p in predictions :
 		TP = 0
@@ -152,7 +153,7 @@ def Perf_calculator(pred, pred_val) :
 		FN = 0
 		BP = 0
 		GP = 0
-		if p is pred :
+		if p is pred_test :
 			print("-----------TRAIN-----------")
 		elif p is pred_val :
 			print("-----------VAL-----------")
@@ -161,15 +162,19 @@ def Perf_calculator(pred, pred_val) :
 			if p.iloc[i, 0] == 1 and p.iloc[i, 1] == 1 :
 				GP += 1
 				TP += 1
+				index_wp.append(p.index[i])
 			elif p.iloc[i, 0] == 0 and p.iloc[i, 1] == 0 :
 				GP += 1
 				TN += 1
+				index_wp.append(p.index[i])
 			elif p.iloc[i, 0] == 0 and p.iloc[i, 1] == 1 :
 				BP += 1
 				FP += 1
+				index_bp.append(p.index[i])
 			elif p.iloc[i, 0] == 1 and p.iloc[i, 1] == 0 : 
 				BP += 1
 				FN += 1
+				index_bp.append(p.index[i])
 
 
 		total = len(p)
@@ -189,11 +194,27 @@ def Perf_calculator(pred, pred_val) :
 		df_cm.columns.name = 'Predicted'
 		plt.figure()
 		sns.heatmap(df_cm, cmap = "Blues", annot = True)
-		if p is pred :
+		if p is pred_test :
 			plt.title("Heatmap of Performances on the test dataset")
 		elif p is pred_val :
 			plt.title("Heatmap of Performances on the validation dataset")
-		plt.show()
+		#plt.show()
+
+		print("Good pred : ", index_wp, "\n", "Bad pred : ", index_bp)
+
+	with open('Good_pred.txt', 'w') as filout :
+		for idt in index_wp :
+			filout.write(idt+"\n")
+	with open('Bad_pred.txt', 'w') as filout :
+		for idt in index_bp :
+			filout.write(idt+"\n")
+
+	return index_wp, index_bp
+
+
+
+
+
 
 
 
@@ -203,11 +224,13 @@ if __name__ == '__main__' :
 
 	df = data_reading('dataframe_all.csv')
 	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
-	#Optimal_parameters(app)
+
 	random_forest = model()
-	model_res_app, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
-	df_imp = Importance(random_forest, app, importance)
-	Perf_calculator(predictions, val_pred)
+	Optimal_parameters(app)
+
+	#model_res_app, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
+	#df_imp = Importance(random_forest, app, importance)
+	#Perf_calculator(predictions, val_pred)
 
 
 
