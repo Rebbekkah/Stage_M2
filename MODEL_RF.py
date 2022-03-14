@@ -5,6 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import confusion_matrix
 
 
 def data_reading(file) :
@@ -97,12 +98,13 @@ def model() :
 	return rf
 
 
-def Model_(rf, train, test) :
+def Model_(rf, train, test, val) :
 
 	res = rf.fit(train.iloc[:, 1:], train.iloc[:, 0])
 	score = rf.oob_score_
 	imp = rf.feature_importances_
 	print("%.4f" % score)
+	print("%.4f" % (1-score))
 
 	print(test.iloc[:, 0], type(test.iloc[:, 0]))
 	print(train)
@@ -112,9 +114,17 @@ def Model_(rf, train, test) :
 	df_pred = pd.concat([test.iloc[:, 0], df_pred], axis = 1)
 	print("--------PRED\n", df_pred)
 
-	df_pred.to_csv('Predictions_res.csv', sep = '\t', header = True, index = True)
 
-	return res, score, imp, df_pred
+
+	pred_val = rf.predict(val.iloc[:, 1:])
+	df_pred_val = pd.DataFrame(pred_val, columns = ['pred'])
+	df_pred_val.index = val.index
+	df_pred_val = pd.concat([val.iloc[:, 0], df_pred_val], axis = 1)
+
+	df_pred.to_csv('Predictions_res_test.csv', sep = '\t', header = True, index = True)
+	df_pred.to_csv('Predictions_res_val.csv', sep = '\t', header = True, index = True)
+
+	return res, score, imp, df_pred, df_pred_val
 
 
 
@@ -130,9 +140,60 @@ def Importance(rf, train, important) :
 	return df_desc
 
 
-def Perf_calculator(pred) :
-	pass
+def Perf_calculator(pred, pred_val) :
+	
 
+	predictions = [pred, pred_val]
+
+	for p in predictions :
+		TP = 0
+		FP = 0
+		TN = 0
+		FN = 0
+		BP = 0
+		GP = 0
+		if p is pred :
+			print("-----------TRAIN-----------")
+		elif p is pred_val :
+			print("-----------VAL-----------")
+		print(len(p))
+		for i in range(len(p)) :
+			if p.iloc[i, 0] == 1 and p.iloc[i, 1] == 1 :
+				GP += 1
+				TP += 1
+			elif p.iloc[i, 0] == 0 and p.iloc[i, 1] == 0 :
+				GP += 1
+				TN += 1
+			elif p.iloc[i, 0] == 0 and p.iloc[i, 1] == 1 :
+				BP += 1
+				FP += 1
+			elif p.iloc[i, 0] == 1 and p.iloc[i, 1] == 0 : 
+				BP += 1
+				FN += 1
+
+
+		total = len(p)
+		print(TP, TN, FP, FN)
+		print(TP/total, TN/total, FP/total, FN/total)
+		print(GP, BP)
+
+		Accuracy = (TP+TN)/total
+		print("ACCURACY :", Accuracy)
+
+
+		y_true = p['type']
+		y_pred = p['pred']
+		data = confusion_matrix(y_true, y_pred)
+		df_cm = pd.DataFrame(data, columns = np.unique(y_true), index = np.unique(y_true))
+		df_cm.index.name = 'Actual'
+		df_cm.columns.name = 'Predicted'
+		plt.figure()
+		sns.heatmap(df_cm, cmap = "Blues", annot = True)
+		if p is pred :
+			plt.title("Heatmap of Performances on the test dataset")
+		elif p is pred_val :
+			plt.title("Heatmap of Performances on the validation dataset")
+		plt.show()
 
 
 
@@ -144,9 +205,9 @@ if __name__ == '__main__' :
 	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
 	#Optimal_parameters(app)
 	random_forest = model()
-	model_res_app, score_app, importance, predictions = Model_(random_forest, app, test)
+	model_res_app, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
 	df_imp = Importance(random_forest, app, importance)
-	Perf_calculator(predictions)
+	Perf_calculator(predictions, val_pred)
 
 
 
