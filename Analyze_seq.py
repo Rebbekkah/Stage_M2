@@ -1129,11 +1129,24 @@ def Modification(dataframe) :
 			dataframe['radar'].iloc[index] = float(elem[0])
 
 
+	dataframe['ard2_mini'] = float(0)
+	dataframe['ard2_med'] = float(0)
+	dataframe['ard2_max'] = float(0)
+	for index, elem in enumerate(dataframe['ard2']) :
+		dataframe['ard2'].iloc[index] = float(elem[0])
+		dataframe['ard2_mini'].iloc[index] = float(elem[1])
+		dataframe['ard2_med'].iloc[index] = float(elem[2])
+		dataframe['ard2_max'].iloc[index] = float(elem[3])
+
+
+
 	for col in dataframe :
 		print(dataframe[col], type(dataframe[col]))
 
 	print("---------df2")
 	print(dataframe)
+
+	dataframe.to_csv('dataframe_all.csv', sep = '\t', header = True, index = True)
 
 	return dataframe
 
@@ -1165,6 +1178,8 @@ def splitting(df) :
 	print("-----df neg")
 	print(df_neg)
 
+	df_pos.to_csv('dataframe_pos.csv', sep = '\t', header = True, index = True)
+	df_neg.to_csv('dataframe_neg.csv', sep = '\t', header = True, index = True)
 
 	return df_pos, df_neg
 
@@ -1601,7 +1616,7 @@ if __name__ == '__main__' :
 	df_pos, df_neg = splitting(df_f)
 	#Plotting_by_col(df_pos, 2)
 	#Plotting_pos_neg(df_f, df_pos, df_neg, 'ard2', 2)
-	test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'radar', 2)
+	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'radar', 2)
 	#tsne = Tsne(df)
 	#Tsne_all(df_pos, df_neg, 2)
 
