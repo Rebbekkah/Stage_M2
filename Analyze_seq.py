@@ -1427,26 +1427,91 @@ def Sep_long_proteom(pattern1, pattern2, fold) :
 
 def add_df(df) :
 	
-	df['acc'] = 0
-	list_idt = df.index
+	print("---------df add---------")
+	#df['acc'] = 0
+	list_idt = list(df.index)
 
 	print(df)
-	print(list_idt)
-	fich = glob.glob(path_output+'/acc/Acc_output_*')
+	#print(list_idt, len(list_idt))
+
+	for i in range(36) :
+		k = i
+		df['acc'+str(k)] = 0
+
+
+	k = 0
+	fich = glob.glob(path_output+'acc/v2/Acc_output_*')
+
+	print(fich)
+	if fich[0] == path_output+'acc/v2/Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt' :
+		fich = fich[::-1]
+	print(fich)
+
 	for f in fich :
+		#k = 0
 		print(basename(f))
 		with open(f, 'r') as filin :
 			#df_acc = pd.read_csv(f, sep = '\t')
 			for line in filin :
-				lt = []
-				lt.append(line.strip())
-				lt.split('\t')
-				print(lt, len(lt))
-				break
+				
+				#lt = []
+				#df['acc'+str(k)] = 0
+				line = line.split('\t')
+				#print(line)
+				line[-1] = line[-1].strip()
+				#print(line, len(line))
+				#lt.append(line)
+				#print(lt, len(lt))
+				#k+=1
+
+				for i in range(len(line)) :
+					df['acc'+str(i)].iloc[k] = line[i]
+
+
+				'''
+				for i in range(len(line)) :
+					if basename(f) == 'Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt' :
+						if df['type'].iloc[k] == 1 :
+							df['acc'+str(i)].iloc[k] = line[i]
+					elif basename(f) == 'Acc_output_New_Proteom_1081_tem_pos.fasta_line.txt.txt' :
+						if df['type'].iloc[k] == 0 :
+							df['acc'+str(i)].iloc[k] = line[i]
+				'''
+				'''
+				if basename(f) == 'Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt' :
+					for i in range(len(line)) :
+						if df['type'].iloc[k] == 1 :
+							#print("ok1")
+							df['acc'+str(i)].iloc[k] = line[i]
+							#print("----------------------")
+					#print(df.iloc[k])
+				elif basename(f) == 'Acc_output_New_Proteom_1081_tem_pos.fasta_line.txt.txt' :
+					#print("oui1")
+					#print(df['type'])
+					for i in range(len(line)) :
+						#print(df['type'].iloc[k] == 0)
+						if df['type'].iloc[k] == 0 :
+							#print(df.iloc[k])
+							print("oui2")
+							#print("ok2")
+							df['acc'+str(i)].iloc[k] = line[i]
+					#print(df.iloc[k])
+				'''
+				k += 1
+				
 
 			#print(df_acc)
-		if basename(f) == 'Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt' :
-			pass
+		#if basename(f) == 'Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt' :
+		#	pass
+
+				#for idt in list_idt :
+				#	for ind in range(len(list_idt)) :
+
+
+	#for col in df :
+	#	print(df[col])
+
+	print(df)
 
 
 def Plotting_by_col(df, to_plot) :
