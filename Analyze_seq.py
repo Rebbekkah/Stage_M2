@@ -1146,10 +1146,13 @@ def Modification(dataframe) :
 	print("---------df2")
 	print(dataframe)
 
-	dataframe.to_csv('dataframe_all.csv', sep = '\t', header = True, index = True)
+	#dataframe.to_csv('dataframe_all.csv', sep = '\t', header = True, index = True)
 
 	return dataframe
 
+def writing(df) :
+
+	df.to_csv('dataframe_all.csv', sep = '\t', header = True, index = True)
 
 
 def splitting(df) :
@@ -1168,6 +1171,7 @@ def splitting(df) :
 
 
 	'''
+
 
 	df_pos = df[df['type'] == 0]
 	df_neg = df[df['type'] == 1]
@@ -1268,7 +1272,7 @@ def tsne_data(to_data) :
 	return data
 
 
-def Tsne_all(pos, neg, to_plot) :
+def Tsne_all(pos, neg) :
 
 	print("---------------TSNE POS/NEG---------------")
 	arr_list = []
@@ -1283,8 +1287,8 @@ def Tsne_all(pos, neg, to_plot) :
 			print("df neg")
 			print(df)
 
-		for index, elem in enumerate(df['ard2']) :
-			df['ard2'].iloc[index] = elem[to_plot] 
+		#for index, elem in enumerate(df['ard2']) :
+		#	df['ard2'].iloc[index] = elem[to_plot] 
 
 		df = np.array(df)
 		print(df, len(df), type(df))
@@ -1432,41 +1436,33 @@ def add_df(df) :
 	list_idt = list(df.index)
 
 	print(df)
+	#print(df[df['type'] == 0])
 	#print(list_idt, len(list_idt))
 
+
+
+	print("---------------ACC---------------")
+
 	for i in range(36) :
-		k = i
-		df['acc'+str(k)] = 0
+		df['acc'+str(i)] = 0
 
 
 	k = 0
 	fich = glob.glob(path_output+'acc/v2/Acc_output_*')
-
 	print(fich)
+
 	if fich[0] == path_output+'acc/v2/Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt' :
 		fich = fich[::-1]
-	print(fich)
 
 	for f in fich :
-		#k = 0
 		print(basename(f))
 		with open(f, 'r') as filin :
-			#df_acc = pd.read_csv(f, sep = '\t')
 			for line in filin :
-				
-				#lt = []
-				#df['acc'+str(k)] = 0
 				line = line.split('\t')
-				#print(line)
 				line[-1] = line[-1].strip()
-				#print(line, len(line))
-				#lt.append(line)
-				#print(lt, len(lt))
-				#k+=1
 
 				for i in range(len(line)) :
 					df['acc'+str(i)].iloc[k] = line[i]
-
 
 				'''
 				for i in range(len(line)) :
@@ -1477,41 +1473,15 @@ def add_df(df) :
 						if df['type'].iloc[k] == 0 :
 							df['acc'+str(i)].iloc[k] = line[i]
 				'''
-				'''
-				if basename(f) == 'Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt' :
-					for i in range(len(line)) :
-						if df['type'].iloc[k] == 1 :
-							#print("ok1")
-							df['acc'+str(i)].iloc[k] = line[i]
-							#print("----------------------")
-					#print(df.iloc[k])
-				elif basename(f) == 'Acc_output_New_Proteom_1081_tem_pos.fasta_line.txt.txt' :
-					#print("oui1")
-					#print(df['type'])
-					for i in range(len(line)) :
-						#print(df['type'].iloc[k] == 0)
-						if df['type'].iloc[k] == 0 :
-							#print(df.iloc[k])
-							print("oui2")
-							#print("ok2")
-							df['acc'+str(i)].iloc[k] = line[i]
-					#print(df.iloc[k])
-				'''
 				k += 1
 				
-
-			#print(df_acc)
-		#if basename(f) == 'Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt' :
-		#	pass
-
-				#for idt in list_idt :
-				#	for ind in range(len(list_idt)) :
-
-
 	#for col in df :
 	#	print(df[col])
-
 	print(df)
+
+	print("---------------FREQ---------------")
+
+	return df
 
 
 def Plotting_by_col(df, to_plot) :
@@ -1699,12 +1669,13 @@ if __name__ == '__main__' :
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	df = Modification(final_results)
 	df_f = add_df(df)
-	#df_pos, df_neg = splitting(df_f)
+	writing(df_f)
+	df_pos, df_neg = splitting(df_f)
 	#Plotting_by_col(df_pos, 2)
 	#Plotting_pos_neg(df_f, df_pos, df_neg, 'ard2', 2)
 	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'radar', 2)
-	#tsne = Tsne(df)
-	#Tsne_all(df_pos, df_neg, 2)
+	#tsne = Tsne(df_f)
+	Tsne_all(df_pos, df_neg)
 
 	'''
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
