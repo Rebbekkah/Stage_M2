@@ -1440,7 +1440,6 @@ def add_df(df) :
 	#print(list_idt, len(list_idt))
 
 
-
 	print("---------------ACC---------------")
 
 	for i in range(36) :
@@ -1481,7 +1480,79 @@ def add_df(df) :
 
 	print("---------------FREQ---------------")
 
+	for aa in list_of_aa :
+		df[aa] = 0
+
+	dico_all = Proteom_all(path_output)
+
+	print(dico_all)
+	print(len(dico_all.keys()), len(df))
+
+
+	dico = {}
+	for idt, seq in dico_all.items() :
+		dico[idt] = ""
+		dico[idt] = freq_aa(seq)
+			
+	print(dico)
+
+
+	for idt, dic in dico.items() :
+		for aa, prop in dic.items() :
+			for index, col in enumerate(df) :
+				#print(col)
+				if aa == col and idt == df.index[index] :
+					df[col].iloc[index] = prop
+
+	#for aa in list_of_aa :
+	#	for index, amino in enumerate(df[aa]) :
+	#		for idt, dic in dico.items() :
+
+
+
+	print(df)
+
 	return df
+
+
+def freq_aa(sequence) : 
+	""" Calculates for a given sequence its frequency of amino acid
+
+	Parameters
+	----------
+	sequence : str
+		Sequence to analyze
+
+	Returns
+	-------
+	freq_dico : dictionnary
+		Dictionnary of frequencies, where each key is a amino acid
+		and the dictionnary value its frequency in the sequence
+
+	"""
+	dico = {}
+	for letter in sequence :
+		if letter not in dico.keys() :
+			dico[letter] = 1
+		else :
+			dico[letter] += 1
+
+	total_aa = sum(dico.values()) #ou len(sequence)
+
+	freq_dico = {}
+	for cle, value in dico.items() :
+		if cle not in freq_dico.keys() :
+			freq_dico[cle] = value/total_aa
+
+
+	for aa in list_of_aa :
+		if aa not in freq_dico :
+			freq_dico[aa] = 0
+
+
+	return freq_dico
+
+
 
 
 def Plotting_by_col(df, to_plot) :
@@ -1669,13 +1740,13 @@ if __name__ == '__main__' :
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	df = Modification(final_results)
 	df_f = add_df(df)
-	writing(df_f)
-	df_pos, df_neg = splitting(df_f)
+	#writing(df_f)
+	#df_pos, df_neg = splitting(df_f)
 	#Plotting_by_col(df_pos, 2)
 	#Plotting_pos_neg(df_f, df_pos, df_neg, 'ard2', 2)
 	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'radar', 2)
 	#tsne = Tsne(df_f)
-	Tsne_all(df_pos, df_neg)
+	#Tsne_all(df_pos, df_neg)
 
 	'''
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
