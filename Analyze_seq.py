@@ -1495,14 +1495,32 @@ def add_df(df) :
 		dico[idt] = freq_aa(seq)
 			
 	print(dico)
+	print(len(dico.keys()), len(df))
 
+	'''
+	for idt in dico.keys() :
+		for it in list_idt :
+			if it == idt :
+				print(idt)
+	'''
 
 	for idt, dic in dico.items() :
-		for aa, prop in dic.items() :
-			for index, col in enumerate(df) :
-				#print(col)
-				if aa == col and idt == df.index[index] :
-					df[col].iloc[index] = prop
+		#for aa, prop in dic.items() :
+			#print(aa, prop)
+		for index in list_idt :
+			if idt == index :
+				for col in df :
+					for aa, prop in dic.items() :
+						if col == aa :
+							df.loc[index, aa] = prop
+	
+
+
+
+			#for index, col in enumerate(df) :
+			#	if aa == col and idt == df.index[index] :
+			#		print("ok")
+			#		df[col].iloc[index] = prop
 
 	#for aa in list_of_aa :
 	#	for index, amino in enumerate(df[aa]) :
@@ -1510,6 +1528,7 @@ def add_df(df) :
 
 
 
+	#print(df.loc['>Cre15.g639304.t1.2',:])
 	print(df)
 
 	return df
