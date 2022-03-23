@@ -13,7 +13,7 @@ Softwares :
 Rebecca GOULANCOURT
 M2 BIOLOGIE - INFORMATIQUE
 Université de Paris 2021 - 2022
-Stage M2 - supervisor : Ingrid Lafontaine
+Stage M2 - supervisor : Ingrid Lafontaine & Céline Cattelin
 ------------------------------------------------------------------
 
 """
@@ -158,6 +158,9 @@ def proteome_maker(ToKeep, path_proteom, pattern) :
 	path_proteom : str
 		Path to the initial proteoms that contains id and their sequences
 
+	pattern : str
+		pattern to recognize the fasta proteome files
+
 	Returns
 	-------
 	dico2 : dict
@@ -221,6 +224,15 @@ def sep(path_proteom, pattern1, pattern2, pattern3) :
 	----------
 	path_proteom : str
 		Path to where the proteoms are located
+
+	pattern1 : str
+		pattern to recognize fasta proteom files
+
+	pattern2 : str
+		pattern to recognize the TMHMM files
+
+	pattern3 : str
+		pattern to locate the output results
 
 	Returns
 	-------
@@ -1850,23 +1862,23 @@ if __name__ == '__main__' :
 	os.chdir(path_output)
 
 	# TMHMM
-	os.chdir(path_output+'/TMHMM/')
-	proteins = listing(path_output, 'TMHMM/*.tmhmm')
-	new_proteom = proteome_maker(proteins, path_proteom, '*.f*')
-	separateur = sep(path_proteom, '*.f*a', '*.tmhmm', 'TMHMM/')
+	#os.chdir(path_output+'/TMHMM/')
+	#proteins = listing(path_output, 'TMHMM/*.tmhmm')
+	#new_proteom = proteome_maker(proteins, path_proteom, '*.f*')
+	#separateur = sep(path_proteom, '*.f*a', '*.tmhmm', 'TMHMM/')
 	#Long_prot_sep = Sep_long_proteom('TMHMM/New_proteom_all/*.txt', 'TMHMM/sep_prot/', int(32000))
 
-	os.chdir(path_output)
+
 
 	# ARD2
 	path_ard2 = path_output+"ARD2/"
-	path_tmhmm = path_output+"TMHMM/files/"
+	path_tmhmm = path_output+"TMHMM/"
 	
 	# WOLFPSORT
 	path_wpsort = path_output+"WOLFPSORT/"
 
 	# TARGETP2
-	path_trgp2 = path_output+"TRP2/"
+	path_trgp2 = path_output+"TARGETP2/"
 
 	# DEEPLOC
 	path_dploc = path_output+"DEEPLOC/"
