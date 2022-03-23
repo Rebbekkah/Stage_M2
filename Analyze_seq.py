@@ -98,14 +98,14 @@ def reading(fichier) :
 		if elem not in id_to_keep and elem not in dico_h.keys():
 			id_to_keep.append(elem)
 
-	print("Total prot : ", idt_all, len(idt_all))
-	print("PROT TO KEEP : ", id_to_keep, len(id_to_keep))
+	#print("Total prot : ", idt_all, len(idt_all))
+	#print("PROT TO KEEP : ", id_to_keep, len(id_to_keep))
 
 	id_to_delete = []	
 	for idt in idt_all :
 		if idt in dico_h.keys() :
 			id_to_delete.append(idt)
-	print("TO DELETE : ", id_to_delete)
+	#print("TO DELETE : ", id_to_delete)
 	
 	#os.chdir(path_output)
 	#with open("output_Analyzeseq_ToKeep_"+basename(fichier)+".txt", "w") as filout :
@@ -200,7 +200,7 @@ def proteome_maker(ToKeep, path_proteom, pattern) :
 
 	for idt in idt_del :
 		if idt in dico2.keys() :
-			print(idt)
+			#print(idt)
 			del dico2[idt]
 	print("LEN DICO2------", len(dico2))
 
@@ -229,7 +229,7 @@ def sep(path_proteom, pattern1, pattern2, pattern3) :
 	Writes
 	------
 	New_Proteom.txt : txt file
-		File of the new proteoms (negative and positive sets)
+		File of the new proteoms 
 
 	'''
 	print("-----------------separateur-----------------")
@@ -261,16 +261,21 @@ def sep(path_proteom, pattern1, pattern2, pattern3) :
 				else :
 					dico_all[elem] += line.strip()
 			print(len(dico_all.keys()))
+			#print(dico_all.keys())
 		for idt in idt_ok[i] :
 			idt = ">"+idt
+			#print(idt)
 			if idt in dico_all.keys() :
+				#print("oui")
 				dico2[idt] = ""
 				dico2[idt] += dico_all[idt]
-		print("LEN DICO2", len(dico2))
+		print("LEN DICO2 KEYS", len(dico2.keys()))
+		#print("LEN DICO2 VAL", len(dico2.values()))
 		with open("New_Proteom_"+basename(p)+".txt", "w") as filout :
 			for idt, seq in dico2.items() :
 				if len(seq) > 120 :
 					filout.write(idt+"\n"+seq+"\n")
+		print("--------------------")
 		i += 1
 
 
@@ -1836,20 +1841,22 @@ if __name__ == '__main__' :
 	#Tsne_all(df_pos, df_neg)
 	'''
 	
-	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
-	path_output = path_proteom+"outputs/"
-	print(path_output)
+	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/TMHMM/old/"
+	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
+	#print(path_output)
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 	
 
-	os.chdir(path_output+'TMHMM/files/')
+	os.chdir(path_output)
 
 	# TMHMM
-	#proteins = listing(path_output, 'TMHMM/old/*.tmhmm')
-	#new_proteom = proteome_maker(proteins, path_proteom, '*/*.f'+'*a')
-	#separateur = sep(path_proteom, '*/*.f'+'*a', 'outputs/TMHMM/old/*.tmhmm', 'TMHMM/New_proteom_all/')
+	os.chdir(path_output+'/TMHMM/')
+	proteins = listing(path_output, 'TMHMM/*.tmhmm')
+	new_proteom = proteome_maker(proteins, path_proteom, '*.f*')
+	separateur = sep(path_proteom, '*.f*a', '*.tmhmm', 'TMHMM/')
 	#Long_prot_sep = Sep_long_proteom('TMHMM/New_proteom_all/*.txt', 'TMHMM/sep_prot/', int(32000))
 
+	os.chdir(path_output)
 
 	# ARD2
 	path_ard2 = path_output+"ARD2/"
@@ -1870,8 +1877,8 @@ if __name__ == '__main__' :
 	# RADAR
 	path_radar = path_output+"RADAR/"
 
-	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
-	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
+	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
+	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	#df_f = Modification(final_results)
 	#tsne = Tsne(df_f)
 	
