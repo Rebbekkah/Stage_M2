@@ -248,14 +248,14 @@ def which_clade(df_test, df_val) :
 			#print(ind, type(ind))
 			if ind.startswith('>Cre') :
 				df.loc[ind, 'org'] = 'proteome_Chlamydomonas.fa'
-			#elif ind.split(' ')[-1]
+			elif ind.startswith('>AT') :
+				df.loc[ind, 'org'] = 'proteome_Arabidopsis_thaliana.faa'
 
 
 
 	print(ldf)
 
 	lorg = ['proteome_Chlamydomonas.fa', 'proteome_Arabidopsis_thaliana.faa', 'other']
-	print(lorg[0], type(lorg[0]), len(org[0]))
 
 	for df in ldf :
 		TP_other = 0
@@ -306,41 +306,61 @@ def which_clade(df_test, df_val) :
 
 
 		total_chlamy = len(df[df['org'] == lorg[0]])
-		#total_arabi = len(df[df['org'] == lorg[1]])
+		total_arabi = len(df[df['org'] == lorg[1]])
 		total_other = len(df[df['org'] == lorg[2]])
 		#print(total_chlamy)
-		print(TP_chlamy, TN_chlamy, FP_chlamy, FN_chlamy)
-		print(TP_chlamy/total_chlamy, TN_chlamy/total_chlamy, FP_chlamy/total_chlamy, FN_chlamy/total_chlamy)
+		#print(TP_chlamy, TN_chlamy, FP_chlamy, FN_chlamy)
+		#print(TP_chlamy/total_chlamy, TN_chlamy/total_chlamy, FP_chlamy/total_chlamy, FN_chlamy/total_chlamy)
 
 		Accuracy_chlamy = (TP_chlamy+TN_chlamy)/total_chlamy
-		#Accuracy_arabi = (TP_arabi+TN_arabi)/total_arabi
+		Accuracy_arabi = (TP_arabi+TN_arabi)/total_arabi
 		Accuracy_other = (TP_other+TN_other)/total_other
 		print("ACCURACY CHLAMY:", Accuracy_chlamy)
-		#print("ACCURACY ARABIDOPSIS:", Accuracy_arabi)
+		print("ACCURACY ARABIDOPSIS:", Accuracy_arabi)
 		print("ACCURACY OTHER:", Accuracy_other)
 		print("---------------------")
 
-		print(TP_arabi, TN_arabi, FP_arabi, FN_arabi)
-		Sensibility_chlamy = TP_chlamy/(TP_chlamy+FN_chlamy)
-		#Sensibility_arabi = TP_arabi/(TP_arabi+FN_arabi)
-		Sensibility_other = TP_other/(TP_other+FN_other)
-		print("SENSIBILITY CHLAMY:", Sensibility_chlamy)
-		#print("SENSIBILITY ARABIDOPSIS:", Sensibility_arabi)
-		print("SENSIBILITY OTHER:", Sensibility_other)
+		print("_____", TP_arabi, TN_arabi, FP_arabi, FN_arabi)
+		if (TP_chlamy+FN_chlamy) != 0 :
+			Sensibility_chlamy = TP_chlamy/(TP_chlamy+FN_chlamy)
+			print("SENSIBILITY CHLAMY:", Sensibility_chlamy)
+		else :
+			print("SENSIBILITY CHLAMY: non calculable --> (TP_chlamy+FN_chlamy) = 0")
+			print("TP = ", TP_chlamy, "FN = ", FN_chlamy)
+		if (TP_arabi+FN_arabi) != 0 :
+			Sensibility_arabi = TP_arabi/(TP_arabi+FN_arabi)
+			print("SENSIBILITY ARABIDOPSIS:", Sensibility_arabi)
+		else :
+			print("SENSIBILITY ARABIDOPSIS: non calculable --> (TP_arabi+FN_arabi) = 0")
+			print("TP = ", TP_arabi, "FN = ", FN_arabi)
+		if (TP_other+FN_other) != 0 :
+			Sensibility_other = TP_other/(TP_other+FN_other)
+			print("SENSIBILITY OTHER:", Sensibility_other)
+		else :
+			print("SENSIBILITY OTHER: non calculable --> (TP_other+FN_other) = 0")
+			print("TP = ", TP_other, "FN = ", FN_other)
+		
 		print("---------------------")
 
 
-
-		Specificity_chlamy = TN_chlamy/(TN_chlamy+FP_chlamy)
-		#Specificity_arabi = TN_arabi/(TN_arabi+FP_arabi)
-		Specificity_other = TN_other/(TN_other+FP_other)
-		print("SPECIFICITY CHLAMY:", Specificity_chlamy)
-		#print("SPECIFICITY ARABIDOPSIS:", Specificity_arabi)
-		print("SPECIFICITY OTHER:", Specificity_other)
-		#print("SENSIBILITY :", Sensibility)
-		#print("SPECIFICITY :", Specificity)
-		#print("ACCURACY :", Accuracy)
-
+		if (TN_chlamy+FP_chlamy) != 0 :
+			Specificity_chlamy = TN_chlamy/(TN_chlamy+FP_chlamy)
+			print("SPECIFICITY CHLAMY:", Specificity_chlamy)
+		else : 
+			print("SPECIFICITY CHLAMY: non calculable --> (TN_chlamy+FP_chlamy) = 0")
+			print("TN =", TN_chlamy, "FP = ", FP_chlamy)
+		if (TN_arabi+FP_arabi) != 0 :
+			Specificity_arabi = TN_arabi/(TN_arabi+FP_arabi)
+			print("SPECIFICITY ARABIDOPSIS:", Specificity_arabi)
+		else : 
+			print("SPECIFICITY ARABIDOPSIS: non calculable --> (TN_arabi+FP_arabi) = 0")
+			print("TN =", TN_arabi, "FP = ", FP_arabi)
+		if (TN_other+FP_other) != 0 :
+			Specificity_other = TN_other/(TN_other+FP_other)
+			print("SPECIFICITY OTHER:", Specificity_other)
+		else : 
+			print("SPECIFICITY OTHER: non calculable --> (TN_other+FP_other) = 0")
+			print("TN =", TN_other, "FP = ", FP_other)
 
 def idt_(path) :
 
