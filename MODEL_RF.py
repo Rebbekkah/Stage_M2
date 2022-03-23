@@ -1,3 +1,16 @@
+""" This allow perform a Random Forest model in order to analyze and classify
+	proteins as alpha-solenoïds ROGEs (Regulator Of Genome Expression) in
+	plants organelles
+
+------------------------------------------------------------------
+Rebecca GOULANCOURT
+M2 BIOLOGIE - INFORMATIQUE
+Université de Paris 2021 - 2022
+Stage M2 - supervisor : Ingrid Lafontaine & Céline Cattelin
+------------------------------------------------------------------
+
+"""
+
 import pandas as pd
 import numpy as np
 import os
@@ -11,6 +24,21 @@ from sklearn.metrics import confusion_matrix
 
 
 def data_reading(file) :
+	''' Read a csv file that contains a dataframe of the results for the
+	"Analyze_seq.py" code 
+
+	
+	Parameter
+	---------
+	file : str
+		file to be read
+
+	Returns
+	-------
+	df : Dataframe
+		dataframe that has been read
+
+	'''
 
 	df = pd.read_csv(path+file, sep = '\t')
 
@@ -21,6 +49,30 @@ def data_reading(file) :
 	return df
 
 def app_test_val(df, len_app_test, len_val, len_app, len_test) :
+	''' Use a dataframe to split and create learning, test and validation dataframes
+	--> Dire l'organisation des données
+
+
+	Parameter
+	---------
+	df : Dataframe
+		dataframe of results
+
+	Returns
+	-------
+	df_shuffled : Dataframe
+		the same dataframe in input but shuffled
+
+	val_data : Dataframe
+		dataframe that contains validation dataset
+
+	df_app : Dataframe
+		dataframe that contains train dataset
+
+	df_test : Dataframe
+		dataframe that contains test dataset
+
+	'''
 
 	df_shuffled = df.sample(frac = 1)
 	print(df_shuffled)
@@ -75,6 +127,18 @@ def Optimal_parameters(train) :
 
 
 def model() :
+	''' Set the model and its parameters
+
+	Parameters
+	----------
+	None
+
+	Returns
+	-------
+	rf : sklearn 'RandomForestClassifier'
+		the model we will use to predict
+
+	'''
 	
 	rf = RandomForestClassifier(criterion = 'gini', 
 							 n_estimators = 500,
@@ -96,11 +160,53 @@ def model() :
 							 random_state = 1,
 							 n_jobs = -1)
 	'''
-
 	return rf
 
 
 def Model_(rf, train, test, val) :
+	''' Train the model on the train dataset, test it on the test dataset 
+	and validation dataset
+
+	Parameters
+	----------
+	rf : sklearn 'RandomForestClassifier'
+		the model used to predict
+
+	train : Dataframe
+		train dataset
+
+	test : Dataframe
+		test dataset
+
+	val : Dataframe
+		validation dataset
+
+	Returns
+	-------
+	res : sklearn 'RandomForestClassifier'
+		results of the prediction on the train dataset
+
+	score : float
+		accuracy calculated by the rf itself
+
+	imp : str
+		importance of each descriptors
+
+	df_pred : Dataframe
+		dataframe of prediciton results on test dataset
+
+	df_pred_val : Dataframe
+		dataframe of prediciton results on validation dataset
+
+	Writes
+	------
+	Predictions_res_test.csv : .csv file
+		df_pred
+
+	Predictions_res_val.csv : .csv file
+		df_pred_val
+
+	'''
 
 	res = rf.fit(train.iloc[:, 1:], train.iloc[:, 0])
 	score = rf.oob_score_
@@ -131,6 +237,11 @@ def Model_(rf, train, test, val) :
 
 
 def Importance(rf, train, important) :
+	''' 
+
+
+	'''
+
 
 	df_desc = pd.concat((pd.DataFrame(train.iloc[:, 1:].columns, columns = ['variable']),
 		pd.DataFrame(important, columns = ['importance'])), 
@@ -308,9 +419,6 @@ def which_clade(df_test, df_val) :
 		total_chlamy = len(df[df['org'] == lorg[0]])
 		total_arabi = len(df[df['org'] == lorg[1]])
 		total_other = len(df[df['org'] == lorg[2]])
-		#print(total_chlamy)
-		#print(TP_chlamy, TN_chlamy, FP_chlamy, FN_chlamy)
-		#print(TP_chlamy/total_chlamy, TN_chlamy/total_chlamy, FP_chlamy/total_chlamy, FN_chlamy/total_chlamy)
 
 		Accuracy_chlamy = (TP_chlamy+TN_chlamy)/total_chlamy
 		Accuracy_arabi = (TP_arabi+TN_arabi)/total_arabi
@@ -320,7 +428,6 @@ def which_clade(df_test, df_val) :
 		print("ACCURACY OTHER:", Accuracy_other)
 		print("---------------------")
 
-		print("_____", TP_arabi, TN_arabi, FP_arabi, FN_arabi)
 		if (TP_chlamy+FN_chlamy) != 0 :
 			Sensibility_chlamy = TP_chlamy/(TP_chlamy+FN_chlamy)
 			print("SENSIBILITY CHLAMY:", Sensibility_chlamy)
