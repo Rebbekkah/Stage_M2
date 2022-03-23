@@ -21,6 +21,7 @@ Stage M2 - supervisor : Ingrid Lafontaine
 # Modules
 import pandas as pd
 import numpy as np
+#print(np.version.version)
 import sys
 import os
 import statistics
@@ -31,6 +32,9 @@ import seaborn as sns
 from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
 import scipy.stats.distributions as dist
+import umap
+import umap.plot
+from sklearn.decomposition import PCA
 
 
 def reading(fichier) :
@@ -1551,6 +1555,31 @@ def freq_aa(sequence) :
 
 
 
+def check_up(df) :
+
+	#for index, elem in enumerate(df['radar']) :
+	l = []
+	lpos = []
+	lneg = []
+
+	for index, elem in enumerate(df['radar']) :
+		if elem == 0.0 :
+			l.append(df.index[index])
+		if elem == 0.0 and df['type'].iloc[index] == 0 : 
+			lpos.append(df.index[index])
+		elif elem == 0.0 and df['type'].iloc[index] == 1 : 
+			lneg.append(df.index[index])
+
+
+	print(len(l))
+	print(len(lpos)/len(df[df['type'] == 0]))
+	print(len(lneg)/len(df[df['type'] == 1]))
+	#print(df.iloc[])
+
+
+
+
+
 
 def Plotting_by_col(df, to_plot) :
 
@@ -1693,8 +1722,66 @@ def Plotting_pos_neg(df, df_pos, def_neg, col, to_plot) :
 		plt.legend()
 		plt.show()
 
+
+
+
+def boxplot(df_pos, df_neg) :
+	pass
+
+def UMAP(df_pos, df_neg) :
+
+	df_pos = np.array(df_pos)
+	df_neg = np.array(df_neg)
+	
+	emb_pos = umap.UMAP(n_neighbors = 5, min_dist = 0.3,
+		metric = 'correlation').fit(df_pos)
+		#metric = 'neighborhood').fit_transform(df)
+
+	emb_neg = umap.UMAP(n_neighbors = 5, min_dist = 0.3,
+		metric = 'correlation').fit(df_neg)
+
+
+	#embedding = umap.UMAP(n_neighbors = 5, min_dist = 0.3,
+	#	metric = 'correlation').fit(df)
+	#umap.plot.points(embedding, labels = df['type'])
+	#print(embedding, type(embedding), embedding.shape)
+	#for arr in embedding :
+	#	if arr.shape != (2,) :
+	#		print(arr, type(arr), arr.shape)
+	#sns.scatterplot(embedding)
+	#sns.scatterplot(x = df_pos, y = emb_pos, color = 'darkred', label = 'pos')
+	#sns.scatterplot(x = df_neg, y = emb_neg, label = 'neg')
+
+	#plt.plot(emb_pos, emb_neg)
+	fig, ax = plt.subplots()
+	ax.scatter(emb_pos, emb_neg)
+	plt.show()
+
+
+def PCA(df) :
+
+	sys.setrecursionlimit(10000000)
+	
+	#df = np.array(df)
+
+	pca = PCA(2)
+	fit_ = pca.fit_transform(df)
+
+	print(pca.n_components_)
+	print(pca.explained_variance_)
+
+	plt.scatter(fit_[:,0], fit_[:,1])
+	plt.xlabel('component 1')
+	plt.ylabel('component 2')
+	plt.colobar()
+	plt.show()
+
+
 if __name__ == '__main__' :
 
+
+
+	'''
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/"
 	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
@@ -1737,20 +1824,23 @@ if __name__ == '__main__' :
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	df = Modification(final_results)
 	df_f = add_df(df)
-	writing(df_f)
+	#writing(df_f)
 	df_pos, df_neg = splitting(df_f)
+	#UMAP(df_pos, df_neg)
+	#PCA(df_f)
+	#check_up(df_f)
 	#Plotting_by_col(df_pos, 2)
 	#Plotting_pos_neg(df_f, df_pos, df_neg, 'ard2', 2)
 	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'radar', 2)
 	#tsne = Tsne(df_f)
-	Tsne_all(df_pos, df_neg)
-
+	#Tsne_all(df_pos, df_neg)
 	'''
+	
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/"
 	path_output = path_proteom+"outputs/"
 	print(path_output)
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
-
+	
 
 	os.chdir(path_output+'TMHMM/files/')
 
@@ -1784,7 +1874,7 @@ if __name__ == '__main__' :
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	#df_f = Modification(final_results)
 	#tsne = Tsne(df_f)
-	'''
+	
 
 	#df_pos, df_neg = splitting(df_f)
 	#tsne = Tsne(df_pos)
