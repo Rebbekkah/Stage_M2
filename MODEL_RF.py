@@ -1,7 +1,9 @@
 import pandas as pd
 import numpy as np
 import os
+import glob
 import seaborn as sns
+from os.path import basename
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
@@ -122,7 +124,7 @@ def Model_(rf, train, test, val) :
 	df_pred_val = pd.concat([val.iloc[:, 0], df_pred_val], axis = 1)
 
 	df_pred.to_csv('Predictions_res_test.csv', sep = '\t', header = True, index = True)
-	df_pred.to_csv('Predictions_res_val.csv', sep = '\t', header = True, index = True)
+	df_pred_val.to_csv('Predictions_res_val.csv', sep = '\t', header = True, index = True)
 
 	return res, score, imp, df_pred, df_pred_val
 
@@ -154,7 +156,7 @@ def Perf_calculator(pred_test, pred_val) :
 		BP = 0
 		GP = 0
 		if p is pred_test :
-			print("-----------TRAIN-----------")
+			print("-----------TEST-----------")
 		elif p is pred_val :
 			print("-----------VAL-----------")
 		print(len(p))
@@ -183,6 +185,10 @@ def Perf_calculator(pred_test, pred_val) :
 		print(GP, BP)
 
 		Accuracy = (TP+TN)/total
+		Sensibility = TP/(TP+FN)
+		Specificity = TN/(TN+FP)
+		print("SENSIBILITY :", Sensibility)
+		print("SPECIFICITY :", Specificity)
 		print("ACCURACY :", Accuracy)
 
 
@@ -212,28 +218,167 @@ def Perf_calculator(pred_test, pred_val) :
 	return index_wp, index_bp
 
 
+def which_clade(df_test, df_val) :
+	
+	dico = idt_(path_prote)
+	#print(dico.keys(), len(dico.keys()))
+	#print(df_test)
+	#print(df_val)
+
+	ldf = [df_test, df_val]
+	for df in ldf :
+		df['org'] = 0
+
+	for df in ldf :
+		for ind in list(df.index) :
+			#print(ind)
+			for org, ident in dico.items() :
+				#print(org)
+				if ind in ident :
+				#	print("oui")
+					df.loc[ind, 'org'] = org
+				#else :
+				#	print("non")
+			if df.loc[ind, 'org'] == 0 :
+				df.loc[ind, 'org'] = 'other'
+
+
+		for ind in list(df.index) :
+			#print(ind.split(' ')[-1])
+			#print(ind, type(ind))
+			if ind.startswith('>Cre') :
+				df.loc[ind, 'org'] = 'proteome_Chlamydomonas.fa'
+			#elif ind.split(' ')[-1]
 
 
 
+	print(ldf)
+
+	lorg = ['proteome_Chlamydomonas.fa', 'proteome_Arabidopsis_thaliana.faa', 'other']
+	print(lorg[0], type(lorg[0]), len(org[0]))
+
+	for df in ldf :
+		TP_other = 0
+		TP_chlamy = 0
+		TP_arabi = 0
+		FP_other = 0
+		FP_chlamy = 0
+		FP_arabi = 0
+		TN_other = 0
+		TN_chlamy = 0
+		TN_arabi = 0
+		FN_other = 0
+		FN_chlamy = 0
+		FN_arabi = 0
+		if df is df_test :
+			print("-----------TEST-----------")
+		elif df is df_val :
+			print("-----------VAL-----------")
+		for i in range(len(df)) :
+			if df.iloc[i, 0] == 1 and df.iloc[i, 1] == 1 :
+				if df.iloc[i, 2] == lorg[0] :
+					TP_chlamy += 1
+				elif df.iloc[i, 2] == lorg[1] :
+					TP_arabi += 1
+				else :
+					TP_other += 1
+			elif df.iloc[i, 0] == 0 and df.iloc[i, 1] == 0 :
+				if df.iloc[i, 2] == lorg[0] :
+					TN_chlamy += 1
+				elif df.iloc[i, 2] == lorg[1] :
+					TN_arabi += 1
+				else :
+					TN_other += 1
+			elif df.iloc[i, 0] == 0 and df.iloc[i, 1] == 1 :
+				if df.iloc[i, 2] == lorg[0] :
+					FP_chlamy += 1
+				elif df.iloc[i, 2] == lorg[1] :
+					FP_arabi += 1
+				else :
+					FP_other += 1
+			elif df.iloc[i, 0] == 1 and df.iloc[i, 1] == 0 : 
+				if df.iloc[i, 2] == lorg[0] :
+					FN_chlamy += 1
+				elif df.iloc[i, 2] == lorg[1] :
+					FN_arabi += 1
+				else :
+					FN_other += 1
+
+
+		total_chlamy = len(df[df['org'] == lorg[0]])
+		#total_arabi = len(df[df['org'] == lorg[1]])
+		total_other = len(df[df['org'] == lorg[2]])
+		#print(total_chlamy)
+		print(TP_chlamy, TN_chlamy, FP_chlamy, FN_chlamy)
+		print(TP_chlamy/total_chlamy, TN_chlamy/total_chlamy, FP_chlamy/total_chlamy, FN_chlamy/total_chlamy)
+
+		Accuracy_chlamy = (TP_chlamy+TN_chlamy)/total_chlamy
+		#Accuracy_arabi = (TP_arabi+TN_arabi)/total_arabi
+		Accuracy_other = (TP_other+TN_other)/total_other
+		print("ACCURACY CHLAMY:", Accuracy_chlamy)
+		#print("ACCURACY ARABIDOPSIS:", Accuracy_arabi)
+		print("ACCURACY OTHER:", Accuracy_other)
+		print("---------------------")
+
+		print(TP_arabi, TN_arabi, FP_arabi, FN_arabi)
+		Sensibility_chlamy = TP_chlamy/(TP_chlamy+FN_chlamy)
+		#Sensibility_arabi = TP_arabi/(TP_arabi+FN_arabi)
+		Sensibility_other = TP_other/(TP_other+FN_other)
+		print("SENSIBILITY CHLAMY:", Sensibility_chlamy)
+		#print("SENSIBILITY ARABIDOPSIS:", Sensibility_arabi)
+		print("SENSIBILITY OTHER:", Sensibility_other)
+		print("---------------------")
+
+
+
+		Specificity_chlamy = TN_chlamy/(TN_chlamy+FP_chlamy)
+		#Specificity_arabi = TN_arabi/(TN_arabi+FP_arabi)
+		Specificity_other = TN_other/(TN_other+FP_other)
+		print("SPECIFICITY CHLAMY:", Specificity_chlamy)
+		#print("SPECIFICITY ARABIDOPSIS:", Specificity_arabi)
+		print("SPECIFICITY OTHER:", Specificity_other)
+		#print("SENSIBILITY :", Sensibility)
+		#print("SPECIFICITY :", Specificity)
+		#print("ACCURACY :", Accuracy)
+
+
+def idt_(path) :
+
+	file = glob.glob(path+'*.f*'+'a')
+
+	dico = {}
+	for f in file :
+		print(basename(f))
+		dico[basename(f)] = ""
+		l = []
+		with open(f, 'r') as filin :
+			for line in filin :
+				if line.startswith('>') :
+					l.append(line.split(' ')[0])
+			dico[basename(f)] = l
+
+	return dico
 
 
 
 if __name__ == '__main__' :
 
 	path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/'
+	path_prote = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/other/'
+
 
 	df = data_reading('dataframe_all.csv')
 	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
 
 	random_forest = model()
-	Optimal_parameters(app)
+	#Optimal_parameters(app)
 
-	#model_res_app, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
-	#df_imp = Importance(random_forest, app, importance)
-	#Perf_calculator(predictions, val_pred)
+	model_res_app, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
+	df_imp = Importance(random_forest, app, importance)
+	Perf_calculator(predictions, val_pred)
 
 
-
+	clade = which_clade(predictions, val_pred)
 
 
 
