@@ -237,9 +237,34 @@ def Model_(rf, train, test, val) :
 
 
 def Importance(rf, train, important) :
-	''' 
+	''' Find and writes as all the descriptors that the model model considers
+		the most important for the prediction (helps him)
+		Rank the descriptors by ascending
+
+	Parameters
+	----------
+	rf : sklearn 'RandomForestClassifier'
+		the model we will use to predict
+
+	train : Dataframe
+		train dataset
+	
+	important : str
+		importance of each descriptors
 
 
+	Writes
+	------
+	Importance_desc.csv : .csv file
+		csv file that contains the dataframe of col1 : number of column, col2 : descriptor name,
+		col3 : importance
+
+
+	Returns
+	-------
+	df_desc : Dataframe
+		dataframe of the ascended rank descriptors
+	
 	'''
 
 
@@ -254,6 +279,37 @@ def Importance(rf, train, important) :
 
 
 def Perf_calculator(pred_test, pred_val) :
+	''' Function that computes the performance of the model
+
+	Parameters
+	----------
+	pred_test : Dataframe
+		dataframe of the results of the predictions on the test dataset
+
+	pred_val : Dataframe
+		dataframe of the results of the predictions on the validation dataset
+
+	Plots
+	-----
+	Heatmap of performance
+
+	Writes
+	------
+	Good_pred.txt : .txt file
+		protein identifier that were well predicted
+
+	Bad_pred.txt : .txt file
+		protein identifier that were wrong predicted		
+
+	Returns
+	-------
+	index_wp : list
+		list of protein identifier well predicted
+
+	indew_bp : list
+		list of protein identifier wrong predicted
+
+	'''
 
 	predictions = [pred_test, pred_val]
 	index_wp = []
@@ -330,7 +386,25 @@ def Perf_calculator(pred_test, pred_val) :
 
 
 def which_clade(df_test, df_val) :
-	
+	''' Find the organisme for each identifier
+		then computes the perfomances of the model for Chlamydomonas and Arabidopsis
+
+	Parameters
+	----------
+	df_test : Dataframe
+		test dataset
+
+
+	df_val : Dataframe
+		validation dataset
+
+	Returns
+	-------
+	None
+
+	'''
+
+
 	dico = idt_(path_prote)
 	#print(dico.keys(), len(dico.keys()))
 	#print(df_test)
@@ -470,6 +544,19 @@ def which_clade(df_test, df_val) :
 			print("TN =", TN_other, "FP = ", FP_other)
 
 def idt_(path) :
+	''' Function that lists for each organism in a repertory all its protein identifiers
+
+	Parameters
+	----------
+	path : str
+		path to the proteoms
+
+	Returns
+	-------
+	dico : dict
+		dictionnary (key = organism and values = identifiers (as a list))
+
+	'''
 
 	file = glob.glob(path+'*.f*'+'a')
 
@@ -490,8 +577,8 @@ def idt_(path) :
 
 if __name__ == '__main__' :
 
-	path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/'
-	path_prote = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/other/'
+	path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/neg_pos/'
+	#path_prote = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/other/'
 
 
 	df = data_reading('dataframe_all.csv')
