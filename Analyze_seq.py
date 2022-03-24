@@ -366,7 +366,7 @@ def ard2(file) :
 						dico_pos[idt] = ""
 					else :
 						dico_pos[idt] += line.strip()
-			'''
+			
 			else : 
 			
 			for line in filin :
@@ -375,7 +375,7 @@ def ard2(file) :
 					dico_else[idt] = ""
 				else :
 					dico_else[idt] += line.strip()
-			'''
+			
 	dico_f = {}
 	link = []
 	
@@ -400,10 +400,9 @@ def ard2(file) :
 		for index, key in enumerate(dico_f) :
 			dico_f[key] = link[index]
 	
-	'''
-	else : 
 	
-	if basename(file) == 'STDOUT' :
+	else : 
+		#if basename(file) == 'STDOUT' :
 		for idt in dico_else.keys() :
 			dico_f[idt] = {}
 
@@ -412,7 +411,8 @@ def ard2(file) :
 	
 		for index, key in enumerate(dico_f) :
 			dico_f[key] = link[index]
-	'''
+		
+	
 	return dico_f
 
 
@@ -1399,12 +1399,12 @@ def Prop_Test(df1, df2, fold, col, to_plot) :
 		print("Pvalue > 0.05 --> existe une différence significative")
 
 
-def Sep_long_proteom(pattern1, pattern2, fold) :
+def Sep_long_proteom(path, pattern1, pattern2, fold) :
 	
-	proteom = glob.glob(path_output+pattern1)
+	proteom = glob.glob(path+pattern1)
 	print(len(proteom))
 
-	os.chdir(path_output+pattern2)
+	os.chdir(path+pattern2)
 
 	for p in proteom :
 		dico = {}
@@ -1448,6 +1448,29 @@ def Sep_long_proteom(pattern1, pattern2, fold) :
 					print(len(new_dic.keys()))
 					new_dic = {}
 					#i += 1
+
+
+def concat(path, pattern1, pattern2, pattern3) :
+	
+	res = glob.glob(path+pattern1)
+	res.sort()
+	print(res, len(res), type(res))
+
+	os.chdir(path+pattern3)
+	new_file = []
+
+
+	for f in res :
+		with open(f, 'r') as filin :
+			for line in filin :
+				new_file.append(line)
+	print(len(new_file), type(new_file))
+
+
+	with open('New_ard2_STDOUT_'+pattern2+'.txt', 'w') as filout :
+		for line in new_file :
+			filout.write(line)
+
 
 
 def add_df(df) :
@@ -1855,7 +1878,6 @@ if __name__ == '__main__' :
 	
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/TMHMM/old/"
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
-	#print(path_output)
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 	
 
@@ -1866,13 +1888,15 @@ if __name__ == '__main__' :
 	#proteins = listing(path_output, 'TMHMM/*.tmhmm')
 	#new_proteom = proteome_maker(proteins, path_proteom, '*.f*')
 	#separateur = sep(path_proteom, '*.f*a', '*.tmhmm', 'TMHMM/')
-	#Long_prot_sep = Sep_long_proteom('TMHMM/New_proteom_all/*.txt', 'TMHMM/sep_prot/', int(32000))
+	#Long_prot_sep = Sep_long_proteom(path_output, 'TMHMM/New_prot/*.txt', 'TMHMM/New_prot/Separated/', int(25000))
 
 
 
 	# ARD2
 	path_ard2 = path_output+"ARD2/"
 	path_tmhmm = path_output+"TMHMM/"
+	#Long_prot_sep = Sep_long_proteom(path_output, 'TMHMM/New_prot/*.txt', 'TMHMM/New_prot/Separated/', int(25000))
+	#concat(path_output, 'ARD2/Arabi/*/STDOUT_*', 'Arabi', 'ARD2/Arabi/concat/')
 	
 	# WOLFPSORT
 	path_wpsort = path_output+"WOLFPSORT/"
