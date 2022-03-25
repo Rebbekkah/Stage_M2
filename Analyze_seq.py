@@ -367,15 +367,14 @@ def ard2(file) :
 					else :
 						dico_pos[idt] += line.strip()
 			
-			else : 
-			
-			for line in filin :
-				if line.startswith('>') :
-					idt = line.strip()
-					dico_else[idt] = ""
-				else :
-					dico_else[idt] += line.strip()
-			
+			else : 	
+				for line in filin :
+					if line.startswith('>') :
+						idt = line.strip()
+						dico_else[idt] = ""
+					else :
+						dico_else[idt] += line.strip()
+				
 	dico_f = {}
 	link = []
 	
@@ -726,7 +725,7 @@ def Proteom_all(path) :
 
 	dico = {}
 	#with open(path+"TMHMM/files/New_Proteom_All.txt", "r") as filin :
-	with open(path+"tmhmm_filtred/New_Proteom_All.txt", "r") as filin :
+	with open(path+'New_Proteom_All.txt', "r") as filin :
 		for line in filin : 
 			if line.startswith('>') :
 				idt = line.strip()
@@ -1467,7 +1466,7 @@ def concat(path, pattern1, pattern2, pattern3) :
 	print(len(new_file), type(new_file))
 
 
-	with open('New_ard2_STDOUT_'+pattern2+'.txt', 'w') as filout :
+	with open('STDOUT_'+pattern2+'.txt', 'w') as filout :
 		for line in new_file :
 			filout.write(line)
 
@@ -1765,8 +1764,23 @@ def Plotting_pos_neg(df, df_pos, def_neg, col, to_plot) :
 
 
 
-def boxplot(df_pos, df_neg) :
-	pass
+def boxplot(df, x) :
+	
+	i = 1
+	for col in df :
+		print(col)
+		plt.subplot(2, len(df.columns)+1, i)
+		sns.boxplot(x = df[x], y = df[col], hue = df['type'])
+		i += 1
+		print("done")
+	plt.legend()
+	plt.title("Boxplot de "+col+" en fonction du type de données")
+	plt.xlabel("Type")
+	plt.ylabel(col)
+	plt.savefig("Boxplots.png")
+	#plt.show()
+
+
 
 def UMAP(df_pos, df_neg) :
 
@@ -1821,7 +1835,7 @@ if __name__ == '__main__' :
 
 
 
-	'''
+	
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/"
 	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
@@ -1874,7 +1888,8 @@ if __name__ == '__main__' :
 	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'radar', 2)
 	#tsne = Tsne(df_f)
 	#Tsne_all(df_pos, df_neg)
-	'''
+	boxplot(df_f, 'type')
+	
 	
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/TMHMM/old/"
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
@@ -1882,7 +1897,7 @@ if __name__ == '__main__' :
 	
 
 	os.chdir(path_output)
-
+	'''
 	# TMHMM
 	#os.chdir(path_output+'/TMHMM/')
 	#proteins = listing(path_output, 'TMHMM/*.tmhmm')
@@ -1893,7 +1908,7 @@ if __name__ == '__main__' :
 
 
 	# ARD2
-	path_ard2 = path_output+"ARD2/"
+	path_ard2 = path_output+"ARD2/*/*"
 	path_tmhmm = path_output+"TMHMM/"
 	#Long_prot_sep = Sep_long_proteom(path_output, 'TMHMM/New_prot/*.txt', 'TMHMM/New_prot/Separated/', int(25000))
 	#concat(path_output, 'ARD2/Arabi/*/STDOUT_*', 'Arabi', 'ARD2/Arabi/concat/')
@@ -1923,4 +1938,4 @@ if __name__ == '__main__' :
 	#tsne = Tsne(df_pos)
 	#tsne = Tsne(df_neg)
 	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'ard2')
-
+	'''
