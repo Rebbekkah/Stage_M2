@@ -32,9 +32,9 @@ import seaborn as sns
 from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
 import scipy.stats.distributions as dist
-import umap
-import umap.plot
-from sklearn.decomposition import PCA
+#import umap
+#import umap.plot
+#from sklearn.decomposition import PCA
 
 
 def reading(fichier) :
@@ -1766,18 +1766,25 @@ def Plotting_pos_neg(df, df_pos, def_neg, col, to_plot) :
 
 def boxplot(df, x) :
 	
+	os.chdir(path_boxplot)
 	i = 1
 	for col in df :
 		print(col)
-		plt.subplot(2, len(df.columns)+1, i)
+		#plt.subplot(2, len(df.columns)+1, i)
 		sns.boxplot(x = df[x], y = df[col], hue = df['type'])
+		plt.legend()
+		plt.title("Boxplot de "+col+" en fonction du type de données")
+		plt.xlabel("Type")
+		plt.ylabel(col)
+		plt.savefig("Boxplot_"+col+".png")
+		plt.show()
 		i += 1
-		print("done")
-	plt.legend()
-	plt.title("Boxplot de "+col+" en fonction du type de données")
-	plt.xlabel("Type")
-	plt.ylabel(col)
-	plt.savefig("Boxplots.png")
+		print("--> done")
+	#plt.legend()
+	#plt.title("Boxplot de "+col+" en fonction du type de données")
+	#plt.xlabel("Type")
+	#plt.ylabel(col)
+	#plt.savefig("Boxplot_"+col+".png")
 	#plt.show()
 
 
@@ -1840,6 +1847,7 @@ if __name__ == '__main__' :
 	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 
+	path_boxplot = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/images/boxplots/"
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
 
 
