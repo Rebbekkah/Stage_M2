@@ -575,13 +575,33 @@ def idt_(path) :
 
 
 
-def To_Predict(rf, file) :
+def To_Predict(path, rf, file, name) :
 
-	df = data_reading(path_Chlamy_arabi+file)
+	df = data_reading(path+file)
 
 	pred = rf.predict(df.iloc[:, 1:])
 	print(pred)
 
+	df_pred = pd.DataFrame(pred, columns = ['pred'])
+	df_pred.index = val.index
+
+	print(df_pred)
+	
+	df_pred.to_csv('Predictions_'+name+'.csv', sep = '\t', header = True, index = True)
+
+
+	df_alpha = pd.Dataframe()
+	df_other = pd.Dataframe()
+
+	for index, elem in enumerate(df[0]) :
+		if elem == 0 :
+			df_alpha.iloc[index] = df.iloc[index]
+		elif elem == 1 :
+			df_other.iloc[index] = df.iloc[index]
+
+
+	df_alpha.to_csv('Predictions_alpha_'+name+'.csv', sep = '\t', header = True, index = True)
+	df_other.to_csv('Predictions_other_'+name+'.csv', sep = '\t', header = True, index = True)
 
 
 
@@ -604,7 +624,7 @@ if __name__ == '__main__' :
 
 	#clade = which_clade(predictions, val_pred)
 
-	To_Predict(model_res_, 'dataframe_all.csv')
+	To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi')
 
 
 
