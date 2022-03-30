@@ -1404,7 +1404,7 @@ def Prop_Test(df1, df2, fold, col, to_plot) :
 
 def Mean_test(df1, df2, col) :
 	
-	print("Mean Test (Student t-test")
+	print("Mean Test (Student t-test)")
 	print("----------------", col, "----------------")
 
 	#Control of the normaliy of the samples --> pvalue of shapiro test must be > fold
