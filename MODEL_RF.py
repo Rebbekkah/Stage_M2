@@ -575,11 +575,21 @@ def idt_(path) :
 
 
 
+def To_Predict(rf, file) :
+
+	df = data_reading(path_Chlamy_arabi+file)
+
+	pred = rf.predict(df.iloc[:, 1:])
+	print(pred)
+
+
+
+
 if __name__ == '__main__' :
 
 	path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/neg_pos/'
 	#path_prote = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/other/'
-
+	path_Chlamy_arabi = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
 
 	df = data_reading('dataframe_all.csv')
 	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
@@ -587,14 +597,14 @@ if __name__ == '__main__' :
 	random_forest = model()
 	#Optimal_parameters(app)
 
-	model_res_app, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
+	model_res_, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
 	df_imp = Importance(random_forest, app, importance)
 	Perf_calculator(predictions, val_pred)
 
 
-	clade = which_clade(predictions, val_pred)
+	#clade = which_clade(predictions, val_pred)
 
-
+	To_Predict(model_res_, 'dataframe_all.csv')
 
 
 
