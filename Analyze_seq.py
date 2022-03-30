@@ -811,7 +811,7 @@ def verif() :
 	print("-----------", idt_not, len(idt_not))
 
 
-def Data_Create() :
+def Data_Create(pattern_ard2, pattern_wlf, pattern_trgp2, pattern_dploc, pattern_loca, pattern_radar) :
 	''' Function that reads each outputs of each softwares and perform 
 		the corresponding function to parse it
 
@@ -827,12 +827,12 @@ def Data_Create() :
 
 	'''
 
-	file_ard2 = glob.glob(path_ard2+"STDOUT_"+"*")
-	file_wlf = glob.glob(path_wpsort+"*.wolfpsort")
-	file_trgp2 = glob.glob(path_trgp2+"short_output_"+"*")
-	file_dploc = glob.glob(path_dploc+"*"+"deeploc"+"*")
-	file_loca = glob.glob(path_loca+'*'+'localizer')
-	file_radar = glob.glob(path_radar+'*'+'radar')
+	file_ard2 = glob.glob(path_ard2+pattern_ard2)
+	file_wlf = glob.glob(path_wpsort+pattern_wlf)
+	file_trgp2 = glob.glob(path_trgp2+pattern_trgp2)
+	file_dploc = glob.glob(path_dploc+pattern_dploc)
+	file_loca = glob.glob(path_loca+pattern_loca)
+	file_radar = glob.glob(path_radar+pattern_radar)
 
 	dico_trgp2 = {}
 	for file in file_trgp2 :
@@ -1923,7 +1923,7 @@ if __name__ == '__main__' :
 	path_radar = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/"
 	path_pb = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/output_radar/idt_neg.txt"
 
-	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
+	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create("STDOUT_"+"*", "*.wolfpsort", "short_output_"+"*", "*"+"deeploc"+"*", '*'+'localizer', '*'+'radar')
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	df = Modification(final_results)
 	df_f = add_df(df, 'acc/v2/Acc_output_*', 'acc/v2/Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt')
@@ -1978,7 +1978,7 @@ if __name__ == '__main__' :
 	# RADAR
 	path_radar = path_output+"RADAR/"
 
-	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
+	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create("STDOUT_"+"*", "*.wolfpsort", "short_output_"+"*", "*"+"deeploc"+"*", '*'+'LOCALIZER', '*'+'RADAR')
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	df = Modification(final_results)
 	df_f = add_df(df, 'ACC/Acc_output_*', 'New_Proteom_proteome_Chlamydomonas.fa.txt')
