@@ -35,6 +35,10 @@ import scipy.stats.distributions as dist
 #import umap
 #import umap.plot
 #from sklearn.decomposition import PCA
+from scipy.stats import shapiro
+from scipy.stats import f
+import scipy.stats as stats
+
 
 
 def reading(fichier) :
@@ -995,9 +999,9 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 
 	print("---------df1")
 	print(df)
-	#print("------------------------DICO WOLFPSORT------------------------")
-	#print(dico_wlf)
-	#print("------------------------END DICO WOLFPSORT------------------------")
+	#print("------------------------DICO RADAR------------------------")
+	#print(dico_radar)
+	#print("------------------------END DICO RADAR------------------------")
 	return df
 
 
@@ -1353,11 +1357,11 @@ def Prop_Test(df1, df2, fold, col, to_plot) :
 
 	'''
 
-	if col == 'ard2' :
-		for index, elem in enumerate(df1[col]) :
-				df1['ard2'].iloc[index] = elem[to_plot]
-		for index, elem in enumerate(df2[col]) :
-				df2['ard2'].iloc[index] = elem[to_plot]
+	#if col == 'ard2' :
+	#	for index, elem in enumerate(df1[col]) :
+	#			df1['ard2'].iloc[index] = elem[to_plot]
+	#	for index, elem in enumerate(df2[col]) :
+	#			df2['ard2'].iloc[index] = elem[to_plot]
 
 	m_df1 = df1[col].mean()
 	m_df2 = df2[col].mean()
@@ -1396,6 +1400,41 @@ def Prop_Test(df1, df2, fold, col, to_plot) :
 		print("Pvalue < 0.05 --> pas de différence significative")
 	else : 
 		print("Pvalue > 0.05 --> existe une différence significative")
+
+
+def Mean_test(df1, df2, col) :
+	
+	print("Mean Test (Student t-test")
+	print("----------------", col, "----------------")
+
+	#Control of the normaliy of the samples --> pvalue of shapiro test must be > fold
+	# (null hypothesis of a normal distribution)
+	x1, pval1 = shapiro(df1[col])
+	x2, pval2 = shapiro(df2[col])
+
+
+	#Control of the variance equality
+	# Fisher-Snedecor F-test
+	f(df1[col], df2[col])
+
+	#Anova unidirectional
+	stats.f_oneway(df1[col], df2[col])
+
+	#We compare the samples in order to see if there is a significant difference
+	y = stats.ttest_ind(df1[col], df2[col])
+	print("Computed pvalue : ", y[1])
+	pvalue = y[1]
+
+	if pvalue < 0.05 :
+		if pvalue < 0.001 : 
+			print("pvalue significant --> there is a difference, ***")
+		elif pvalue < 0.01 : 
+			print("pvalue significant --> there is a difference, **")
+		else :
+			print("pvalue significant --> there is a difference, *")
+	else : 
+		print("There is no significant difference")
+
 
 
 def Sep_long_proteom(path, pattern1, pattern2, fold) :
@@ -1472,7 +1511,7 @@ def concat(path, pattern1, pattern2, pattern3) :
 
 
 
-def add_df(df) :
+def add_df(df, pattern1, pattern2) :
 	
 	print("---------df add---------")
 	#df['acc'] = 0
@@ -1490,10 +1529,10 @@ def add_df(df) :
 
 
 	k = 0
-	fich = glob.glob(path_output+'acc/v2/Acc_output_*')
+	fich = glob.glob(path_output+pattern1)
 	print(fich)
 
-	if fich[0] == path_output+'acc/v2/Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt' :
+	if fich[0] == path_output+pattern2 :
 		fich = fich[::-1]
 
 	for f in fich :
@@ -1504,7 +1543,7 @@ def add_df(df) :
 				line[-1] = line[-1].strip()
 
 				for i in range(len(line)) :
-					df['acc'+str(i)].iloc[k] = line[i]
+					df['acc'+str(i)].iloc[k] = float(line[i])
 
 				'''
 				for i in range(len(line)) :
@@ -1549,6 +1588,9 @@ def add_df(df) :
 						if col == aa :
 							df.loc[index, aa] = prop
 	
+
+	for col in df :
+		print(df[col])
 
 	print(df)
 
@@ -1851,7 +1893,6 @@ if __name__ == '__main__' :
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
 
 
-
 	os.chdir(path_output)
 
 	# TMHMM
@@ -1885,9 +1926,10 @@ if __name__ == '__main__' :
 	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	df = Modification(final_results)
-	df_f = add_df(df)
+	df_f = add_df(df, 'acc/v2/Acc_output_*', 'acc/v2/Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt')
 	#writing(df_f)
 	df_pos, df_neg = splitting(df_f)
+	Mean_test(df_pos, df_neg, 'acc7')
 	#UMAP(df_pos, df_neg)
 	#PCA(df_f)
 	#check_up(df_f)
@@ -1896,16 +1938,16 @@ if __name__ == '__main__' :
 	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'radar', 2)
 	#tsne = Tsne(df_f)
 	#Tsne_all(df_pos, df_neg)
-	boxplot(df_f, 'type')
+	#boxplot(df_f, 'type')
 	
-	
+	'''
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/TMHMM/old/"
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
-	
+
 
 	os.chdir(path_output)
-	'''
+	
 	# TMHMM
 	#os.chdir(path_output+'/TMHMM/')
 	#proteins = listing(path_output, 'TMHMM/*.tmhmm')
@@ -1916,7 +1958,7 @@ if __name__ == '__main__' :
 
 
 	# ARD2
-	path_ard2 = path_output+"ARD2/*/*"
+	path_ard2 = path_output+"ARD2/*/*/"
 	path_tmhmm = path_output+"TMHMM/"
 	#Long_prot_sep = Sep_long_proteom(path_output, 'TMHMM/New_prot/*.txt', 'TMHMM/New_prot/Separated/', int(25000))
 	#concat(path_output, 'ARD2/Arabi/*/STDOUT_*', 'Arabi', 'ARD2/Arabi/concat/')
@@ -1936,14 +1978,16 @@ if __name__ == '__main__' :
 	# RADAR
 	path_radar = path_output+"RADAR/"
 
-	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
-	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
-	#df_f = Modification(final_results)
+	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create()
+	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
+	df = Modification(final_results)
+	df_f = add_df(df, 'ACC/Acc_output_*', 'New_Proteom_proteome_Chlamydomonas.fa.txt')
+	writing(df_f)
 	#tsne = Tsne(df_f)
-	
+	'''
 
 	#df_pos, df_neg = splitting(df_f)
 	#tsne = Tsne(df_pos)
 	#tsne = Tsne(df_neg)
 	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'ard2')
-	'''
+	
