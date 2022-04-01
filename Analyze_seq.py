@@ -311,6 +311,8 @@ def ard2(file, pattern) :
 
 	'''
 
+	#print(basename(file))
+
 	dico = {}
 	with open(file, 'r') as filin :
 		for line in filin :
@@ -347,10 +349,12 @@ def ard2(file, pattern) :
 				window = []
 			dico[idt] = dico_linker
 
-
+	#print(dico)
 	proteoms = glob.glob(path_output+pattern)
+	#print(proteoms)
 
-	dico_else = {}
+	dico_Arabi = {}
+	dico_Chlamy = {}
 	dico_pos = {}
 	dico_neg = {}
 	for p in proteoms :
@@ -368,8 +372,24 @@ def ard2(file, pattern) :
 						idt = line.strip()
 						dico_pos[idt] = ""
 					else :
-						dico_pos[idt] += line.strip()
+						dico_pos[idt] += line.strip()	
 			
+
+			elif basename(p) == 'New_Proteom_proteome_Arabidopsis_thaliana.faa.txt' : 	
+				for line in filin :
+					if line.startswith('>') :
+						idt = line.strip()
+						dico_Arabi[idt] = ""
+					else :
+						dico_Arabi[idt] += line.strip()
+			elif basename(p) == 'New_Proteom_proteome_Chlamydomonas.fa.txt' : 	
+				for line in filin :
+					if line.startswith('>') :
+						idt = line.strip()
+						dico_Chlamy[idt] = ""
+					else :
+						dico_Chlamy[idt] += line.strip()
+			'''
 			else : 	
 				for line in filin :
 					if line.startswith('>') :
@@ -377,6 +397,7 @@ def ard2(file, pattern) :
 						dico_else[idt] = ""
 					else :
 						dico_else[idt] += line.strip()
+			'''
 				
 	dico_f = {}
 	link = []
@@ -401,8 +422,29 @@ def ard2(file, pattern) :
 
 		for index, key in enumerate(dico_f) :
 			dico_f[key] = link[index]
+
+	elif basename(file) == 'STDOUT_Arabi.txt' :
+		for idt in dico_pos.keys() :
+			dico_f[idt] = {}
+
+		for linker in dico.values() :
+			link.append(linker)
+
+		for index, key in enumerate(dico_f) :
+			dico_f[key] = link[index]
 	
-	
+	elif basename(file) == 'STDOUT_Chlamy.txt' :
+		for idt in dico_pos.keys() :
+			dico_f[idt] = {}
+
+		for linker in dico.values() :
+			link.append(linker)
+
+		for index, key in enumerate(dico_f) :
+			dico_f[key] = link[index]
+
+
+	'''
 	else : 
 		#if basename(file) == 'STDOUT' :
 		for idt in dico_else.keys() :
@@ -410,11 +452,17 @@ def ard2(file, pattern) :
 
 		for linker in dico.values() :
 			link.append(linker)
+		print(len(link))
+		print(len(dico.keys()))
+		print(len(dico_f.keys()))
+		print(len(dico_else.keys()))
+		#print(dico_else.keys())
 	
-		for index, key in enumerate(dico_f) :
+		for index, key in enumerate(dico_f) : 
 			dico_f[key] = link[index]
 		
-	
+	'''
+
 	return dico_f
 
 
@@ -1977,7 +2025,7 @@ if __name__ == '__main__' :
 	# RADAR
 	path_radar = path_output+"RADAR/"
 
-	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create("STDOUT_"+"*", '*a.txt', "*.wolfpsort", "short_output_"+"*", "*"+"DEEPLOC"+"*", '*'+'LOCALIZER', '*'+'RADAR')
+	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create("STDOUT_"+"*", 'TMHMM/prote/*.txt', "*.wolfpsort", "short_output_"+"*", "*"+"DEEPLOC"+"*", '*'+'LOCALIZER', '*'+'RADAR')
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	df = Modification(final_results)
 	df_f = add_df(df, 'ACC/Acc_output_*', 'New_Proteom_proteome_Chlamydomonas.fa.txt')
