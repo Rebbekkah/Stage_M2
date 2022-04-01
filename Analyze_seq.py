@@ -430,7 +430,15 @@ def ard2(file, pattern) :
 		for linker in dico.values() :
 			link.append(linker)
 
+		print(len(link))
+		print(len(dico.keys()))
+		print(len(dico_f.keys()))
+		print(len(dico_Arabi.keys()))
+
 		for index, key in enumerate(dico_f) :
+			#print(index)
+			#print(key)
+			#print("----------")
 			dico_f[key] = link[index]
 	
 	elif basename(file) == 'STDOUT_Chlamy.txt' :
@@ -1550,7 +1558,14 @@ def concat(path, pattern1, pattern2, pattern3) :
 			for line in filin :
 				new_file.append(line)
 	print(len(new_file), type(new_file))
+	#print(new_file)
 
+	a = 0
+	for i in range(len(new_file)) :
+		if new_file[i].startswith('>') :
+			a += 1
+			new_file[i] = '>'+str(a)+'\t R\n'
+	#print(new_file)
 
 	with open('STDOUT_'+pattern2+'.txt', 'w') as filout :
 		for line in new_file :
@@ -2008,7 +2023,7 @@ if __name__ == '__main__' :
 	path_ard2 = path_output+"ARD2/"
 	path_tmhmm = path_output+"TMHMM/"
 	#Long_prot_sep = Sep_long_proteom(path_output, 'TMHMM/New_prot/*.txt', 'TMHMM/New_prot/Separated/', int(25000))
-	#concat(path_output, 'ARD2/Arabi/*/STDOUT_*', 'Arabi', 'ARD2/Arabi/concat/')
+	#concat(path_output, 'ARD2/Arabi/old_1_2/*/_STDOUT_*', 'Arabi', 'ARD2/Arabi/concat/')
 	
 	# WOLFPSORT
 	path_wpsort = path_output+"WOLFPSORT/"
