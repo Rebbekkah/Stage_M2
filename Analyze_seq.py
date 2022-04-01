@@ -295,7 +295,7 @@ def sep(path_proteom, pattern1, pattern2, pattern3) :
 		i += 1
 
 
-def ard2(file) :
+def ard2(file, pattern) :
 	''' Read and parses ard2 output that we had on our new proteoms
 		(proteom of proteins without transmembrane domains)
 	
@@ -348,14 +348,13 @@ def ard2(file) :
 			dico[idt] = dico_linker
 
 
-	proteoms = glob.glob(path_tmhmm+'*.fasta_line.txt')
+	proteoms = glob.glob(path_output+pattern)
 
 	dico_else = {}
 	dico_pos = {}
 	dico_neg = {}
 	for p in proteoms :
 		with open(p, "r") as filin :
-			
 			if basename(p) == 'New_Proteom_1196_tem_neg.fasta_line.txt' :
 				for line in filin :
 					if line.startswith('>') :
@@ -811,7 +810,7 @@ def verif() :
 	print("-----------", idt_not, len(idt_not))
 
 
-def Data_Create(pattern_ard2, pattern_wlf, pattern_trgp2, pattern_dploc, pattern_loca, pattern_radar) :
+def Data_Create(pattern_ard2, pattern_ard2_2, pattern_wlf, pattern_trgp2, pattern_dploc, pattern_loca, pattern_radar) :
 	''' Function that reads each outputs of each softwares and perform 
 		the corresponding function to parse it
 
@@ -843,7 +842,7 @@ def Data_Create(pattern_ard2, pattern_wlf, pattern_trgp2, pattern_dploc, pattern
 			dico_trgp2['pos'] = {}
 			dico_trgp2['pos'] = targetp2(file)
 		else : 
-			dico_trp2[basename(file)] = targetp2(file)
+			dico_trgp2[basename(file)] = targetp2(file)
 
 
 	dico_wlf = {}
@@ -862,12 +861,12 @@ def Data_Create(pattern_ard2, pattern_wlf, pattern_trgp2, pattern_dploc, pattern
 	for file in file_ard2 :
 		if basename(file) == 'STDOUT_neg' :
 			dico_ard2['neg'] = {}
-			dico_ard2['neg'] = ard2(file)
+			dico_ard2['neg'] = ard2(file, pattern_ard2_2)
 		elif basename(file) == 'STDOUT_pos' :
 			dico_ard2['pos'] = {}
-			dico_ard2['pos'] = ard2(file)
+			dico_ard2['pos'] = ard2(file, pattern_ard2_2)
 		else : 
-			dico_ard2[basename(file)] = ard2(file)	
+			dico_ard2[basename(file)] = ard2(file, pattern_ard2_2)	
 
 
 	dico_loca = {}
@@ -999,9 +998,9 @@ def dataframe_maker(dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, \
 
 	print("---------df1")
 	print(df)
-	#print("------------------------DICO RADAR------------------------")
-	#print(dico_radar)
-	#print("------------------------END DICO RADAR------------------------")
+	#print("------------------------DICO ard2------------------------")
+	#print(dico_ard2)
+	#print("------------------------END DICO ard2------------------------")
 	return df
 
 
@@ -1781,8 +1780,8 @@ def Plotting_pos_neg(df, df_pos, def_neg, col, to_plot) :
 
 	plt.show()
 
-	for index, elem in enumerate(df['ard2']) :
-		df['ard2'].iloc[index] = elem[to_plot]
+	#for index, elem in enumerate(df['ard2']) :
+	#	df['ard2'].iloc[index] = elem[to_plot]
 	sns.boxplot(x = df['type'], y = df[col], hue = df['type'])
 	plt.legend()
 	plt.title('Boxplot on all sequences')
@@ -1884,7 +1883,7 @@ if __name__ == '__main__' :
 
 
 
-	
+	'''
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/"
 	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
@@ -1939,8 +1938,8 @@ if __name__ == '__main__' :
 	#tsne = Tsne(df_f)
 	#Tsne_all(df_pos, df_neg)
 	#boxplot(df_f, 'type')
-	
 	'''
+	
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/TMHMM/old/"
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
@@ -1950,7 +1949,7 @@ if __name__ == '__main__' :
 	
 	# TMHMM
 	#os.chdir(path_output+'/TMHMM/')
-	#proteins = listing(path_output, 'TMHMM/*.tmhmm')
+	#proteins = listing(path_output, 'TMHMM/old/*.tmhmm')
 	#new_proteom = proteome_maker(proteins, path_proteom, '*.f*')
 	#separateur = sep(path_proteom, '*.f*a', '*.tmhmm', 'TMHMM/')
 	#Long_prot_sep = Sep_long_proteom(path_output, 'TMHMM/New_prot/*.txt', 'TMHMM/New_prot/Separated/', int(25000))
@@ -1958,7 +1957,7 @@ if __name__ == '__main__' :
 
 
 	# ARD2
-	path_ard2 = path_output+"ARD2/*/*/"
+	path_ard2 = path_output+"ARD2/"
 	path_tmhmm = path_output+"TMHMM/"
 	#Long_prot_sep = Sep_long_proteom(path_output, 'TMHMM/New_prot/*.txt', 'TMHMM/New_prot/Separated/', int(25000))
 	#concat(path_output, 'ARD2/Arabi/*/STDOUT_*', 'Arabi', 'ARD2/Arabi/concat/')
@@ -1978,13 +1977,13 @@ if __name__ == '__main__' :
 	# RADAR
 	path_radar = path_output+"RADAR/"
 
-	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create("STDOUT_"+"*", "*.wolfpsort", "short_output_"+"*", "*"+"deeploc"+"*", '*'+'LOCALIZER', '*'+'RADAR')
+	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create("STDOUT_"+"*", '*a.txt', "*.wolfpsort", "short_output_"+"*", "*"+"DEEPLOC"+"*", '*'+'LOCALIZER', '*'+'RADAR')
 	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	df = Modification(final_results)
 	df_f = add_df(df, 'ACC/Acc_output_*', 'New_Proteom_proteome_Chlamydomonas.fa.txt')
 	writing(df_f)
 	#tsne = Tsne(df_f)
-	'''
+	
 
 	#df_pos, df_neg = splitting(df_f)
 	#tsne = Tsne(df_pos)
