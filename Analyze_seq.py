@@ -424,7 +424,7 @@ def ard2(file, pattern) :
 			dico_f[key] = link[index]
 
 	elif basename(file) == 'STDOUT_Arabi.txt' :
-		for idt in dico_pos.keys() :
+		for idt in dico_Arabi.keys() :
 			dico_f[idt] = {}
 
 		for linker in dico.values() :
@@ -434,7 +434,7 @@ def ard2(file, pattern) :
 			dico_f[key] = link[index]
 	
 	elif basename(file) == 'STDOUT_Chlamy.txt' :
-		for idt in dico_pos.keys() :
+		for idt in dico_Chlamy.keys() :
 			dico_f[idt] = {}
 
 		for linker in dico.values() :
