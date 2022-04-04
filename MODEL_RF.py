@@ -40,7 +40,7 @@ def data_reading(file) :
 
 	'''
 
-	df = pd.read_csv(path+file, sep = '\t')
+	df = pd.read_csv(file, sep = '\t')
 
 	df = df.set_index(df['Unnamed: 0'], inplace = False)
 	del df['Unnamed: 0']
@@ -274,6 +274,16 @@ def Importance(rf, train, important) :
 
 	print(df_desc)
 	df_desc.to_csv('Importance_desc.csv', sep = '\t', header = True, index = True)
+
+	#sns.barplot(x = df_desc[0], y = df_desc[1])
+	sns.barplot(x = 'variable', y = 'importance', data = df_desc)
+	plt.xticks(rotation = 'vertical')
+	plt.tick_params(axis = 'x', labelsize = 8)
+	plt.xlabel('Feature importance Score')
+	plt.ylabel('Features')
+	plt.title('Visualizing important features')
+	#plt.show()
+
 
 	return df_desc
 
@@ -576,32 +586,88 @@ def idt_(path) :
 
 
 def To_Predict(path, rf, file, name) :
+	''' Use the model to predict its alpha_solenoid carateristics on a dataset
+
+	Parameters
+	----------
+	path : str
+		path to the dataframe
+
+	rf : sklearn 'RandomForestClassifier'
+		the model we will use to predict
+
+	file : str
+		name of the file that contains the dataframe
+
+	name : str
+		name of the output file
+
+	Returns
+	-------
+	None
+
+	Writes
+	------
+	df_alpha : dataframe
+		dataframe of the proteins predicted as alpha-solenoïds
+
+	df_other : dataframe
+		dataframe of the proteins predicted as non alpha-solenoïds
+
+	'''
+
+	print('----------NEW PREDICTIONS----------')
+	os.chdir(path_Chlamy_arabi+'Predictions/')
 
 	df = data_reading(path+file)
 
 	pred = rf.predict(df.iloc[:, 1:])
-	print(pred)
+	print('PRED\n', pred, len(pred))
 
 	df_pred = pd.DataFrame(pred, columns = ['pred'])
-	df_pred.index = val.index
 
-	print(df_pred)
+	df_pred.index = df.index
+
+	print('DF_PRED\n', df_pred)
 	
 	df_pred.to_csv('Predictions_'+name+'.csv', sep = '\t', header = True, index = True)
 
-
-	df_alpha = pd.Dataframe()
-	df_other = pd.Dataframe()
-
-	for index, elem in enumerate(df[0]) :
+	#df_alpha = pd.DataFrame()
+	#df_other = pd.DataFrame()
+	alpha = []
+	other = []
+	#i = 0
+	#j = 0
+	for index, elem in enumerate(df_pred['pred']) :
 		if elem == 0 :
-			df_alpha.iloc[index] = df.iloc[index]
+			alpha.append(df_pred.index[index])
+			#df_alpha.iloc[i] = df_pred.iloc[index]
+			#i =+ 1
 		elif elem == 1 :
-			df_other.iloc[index] = df.iloc[index]
+			other.append(df_pred.index[index])
+			#df_other.iloc[j] = df_pred.iloc[index]
+			#j += 1
+
+	print('nb alpha :', len(alpha))
+	print('nb non alpha :', len(other))
+	#df_alpha.to_csv('Predictions_alpha_'+name+'.csv', sep = '\t', header = True, index = True)
+	#df_other.to_csv('Predictions_other_'+name+'.csv', sep = '\t', header = True, index = True)
+
+	with open('prot_alpha.txt', 'w') as filout :
+		for a in alpha :
+			filout.write(a+'\n')
+
+	with open('prot_non_alpha.txt', 'w') as filout :
+		for o in other :
+			filout.write(o+'\n')
 
 
-	df_alpha.to_csv('Predictions_alpha_'+name+'.csv', sep = '\t', header = True, index = True)
-	df_other.to_csv('Predictions_other_'+name+'.csv', sep = '\t', header = True, index = True)
+	return alpha, other, df_pred
+
+
+
+
+
 
 
 
@@ -610,8 +676,10 @@ if __name__ == '__main__' :
 	path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/neg_pos/'
 	#path_prote = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/other/'
 	path_Chlamy_arabi = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
+	os.chdir(path_Chlamy_arabi)
 
-	df = data_reading('dataframe_all.csv')
+
+	df = data_reading(path+'dataframe_all.csv')
 	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
 
 	random_forest = model()
@@ -624,7 +692,7 @@ if __name__ == '__main__' :
 
 	#clade = which_clade(predictions, val_pred)
 
-	To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi')
+	alphasol, nonalphasol, df_pred =To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi')
 
 
 
