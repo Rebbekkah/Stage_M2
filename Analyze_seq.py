@@ -430,10 +430,10 @@ def ard2(file, pattern) :
 		for linker in dico.values() :
 			link.append(linker)
 
-		print(len(link))
-		print(len(dico.keys()))
-		print(len(dico_f.keys()))
-		print(len(dico_Arabi.keys()))
+		#print(len(link))
+		#print(len(dico.keys()))
+		#print(len(dico_f.keys()))
+		#print(len(dico_Arabi.keys()))
 
 		for index, key in enumerate(dico_f) :
 			#print(index)
@@ -1225,7 +1225,7 @@ def Modification(dataframe) :
 	print("---------df2")
 	print(dataframe)
 
-	#dataframe.to_csv('dataframe_all.csv', sep = '\t', header = True, index = True)
+	dataframe.to_csv('dataframe_interm.csv', sep = '\t', header = True, index = True)
 
 	return dataframe
 
@@ -1573,10 +1573,17 @@ def concat(path, pattern1, pattern2, pattern3) :
 
 
 
-def add_df(df, pattern1, pattern2) :
+def add_df(pattern1, pattern2, path, file) :
 	
 	print("---------df add---------")
 	#df['acc'] = 0
+
+	df = pd.read_csv(path+file, sep = '\t')
+
+	df = df.set_index(df['Unnamed: 0'], inplace = False)
+	del df['Unnamed: 0']
+
+
 	list_idt = list(df.index)
 
 	print(df)
@@ -2040,10 +2047,10 @@ if __name__ == '__main__' :
 	# RADAR
 	path_radar = path_output+"RADAR/"
 
-	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create("STDOUT_"+"*", 'TMHMM/prote/*.txt', "*.wolfpsort", "short_output_"+"*", "*"+"DEEPLOC"+"*", '*'+'LOCALIZER', '*'+'RADAR')
-	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
-	df = Modification(final_results)
-	df_f = add_df(df, 'ACC/Acc_output_*', 'New_Proteom_proteome_Chlamydomonas.fa.txt')
+	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create("STDOUT_"+"*", 'TMHMM/prote/*.txt', "*.wolfpsort", "short_output_"+"*", "*"+"DEEPLOC"+"*", '*'+'LOCALIZER', '*'+'RADAR')
+	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
+	#df = Modification(final_results)
+	df_f = add_df('ACC/Acc_output_*', 'New_Proteom_proteome_Chlamydomonas.fa.txt', path_output, 'dataframe_interm.csv')
 	writing(df_f)
 	#tsne = Tsne(df_f)
 	

@@ -37,8 +37,10 @@ library('seqinr')
 
 # Necessary paths
 
-path_output <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/output"
-path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/"
+#path_output <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/"
+#path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/tmhmm_filtred/"
+path <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/ACC/"
+path_output <- "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/ACC/"
 
 # Data reading
 list_of_aa = c('M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H')
@@ -77,10 +79,11 @@ for (df in df_list) {
   N = 0
   k = k + 1
   for (i in 1:nrow(df)) {
-      if (nchar(as.character(df[i,1])) < 100) {
-      df2_ = df[-i, 1]
-      df[i,] = NA
-      N = N + 1
+      if (nchar(as.character(df[i,1])) < 100) { 
+        #cat(row(df[i,1]))
+        df2_ = df[-i, 1]
+        df[i,] = NA
+        N = N + 1
     }
   }
   Nm = c(Nm, N)
@@ -121,7 +124,7 @@ for (df in df2_list) {
   }
   else
   {
-    mat_vect = rbind(mat_vect,mat)
+    mat_vect = rbind(mat_vect, mat)
     Acc = rbind(Acc, mat)
   }
 }
@@ -138,6 +141,11 @@ for (i in 1:length(files)) {
   write.table(Acc_list[i], file = paste0("Acc_output_", files[i], ".txt"),  
               append = FALSE, sep = "\t", dec = ".", row.names = FALSE,
               col.names = FALSE)
+}
+
+for (i in 1:length(files)) {
+  write.table(rownames(df2_list[i]), file = paste0("rownames_", files[i], ".txt"),
+              append = FALSE, sep = "\n", row.names = TRUE, col.names = FALSE)
 }
 
 
