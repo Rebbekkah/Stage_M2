@@ -1573,7 +1573,28 @@ def concat(path, pattern1, pattern2, pattern3) :
 
 
 
-def add_df(pattern1, pattern2, path, file) :
+def rows_acc(path, file) :
+
+	files = glob.glob(path+file)
+	files.sort()
+	print(files)
+
+	idt = []
+
+	for f in files :
+		with open(f, 'r') as filin :
+			for line in filin :
+				#pass
+				line = line.strip()
+				line = line.split('"')[1]
+				line = '>'+line
+				if line != '>1' :
+					idt.append(line)
+	
+	return idt
+
+
+def add_df(idt, pattern1, pattern2, path, file) :
 	
 	print("---------df add---------")
 	#df['acc'] = 0
@@ -1587,6 +1608,19 @@ def add_df(pattern1, pattern2, path, file) :
 	list_idt = list(df.index)
 
 	print(df)
+	#print(idt[:10], len(idt))
+
+
+	to_del = []
+	for ident in idt :
+		if ident not in list_idt :
+			to_del.append(ident)
+	print(to_del, len(to_del))
+
+	with open(path_output+'to_del_acc.txt', 'w') as filout :
+		for elem in to_del :
+			filout.write(elem+'\n')
+	
 	#print(df[df['type'] == 0])
 	#print(list_idt, len(list_idt))
 
@@ -2050,8 +2084,9 @@ if __name__ == '__main__' :
 	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create("STDOUT_"+"*", 'TMHMM/prote/*.txt', "*.wolfpsort", "short_output_"+"*", "*"+"DEEPLOC"+"*", '*'+'LOCALIZER', '*'+'RADAR')
 	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	#df = Modification(final_results)
-	df_f = add_df('ACC/Acc_output_*', 'New_Proteom_proteome_Chlamydomonas.fa.txt', path_output, 'dataframe_interm.csv')
-	writing(df_f)
+	idt = rows_acc(path_output, 'ACC/rownames_*')
+	df_f = add_df(idt, 'ACC/Acc_output_*', 'New_Proteom_proteome_Chlamydomonas.fa.txt', path_output, 'dataframe_interm.csv')
+	#writing(df_f)
 	#tsne = Tsne(df_f)
 	
 
