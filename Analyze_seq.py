@@ -1594,7 +1594,7 @@ def rows_acc(path, file) :
 	return idt
 
 
-def add_df(idt, pattern1, pattern2, path, file) :
+def add_df(idt, pattern1, path, file) :
 	
 	print("---------df add---------")
 	#df['acc'] = 0
@@ -1641,36 +1641,38 @@ def add_df(idt, pattern1, pattern2, path, file) :
 		df['acc'+str(i)] = 0
 
 
-	k = 0
+	
 	fich = glob.glob(path_output+pattern1)
 	print(fich)
+	fich.sort()
+	print(fich)
 
-	if fich[0] == path_output+pattern2 :
-		fich = fich[::-1]
-
+	k = 0
+	element = []
 	for f in fich :
 		print(basename(f))
 		with open(f, 'r') as filin :
 			for line in filin :
 				if k not in to_del_ind :
-					line = line.split('\t')
-					line[-1] = line[-1].strip()
-					for i in range(len(line)) :
-						df['acc'+str(i)].iloc[k] = float(line[i])
-				elif k in to_del_ind :
-					k -= 1
-
-				'''
-				for i in range(len(line)) :
-					if basename(f) == 'Acc_output_New_Proteom_1196_tem_neg.fasta_line.txt.txt' :
-						if df['type'].iloc[k] == 1 :
-							df['acc'+str(i)].iloc[k] = line[i]
-					elif basename(f) == 'Acc_output_New_Proteom_1081_tem_pos.fasta_line.txt.txt' :
-						if df['type'].iloc[k] == 0 :
-							df['acc'+str(i)].iloc[k] = line[i]
-				'''
+					element.append(line)
 				k += 1
-				
+	print(len(element))
+
+	#print(element)
+	with open(path_output+'ACC/acc_file_all.txt', 'w') as filout :
+		for elem in element :
+			filout.write(elem)
+
+	k = 0
+	with open(path_output+'ACC/acc_file_all.txt', 'r') as filin :
+		for line in filin :
+			line = line.split('\t')
+			line[-1] = line[-1].strip()
+			#print(line, len(line))
+			for i in range(len(line)) :
+				df['acc'+str(i)].iloc[k] = float(line[i])
+			k += 1
+
 	#for col in df :
 	#	print(df[col])
 	#print(df)
@@ -2097,7 +2099,7 @@ if __name__ == '__main__' :
 	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	#df = Modification(final_results)
 	idt = rows_acc(path_output, 'ACC/rownames_*')
-	df_f = add_df(idt, 'ACC/Acc_output_*', 'New_Proteom_proteome_Chlamydomonas.fa.txt', path_output, 'dataframe_interm.csv')
+	df_f = add_df(idt, 'ACC/Acc_output_*', path_output, 'dataframe_interm.csv')
 	writing(df_f)
 	#tsne = Tsne(df_f)
 	
