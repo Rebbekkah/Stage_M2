@@ -144,7 +144,9 @@ for (i in 1:length(files)) {
 }
 
 for (i in 1:length(files)) {
-  write.table(rownames(df2_list[i]), file = paste0("rownames_", files[i], ".txt"),
+  print(files[i])
+  l = as.list(row.names.data.frame(df2_list[[i]]))
+  write.table(l, file = paste0("rownames_", files[i], ".txt"),
               append = FALSE, sep = "\n", row.names = TRUE, col.names = FALSE)
 }
 
