@@ -665,8 +665,46 @@ def To_Predict(path, rf, file, name) :
 	return alpha, other, df_pred
 
 
+def which_proteom() :
+
+	file = path_Chlamy_arabi+'Predictions/prot_alpha.txt'
+	print(file)
+
+	proteoms = glob.glob(path_Chlamy_arabi+'TMHMM/prote/*.txt')
+	proteoms.sort()
+
+	alpha = []
+	with open(file, 'r') as filin :
+		for line in filin :
+			line = line.strip()
+			alpha.append(line)
+	print(len(alpha))
 
 
+	dico = {}
+	for p in proteoms :
+		print(p, type(p))
+		dico[basename(p)] = {}
+		dico[basename(p)] = read_proteom(p)
+	print(dico.keys(), len(dico.keys()))
+
+	#for proteom, dic in dico.items() :
+	#	for idt in dic.keys() :
+
+
+
+def read_proteom(file) :
+
+	dico = {}
+	with open(file, 'r') as filin :
+		for line in filin :
+			if line.startswith('>') :
+				idt = line.strip()
+				dico[idt] = ""
+			else :
+				dico[idt] += line.strip()
+
+	return dico
 
 
 
@@ -678,7 +716,7 @@ if __name__ == '__main__' :
 	path_Chlamy_arabi = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
 	os.chdir(path_Chlamy_arabi)
 
-
+	'''
 	df = data_reading(path+'dataframe_all.csv')
 	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
 
@@ -692,8 +730,9 @@ if __name__ == '__main__' :
 
 	#clade = which_clade(predictions, val_pred)
 
-	alphasol, nonalphasol, df_pred =To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi')
-
+	alphasol, nonalphasol, df_pred = To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi')
+	'''
+	which_proteom()
 
 
 
