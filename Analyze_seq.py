@@ -1615,11 +1615,21 @@ def add_df(idt, pattern1, pattern2, path, file) :
 	for ident in idt :
 		if ident not in list_idt :
 			to_del.append(ident)
-	print(to_del, len(to_del))
+	#print(to_del, len(to_del))
 
 	with open(path_output+'to_del_acc.txt', 'w') as filout :
 		for elem in to_del :
 			filout.write(elem+'\n')
+
+	to_del_ind = []
+	z = 0
+	for ident in idt :
+		if ident in to_del :
+			to_del_ind.append(int(z))
+		z += 1
+
+	print(df)
+	print(to_del_ind, len(to_del_ind))
 	
 	#print(df[df['type'] == 0])
 	#print(list_idt, len(list_idt))
@@ -1642,11 +1652,13 @@ def add_df(idt, pattern1, pattern2, path, file) :
 		print(basename(f))
 		with open(f, 'r') as filin :
 			for line in filin :
-				line = line.split('\t')
-				line[-1] = line[-1].strip()
-
-				for i in range(len(line)) :
-					df['acc'+str(i)].iloc[k] = float(line[i])
+				if k not in to_del_ind :
+					line = line.split('\t')
+					line[-1] = line[-1].strip()
+					for i in range(len(line)) :
+						df['acc'+str(i)].iloc[k] = float(line[i])
+				elif k in to_del_ind :
+					k -= 1
 
 				'''
 				for i in range(len(line)) :
@@ -2086,7 +2098,7 @@ if __name__ == '__main__' :
 	#df = Modification(final_results)
 	idt = rows_acc(path_output, 'ACC/rownames_*')
 	df_f = add_df(idt, 'ACC/Acc_output_*', 'New_Proteom_proteome_Chlamydomonas.fa.txt', path_output, 'dataframe_interm.csv')
-	#writing(df_f)
+	writing(df_f)
 	#tsne = Tsne(df_f)
 	
 
