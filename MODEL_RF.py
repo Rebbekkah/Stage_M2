@@ -667,11 +667,14 @@ def To_Predict(path, rf, file, name) :
 
 def which_proteom() :
 
+	os.chdir(path_Chlamy_arabi+'Predictions/')
+
 	file = path_Chlamy_arabi+'Predictions/prot_alpha.txt'
 	print(file)
 
 	proteoms = glob.glob(path_Chlamy_arabi+'TMHMM/prote/*.txt')
 	proteoms.sort()
+	print(proteoms)
 
 	alpha = []
 	with open(file, 'r') as filin :
@@ -688,8 +691,29 @@ def which_proteom() :
 		dico[basename(p)] = read_proteom(p)
 	print(dico.keys(), len(dico.keys()))
 
-	#for proteom, dic in dico.items() :
-	#	for idt in dic.keys() :
+
+	alpha_Chlamy = []
+	alpha_Arabi = []
+	for a in alpha :
+		for org, dic in dico.items() :
+			if a in dic.keys() :
+				if org == 'New_Proteom_proteome_Arabidopsis_thaliana.faa.txt' :
+					alpha_Arabi.append(a)
+				elif org == 'New_Proteom_proteome_Chlamydomonas.fa.txt' :
+					alpha_Chlamy.append(a)
+	print(alpha_Arabi[:100])
+	print(len(alpha_Arabi))
+	print("----------------------")
+	print(alpha_Chlamy[:100])
+	print(len(alpha_Chlamy))
+
+	with open('alpha_Arabi.txt', 'w') as filout :
+		for a in alpha_Arabi :
+			filout.write(a+'\n')
+
+	with open('alpha_Chlamy.txt', 'w') as filout :
+		for a in alpha_Chlamy :
+			filout.write(a+'\n')
 
 
 
@@ -707,6 +731,49 @@ def read_proteom(file) :
 	return dico
 
 
+def is_pos_neg() :
+
+	dico = {}
+	proteoms = glob.glob(path_pos_neg+'*.fasta_line')
+	proteoms.sort()
+	print(proteoms)
+
+	for p in proteoms :
+		dico[basename(p)] = {}
+		dico[basename(p)] = read_proteom(p)
+	print(dico.keys(), len(dico.keys()))
+
+	is_pos = []
+	is_neg = []
+
+	#AT != NP !!!!!!!!! demander à céline les bons protéomes
+
+
+def select_imp(file) :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/')
+
+	df = pd.read_csv(path_Chlamy_arabi+file, sep = '\t')
+	df = df.set_index(df['Unnamed: 0'], inplace = False)
+	del df['Unnamed: 0']
+
+	print(df)
+
+
+	dico = {}
+	for index, elem in enumerate(df['importance']) :
+		if elem > 0.02 :
+			dico[df.loc[index, 'variable']] = 0
+			dico[df.loc[index, 'variable']] += float(elem)
+	print(dico.keys(), len(dico.keys()))
+
+	with open('Most_imp_desc.txt', 'w') as filout :
+		for cle, value in dico.items() :
+			filout.write(cle+'\t'+str(value)+'\n')
+
+
+
+
 
 
 if __name__ == '__main__' :
@@ -714,6 +781,8 @@ if __name__ == '__main__' :
 	path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/neg_pos/'
 	#path_prote = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/other/'
 	path_Chlamy_arabi = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
+	path_pos_neg = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
+	
 	os.chdir(path_Chlamy_arabi)
 
 	'''
@@ -732,8 +801,9 @@ if __name__ == '__main__' :
 
 	alphasol, nonalphasol, df_pred = To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi')
 	'''
-	which_proteom()
-
+	#which_proteom()
+	#is_pos_neg()
+	select_imp('Importance_desc.csv')
 
 
 
