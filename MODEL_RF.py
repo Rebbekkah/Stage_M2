@@ -715,6 +715,7 @@ def which_proteom() :
 		for a in alpha_Chlamy :
 			filout.write(a+'\n')
 
+	#return alpha
 
 
 def read_proteom(file) :
@@ -723,7 +724,7 @@ def read_proteom(file) :
 	with open(file, 'r') as filin :
 		for line in filin :
 			if line.startswith('>') :
-				idt = line.strip()
+				idt = line.split(' ')[0]
 				dico[idt] = ""
 			else :
 				dico[idt] += line.strip()
@@ -772,6 +773,67 @@ def select_imp(file) :
 			filout.write(cle+'\t'+str(value)+'\n')
 
 
+	return dico
+
+
+
+def comp_res_Celine(path) :
+
+	file = path_Chlamy_arabi+'Predictions/prot_alpha.txt'
+	#file = glob.glob(path_Chlamy_arabi+'Predictions/alpha_*.txt')
+	#file.sort()
+	print(file, len(file), type(file))
+
+	res = glob.glob(path)
+	res.sort()
+	print(res, len(res))
+
+	dico = {}
+	for r in res :
+		dico[basename(r)] = {}
+		dico[basename(r)] = read_proteom(r)
+	#print(dico.keys(), len(dico.keys()))
+
+
+	alpha = []
+	with open(file, 'r') as filin :
+		for line in filin :
+			#print(line)
+			alpha.append(line.strip())
+	print("ALPHA ", len(alpha))
+
+
+	yes = []
+	no = []
+	new_pred = []
+	dickeys = []
+	keys = []
+	for org, dic in dico.items() :
+		dickeys.append(list(dic.keys()))
+		for idt in dic.keys() :
+			if idt in alpha :
+				yes.append(idt)
+			if idt not in alpha :
+				no.append(idt)
+	#for k in dickeys :
+	#	for elem in k :
+	#		if elem not in keys :
+	#			keys.append(k)
+	for elem in dickeys :
+		keys = keys+elem
+	#print(keys, len(keys))
+	for a in alpha :
+		if a not in keys :
+			if a not in new_pred :
+				new_pred.append(a)
+
+
+	print(keys)
+	print("PRED & PRED ", len(yes))
+	print("CEL PRED MAIS PAS MOI ", len(no))
+	print("NEW PRED PAR MOI ", len(new_pred))
+
+	
 
 
 
@@ -803,7 +865,7 @@ if __name__ == '__main__' :
 	'''
 	#which_proteom()
 	#is_pos_neg()
-	select_imp('Importance_desc.csv')
-
+	#dico_imp = select_imp('Importance_desc.csv')
+	comp_res_Celine('/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/*/*')
 
 
