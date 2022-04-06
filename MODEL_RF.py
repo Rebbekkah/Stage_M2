@@ -783,8 +783,6 @@ def comp_res_Celine(path) :
 
 
 	file = path_Chlamy_arabi+'Predictions/prot_alpha.txt'
-	#file = glob.glob(path_Chlamy_arabi+'Predictions/alpha_*.txt')
-	#file.sort()
 	print(file, len(file), type(file))
 
 	res = glob.glob(path)
@@ -795,13 +793,11 @@ def comp_res_Celine(path) :
 	for r in res :
 		dico[basename(r)] = {}
 		dico[basename(r)] = read_proteom(r)
-	#print(dico.keys(), len(dico.keys()))
 
 
 	alpha = []
 	with open(file, 'r') as filin :
 		for line in filin :
-			#print(line)
 			alpha.append(line.strip())
 	print("ALPHA ", len(alpha))
 
@@ -818,13 +814,8 @@ def comp_res_Celine(path) :
 				yes.append(idt)
 			if idt not in alpha :
 				no.append(idt)
-	#for k in dickeys :
-	#	for elem in k :
-	#		if elem not in keys :
-	#			keys.append(k)
 	for elem in dickeys :
 		keys = keys+elem
-	#print(keys, len(keys))
 	for a in alpha :
 		if a not in keys :
 			if a not in new_pred :
@@ -880,8 +871,8 @@ if __name__ == '__main__' :
 	alphasol, nonalphasol, df_pred = To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi')
 	'''
 	#which_proteom()
-	#is_pos_neg()
+	is_pos_neg()
 	#dico_imp = select_imp('Importance_desc.csv')
-	comp_res_Celine('/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/*/*')
+	#comp_res_Celine('/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/*/*')
 
 
