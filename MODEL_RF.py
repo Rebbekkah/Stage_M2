@@ -779,6 +779,9 @@ def select_imp(file) :
 
 def comp_res_Celine(path) :
 
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/')
+
+
 	file = path_Chlamy_arabi+'Predictions/prot_alpha.txt'
 	#file = glob.glob(path_Chlamy_arabi+'Predictions/alpha_*.txt')
 	#file.sort()
@@ -827,14 +830,27 @@ def comp_res_Celine(path) :
 			if a not in new_pred :
 				new_pred.append(a)
 
-
-	print(keys)
 	print("PRED & PRED ", len(yes))
 	print("CEL PRED MAIS PAS MOI ", len(no))
 	print("NEW PRED PAR MOI ", len(new_pred))
 
-	
+	with open('pred_pred.txt', 'w') as filout :
+		for ident in yes :
+			filout.write(ident+'\n')
+	with open('Cel_pred_moi_non.txt', 'w') as filout :
+		for ident in no :
+			filout.write(ident+'\n')
+	with open('new_pred.txt', 'w') as filout :
+		for ident in new_pred :
+			filout.write(ident+'\n')
 
+	with open('new_pred_Chlamy.txt', 'w') as filout_1 :
+		with open('new_pred_Arabidopsis.txt', 'w') as filout_2 :
+			for ident in new_pred :
+				if ident.startswith('>Cre') :
+					filout_1.write(ident+'\n')
+				else :
+					filout_2.write(ident+'\n')
 
 
 
