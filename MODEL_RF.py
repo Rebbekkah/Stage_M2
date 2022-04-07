@@ -963,16 +963,83 @@ def sep_alpha() :
 		with open('alpha_Chlamy.txt', 'w') as filout_2 :
 			for a in alpha :
 				if a.startswith('>Cre') :
-					filout_1.write(a+'\n')
-				else :
 					filout_2.write(a+'\n')
+				else :
+					filout_1.write(a+'\n')
 
+
+
+def proteom_alpha() :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/')
+	
+	all_proteom = Proteom_all(path_Chlamy_arabi)
+
+	alpha_Chlamy = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Chlamy.txt')
+	alpha_Arabi = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Arabi.txt')
+
+	list_alpha = [alpha_Arabi, alpha_Chlamy]
+
+
+	proteom = {}
+	for l in list_alpha :
+		dic = {}
+		if l is alpha_Arabi :
+			print("Arabi")
+			for prot in l :
+				dic[prot] = all_proteom[prot]
+			proteom['Arabidopsis'] = dic
+		if l is alpha_Chlamy :
+			print("Chlamy")
+			for prot in l :
+				dic[prot] = all_proteom[prot]
+			proteom['Chlamydomonas'] = dic
+
+
+	with open('Proteom_alpha_Arabidopsis.txt', 'w') as filout_1 :
+		with open('Proteom_alpha_Chlamydomonas.txt', 'w') as filout_2 :
+				for org, dic in proteom.items() :
+					if org == 'Arabidopsis' :
+						for prot, seq in dic.items() :
+							filout_1.write(prot+'\n'+seq+'\n')
+					if org == 'Chlamydomonas' :
+						for prot, seq in dic.items() :
+							filout_2.write(prot+'\n'+seq+'\n')
+
+
+
+
+def Proteom_all(path) :
+	''' Function that read the new meta proteom that we'll use in other functions 
+	
+	Parameters
+	----------
+	path : str
+		Path to the New_Proteom_All.txt file
+
+	Returns
+	-------
+	dico : dict
+		Dictionnary of the metaproteom (key = id, value = sequence)
+
+	'''
+
+	dico = {}
+	with open(path+'New_Proteom_All.txt', "r") as filin :
+		for line in filin : 
+			if line.startswith('>') :
+				idt = line.strip()
+				dico[idt] = ""
+			else :
+				dico[idt] += line.strip()
+
+	return dico
 
 
 
 if __name__ == '__main__' :
 
-	path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/neg_pos/'
+	#path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/neg_pos/'
 	#path_prote = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/other/'
 	path_Chlamy_arabi = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
 	path_pos_neg = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
@@ -1001,4 +1068,5 @@ if __name__ == '__main__' :
 	#dico_imp = select_imp('Importance_desc.csv')
 	#comp_res_Celine(path_method_Cel+'*/*')
 	#comp_methode_2(path_method_Cel+'M2_*/*')
-	sep_alpha()
+	#sep_alpha()
+	#proteom_alpha()
