@@ -777,8 +777,20 @@ def select_imp(file) :
 
 
 
+def get_idt(file) :
+
+	idt = []
+	with open(file, 'r') as filin :
+		for line in filin :
+			idt.append(line.strip())
+	print("idt ", len(idt))
+
+	return idt
+
+
 def comp_res_Celine(path) :
 
+	print("----------- MÉTHODE 1&2 -----------")
 	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/')
 
 
@@ -795,13 +807,16 @@ def comp_res_Celine(path) :
 		dico[basename(r)] = read_proteom(r)
 
 
-	alpha = []
-	with open(file, 'r') as filin :
-		for line in filin :
-			alpha.append(line.strip())
+	#alpha = []
+	#with open(file, 'r') as filin :
+	#	for line in filin :
+	#		alpha.append(line.strip())
+	#print("ALPHA ", len(alpha))
+
+	alpha = get_idt(file)
 	print("ALPHA ", len(alpha))
 
-
+	'''
 	yes = []
 	no = []
 	new_pred = []
@@ -820,6 +835,10 @@ def comp_res_Celine(path) :
 		if a not in keys :
 			if a not in new_pred :
 				new_pred.append(a)
+	'''
+
+
+	yes, no, new_pred = is_in(dico, alpha)
 
 	print("PRED & PRED ", len(yes))
 	print("CEL PRED MAIS PAS MOI ", len(no))
@@ -844,6 +863,112 @@ def comp_res_Celine(path) :
 					filout_2.write(ident+'\n')
 
 
+def comp_methode_2(path) :
+
+	print("----------- MÉTHODE 2 -----------")
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/comp_M2/')
+
+
+	file = path_Chlamy_arabi+'Predictions/prot_alpha.txt'
+	print(file, len(file), type(file))
+
+	res = glob.glob(path)
+	res.sort()
+	print(res, len(res))
+
+	dico = {}
+	for r in res :
+		dico[basename(r)] = {}
+		dico[basename(r)] = read_proteom(r)
+
+	print(dico.keys())
+	for ident in dico.values() :
+		print(len(ident))
+	#print(dico.values())
+
+	alpha = get_idt(file)
+	print("len aplha : ", len(alpha))
+
+	pred_pred, Cel_pred, new_pred_m2 = is_in(dico, alpha) 
+
+	print("PRED & PRED ", len(pred_pred))
+	print("CEL PRED MAIS PAS MOI ", len(Cel_pred))
+	print("NEW PRED PAR MOI ", len(new_pred_m2))
+
+
+	with open('pred_pred_Chlamy_m2.txt', 'w') as filout_1 :
+		with open('pred_pred_Arabi_m2.txt', 'w') as filout_2 :
+			for ident in pred_pred :
+				if ident.startswith('>Cre') :
+					filout_1.write(ident+'\n')
+				else :
+					filout_2.write(ident+'\n')
+
+	with open('Cel_pred_moi_non_Chlamy_m2.txt', 'w') as filout_1 :
+		with open('Cel_pred_moi_non_Arabi_m2.txt', 'w') as filout_2 :
+			for ident in Cel_pred :
+				if ident.startswith('>Cre') :
+					filout_1.write(ident+'\n')
+				else :
+					filout_2.write(ident+'\n')
+
+	with open('new_pred_vs_m2.txt', 'w') as filout :
+		for ident in new_pred_m2 :
+			filout.write(ident+'\n')
+
+	with open('new_pred_Chlamy_vs_m2.txt', 'w') as filout_1 :
+		with open('new_pred_Arabidopsis_vs_m2.txt', 'w') as filout_2 :
+			for ident in new_pred_m2 :
+				if ident.startswith('>Cre') :
+					filout_1.write(ident+'\n')
+				else :
+					filout_2.write(ident+'\n')
+
+
+def is_in(dico, list_idt) :
+
+	yes = []
+	no = []
+	new_pred = []
+	dickeys = []
+	keys = []
+	for org, dic in dico.items() :
+		dickeys.append(list(dic.keys()))
+		for idt in dic.keys() :
+			if idt in list_idt :
+				yes.append(idt)
+			if idt not in list_idt :
+				no.append(idt)
+	for elem in dickeys :
+		keys = keys+elem
+	for a in list_idt :
+		if a not in keys :
+			if a not in new_pred :
+				new_pred.append(a)
+
+	return yes, no, new_pred
+
+
+def sep_alpha() :
+
+	print("---------- SEP ALPHA ----------")
+	os.chdir(path_Chlamy_arabi+'Predictions/')
+
+	file = path_Chlamy_arabi+'Predictions/prot_alpha.txt'
+
+	alpha = get_idt(file)
+
+	with open('alpha_Arabi.txt', 'w') as filout_1 :
+		with open('alpha_Chlamy.txt', 'w') as filout_2 :
+			for a in alpha :
+				if a.startswith('>Cre') :
+					filout_1.write(a+'\n')
+				else :
+					filout_2.write(a+'\n')
+
+
+
 
 if __name__ == '__main__' :
 
@@ -851,7 +976,8 @@ if __name__ == '__main__' :
 	#path_prote = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/other/'
 	path_Chlamy_arabi = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
 	path_pos_neg = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
-	
+	path_method_Cel = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/'
+
 	os.chdir(path_Chlamy_arabi)
 
 	'''
@@ -871,8 +997,8 @@ if __name__ == '__main__' :
 	alphasol, nonalphasol, df_pred = To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi')
 	'''
 	#which_proteom()
-	is_pos_neg()
+	#is_pos_neg()
 	#dico_imp = select_imp('Importance_desc.csv')
-	#comp_res_Celine('/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/*/*')
-
-
+	#comp_res_Celine(path_method_Cel+'*/*')
+	#comp_methode_2(path_method_Cel+'M2_*/*')
+	sep_alpha()
