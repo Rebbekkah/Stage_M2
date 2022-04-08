@@ -425,9 +425,37 @@ def minus_log_evalue(pattern) :
 		i += 1
 	print(new[:10], len(new))
 
-	with open('for_cytoscape_Arabi.out', 'w') as filout :
+	with open('for_cytoscape_Arabi.csv', 'w') as filout :
 		for line in new :
 			filout.write(line)
+
+
+def correspondance_acc(file) :
+
+
+	os.chdir(path_Chlamy_arabi+'Predictions/')
+
+	df = pd.read_csv(path_Chlamy_arabi+file, sep = '\t')
+
+	df = df.set_index(df['Unnamed: 0'], inplace = False)
+	del df['Unnamed: 0']
+
+	acc_list = []
+	for col in df :
+		if col.startswith('acc') :
+			acc_list.append(col)
+
+	real_acc = []
+	with open(path_to_script+'acc/colnames_acc.txt', 'r') as filin :
+		for line in filin :
+			real_acc.append(line.strip())
+
+	acc_df = pd.DataFrame(acc_list, columns = ['acc_df'])
+	df_real = pd.DataFrame(real_acc, columns = ['real'])
+	df_acc = pd.concat([acc_df, df_real], axis = 1)
+	
+	df_acc.to_csv('acc.csv', sep = '\t', header = True, index = True)
+
 
 
 if __name__ == '__main__' :
@@ -437,6 +465,7 @@ if __name__ == '__main__' :
 	path_Chlamy_arabi = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
 	path_pos_neg = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
 	path_method_Cel = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/'
+	path_to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/"
 
 	os.chdir(path_Chlamy_arabi)
 
@@ -447,4 +476,7 @@ if __name__ == '__main__' :
 	#comp_methode_2(path_method_Cel+'M2_*/*')
 	#sep_alpha()
 	#proteom_alpha()
-	minus_log_evalue('Predictions/Pour_celine_comp/db_*/*.out')
+	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*.out')
+	correspondance_acc('Predictions/dataframe_all.csv')
+
+
