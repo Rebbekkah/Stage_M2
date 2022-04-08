@@ -150,6 +150,9 @@ for (i in 1:length(files)) {
               append = FALSE, sep = "\n", row.names = TRUE, col.names = FALSE)
 }
 
+colnames = list(colnames(Acc_proteome_Chlamydomonas.fa))
+write.table(colnames, file = 'colnames_acc.txt', append = FALSE, sep = '\n', row.names = FALSE, col.names = FALSE)
+
 
 # Plot of Acc with Tsne
 
