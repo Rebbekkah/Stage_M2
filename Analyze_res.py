@@ -506,7 +506,7 @@ def adressage_alpha(file1, file2) :
 				elif org == 'Arabi' :
 					df_adr_Arabi.loc[idt, software] = df.loc[idt, software]
 
-	print(df_adr)
+	print("DF ADR\n", df_adr)
 	#print(df_adr_Chl)
 	#print(df_adr_Arabi)
 
@@ -522,42 +522,91 @@ def adressage_alpha(file1, file2) :
 	idt_adr_Chl = []
 	idt_adr_Arabi = []
 	for d in ldf :
-		for software in adress :
-			for elem in df[software] :
+		#for software in adress :
+			#for elem in df[software] :
+		for k, elem in enumerate(d) :
+			if d.iloc[k, 'wolfpsort'] > 0.5 or d.iloc[k, 'deeploc'] > 0.5 and \
+				d.iloc[k, 'trp2'] == 1.0 or d.iloc[k, 'trp2'] == 2.0 and d.iloc[k, 'localizer'] == 1.0 :
+				if d.index[k] not in idt_adr :
+					idt_adr.append(d.index[k])
+				if d is df_adr_Chl :
+					if d.index[k] not in idt_adr_Chl :
+						idt_adr_Chl.append(d.index[k])
+				elif d is df_adr_Arabi :
+					if d.index[k] not in idt_adr_Arabi :
+						idt_adr_Arabi.append(d.index[k])
+
+
+				'''
 				if software == 'wolfpsort' or software == 'deeploc' :
-					if elem > 0.65 :
-						idt_adr.append(list(d.index))
-						if ldf is df_adr_Chl :
-							idt_adr_Chl.append(list(d.index))
-						elif ldf is df_adr_Arabi :
-							idt_adr_Arabi.append(list(d.index))
+					if elem > 0.5 :
+						if d.index[k] not in idt_adr :
+							idt_adr.append(d.index[k])
+						if d is df_adr_Chl :
+							if d.index[k] not in idt_adr_Chl :
+								idt_adr_Chl.append(d.index[k])
+						elif d is df_adr_Arabi :
+							if d.index[k] not in idt_adr_Arabi :
+								idt_adr_Arabi.append(d.index[k])
 				if software == 'trp2' :
 					if elem == 1.0 or elem == 2.0 :
-						idt_adr.append(list(d.index))
-						if ldf is df_adr_Chl :
-							idt_adr_Chl.append(list(d.index))
-						elif ldf is df_adr_Arabi :
-							idt_adr_Arabi.append(list(d.index))
+						if d.index[k] not in idt_adr :
+							idt_adr.append(d.index[k])
+						if d is df_adr_Chl :
+							if d.index[k] not in idt_adr_Chl :
+								idt_adr_Chl.append(d.index[k])
+						elif d is df_adr_Arabi :
+							if d.index[k] not in idt_adr_Arabi :
+								idt_adr_Arabi.append(d.index[k])
 				if software == 'localizer' :
 					if elem == 1.0 :
-						idt_adr.append(list(d.index))
-						if ldf is df_adr_Chl :
-							idt_adr_Chl.append(list(d.index))
-						elif ldf is df_adr_Arabi :
-							idt_adr_Arabi.append(list(d.index))	
+						if d.index[k] not in idt_adr :
+							idt_adr.append(d.index[k])
+						if d is df_adr_Chl :
+							if d.index[k] not in idt_adr_Chl :
+								idt_adr_Chl.append(d.index[k])
+						elif d is df_adr_Arabi :
+							if d.index[k] not in idt_adr_Arabi :
+								idt_adr_Arabi.append(d.index[k])
+				'''
+			#k += 1
 
 	lidt = [idt_adr, idt_adr_Chl, idt_adr_Arabi]
 
+	print("----------------------")
+	print(idt_adr, len(idt_adr))
+	print(idt_adr_Chl, len(idt_adr_Chl))
+	print(idt_adr_Arabi, len(idt_adr_Arabi))
+
+	l = ['all', 'Chl', 'Arabi']
+
+	i = 0
+	for newf in lidt :
+		with open('prot_adress_'+l[i]+'.txt', 'w') as filout :
+			for idt in newf :
+				filout.write(idt+"\n")
+		i += 1
+
+
+	print(df.loc['>NP_001030886.1', adress])
+	print(df.loc['>NP_001030703.1', adress])
+	print(df.loc['>NP_001030656.1', adress])
+	print(df.loc['>NP_001030887.1', adress])
+
+
+
+	'''
 	i = 0
 	for l in lidt :
 		new = []
 		for elem in l :
-			new.append(elem)
-		print(new, len(new))
+			if elem not in new :
+				new.append(elem)
+		#print(len(new))
+		#print("---")
 		lidt[i] = new
-		break
-
-	
+	'''
+	'''
 	i = 0
 	for idt in lidt :
 		break
@@ -566,11 +615,13 @@ def adressage_alpha(file1, file2) :
 			if ident not in new :
 				new.append(ident)
 		print(len(new))
+		print("lalalal")
 		lidt[i] = new
 		i += 1
-
+	'''
 	#print(lidt)
-	print(len(lidt[0]))
+	#print(len(lidt[0]))
+	#print("----------\n", idt_adr_Arabi)
 
 	'''
 	for idt in lidt :
