@@ -383,51 +383,58 @@ def Proteom_all(path) :
 def minus_log_evalue(pattern) :
 
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/db_Arabi/')
+	#os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/db_Chlamy')
 
 	files = glob.glob(path_Chlamy_arabi+pattern)
 	files.sort()
 	print(files)
+	lp = ['db_Arabi', 'db_Chlamy']
 
-	evalue = []
-	l = []
-	with open(files[0], 'r') as filin :
-		for line in filin :
-			l.append(line)
-			res = line.split('\t')[2]
-			evalue.append(float(res))
-	print(len(evalue))
-
-	print(evalue[:10], len(evalue))
-	mlog = []
-	for ev in evalue :
-		if ev == 0.0 :
-			ev = 10**-300
-		res = -m.log(ev)
-		mlog.append(res)
-	print(mlog[:10], len(mlog))
-
-
-	print(l[:10], len(l))
 	i = 0
-	new = []
-	for prot in l :
-		#print(prot.split('\t')[2])
-		#prot.split('\t')[2] = mlog[i]
-		#print(prot)
-		new_line = prot.split('\t')
-		#print(new_line)
-		new_line[2] = str(mlog[i])
-		#print(new_line)
-		new_line = '\t'.join(new_line)
-		#print(new_line)
-		new.append(new_line)
+	for f in files :
+		p = lp[i]
+		os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/'+p+'/')
 		i += 1
-	print(new[:10], len(new))
+		evalue = []
+		l = []
+		with open(f, 'r') as filin :
+			for line in filin :
+				l.append(line)
+				res = line.split('\t')[2]
+				evalue.append(float(res))
+		print(len(evalue))
 
-	with open('for_cytoscape_Arabi.csv', 'w') as filout :
-		for line in new :
-			filout.write(line)
+		print(evalue[:10], len(evalue))
+		mlog = []
+		for ev in evalue :
+			if ev == 0.0 :
+				ev = 10**-300
+			res = -m.log10(ev)
+			mlog.append(res)
+		print(mlog[:10], len(mlog))
+
+
+		print(l[:10], len(l))
+		i = 0
+		new = []
+		for prot in l :
+			#print(prot.split('\t')[2])
+			#prot.split('\t')[2] = mlog[i]
+			#print(prot)
+			new_line = prot.split('\t')
+			#print(new_line)
+			new_line[2] = str(mlog[i])
+			#print(new_line)
+			new_line = '\t'.join(new_line)
+			#print(new_line)
+			new.append(new_line)
+			i += 1
+		print(new[:10], len(new))
+
+
+		with open('for_cytoscape_'+p+'.csv', 'w') as filout :
+			for line in new :
+				filout.write(line)
 
 
 def correspondance_acc(file) :
@@ -476,7 +483,7 @@ if __name__ == '__main__' :
 	#comp_methode_2(path_method_Cel+'M2_*/*')
 	#sep_alpha()
 	#proteom_alpha()
-	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*.out')
-	correspondance_acc('Predictions/dataframe_all.csv')
+	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*_VS_*.out')
+	#correspondance_acc('Predictions/dataframe_all.csv')
 
 
