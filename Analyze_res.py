@@ -94,6 +94,15 @@ def is_pos_neg() :
 	#AT != NP !!!!!!!!! demander à céline les bons protéomes
 
 
+def read_df(path_df) :
+
+	df = pd.read_csv(path_df+'dataframe_all.csv', sep = '\t')
+	df = df.set_index(df['Unnamed: 0'], inplace = False)
+	del df['Unnamed: 0']
+
+	return df
+
+
 def select_imp(file) :
 
 	os.chdir(path_Chlamy_arabi+'Predictions/')
@@ -465,6 +474,105 @@ def correspondance_acc(file) :
 
 
 
+def adressage_alpha(file1, file2) :
+
+	df = read_df(path_Chlamy_arabi+'Predictions/')
+
+	#df_2 = df.iloc[:150, :]
+
+	print(df)
+	adress = ['wolfpsort', 'deeploc', 'trp2', 'localizer']
+
+	dico = {'Arabi' : get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/'+file1), \
+	'Chlamy' : get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/'+file2)}
+
+	#print(dico)
+
+	df_adr_Chl = pd.DataFrame(index = dico['Chlamy'], columns = [adress])
+	#print(df_adr_Chl)
+	df_adr_Arabi = pd.DataFrame(index = dico['Arabi'], columns = [adress])
+	df_adr = pd.DataFrame(index = dico['Chlamy']+dico['Arabi'], columns = [adress])
+	#print("-------------------\n", df_adr)
+	
+
+
+	for org, lidt in dico.items() :
+		for idt in lidt :
+			for software in adress :
+				#df_adr.loc[idt, software] = df_adr.loc[idt, software]
+				df_adr.loc[idt, software] = df.loc[idt, software]
+				if org == 'Chlamy' :
+					df_adr_Chl.loc[idt, software] = df.loc[idt, software]
+				elif org == 'Arabi' :
+					df_adr_Arabi.loc[idt, software] = df.loc[idt, software]
+
+	print(df_adr)
+	#print(df_adr_Chl)
+	#print(df_adr_Arabi)
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+
+	df_adr.to_csv('df_adr.csv', sep = '\t', header = True, index = True)
+	df_adr_Chl.to_csv('df_adr_Chl.csv', sep = '\t', header = True, index = True)
+	df_adr_Arabi.to_csv('df_adr_Arabi.csv', sep = '\t', header = True, index = True)
+
+	ldf = [df_adr, df_adr_Chl, df_adr_Arabi]
+
+	idt_adr = []
+	idt_adr_Chl = []
+	idt_adr_Arabi = []
+	for d in ldf :
+		for software in adress :
+			for elem in df[software] :
+				if software == 'wolfpsort' or software == 'deeploc' :
+					if elem > 0.65 :
+						idt_adr.append(list(d.index))
+						if ldf is df_adr_Chl :
+							idt_adr_Chl.append(list(d.index))
+						elif ldf is df_adr_Arabi :
+							idt_adr_Arabi.append(list(d.index))
+				if software == 'trp2' :
+					if elem == 1.0 or elem == 2.0 :
+						idt_adr.append(list(d.index))
+						if ldf is df_adr_Chl :
+							idt_adr_Chl.append(list(d.index))
+						elif ldf is df_adr_Arabi :
+							idt_adr_Arabi.append(list(d.index))
+				if software == 'localizer' :
+					if elem == 1.0 :
+						idt_adr.append(list(d.index))
+						if ldf is df_adr_Chl :
+							idt_adr_Chl.append(list(d.index))
+						elif ldf is df_adr_Arabi :
+							idt_adr_Arabi.append(list(d.index))	
+
+	lidt = [idt_adr, idt_adr_Chl, idt_adr_Arabi]
+	i = 0
+	for idt in lidt :
+		new = []
+		for ident in idt :
+			if ident not in new :
+				new.append(ident)
+		print(len(new))
+		lidt[i] = new
+		i += 1
+
+	#print(lidt)
+	print(len(lidt[0]))
+
+	'''
+	for idt in lidt :
+		print(len(idt))
+		idt = list(set(idt))
+		print(len(idt))
+		break
+		lidt[i] = idt
+		i += 1
+
+		'''
+
+
+
 if __name__ == '__main__' :
 
 	#path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/neg_pos/'
@@ -485,5 +593,6 @@ if __name__ == '__main__' :
 	#proteom_alpha()
 	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*_VS_*.out')
 	#correspondance_acc('Predictions/dataframe_all.csv')
+	adressage_alpha('alpha_Arabi.txt', 'alpha_Chlamy.txt')
 
 
