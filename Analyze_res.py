@@ -547,8 +547,20 @@ def adressage_alpha(file1, file2) :
 							idt_adr_Arabi.append(list(d.index))	
 
 	lidt = [idt_adr, idt_adr_Chl, idt_adr_Arabi]
+
+	i = 0
+	for l in lidt :
+		new = []
+		for elem in l :
+			new.append(elem)
+		print(new, len(new))
+		lidt[i] = new
+		break
+
+	
 	i = 0
 	for idt in lidt :
+		break
 		new = []
 		for ident in idt :
 			if ident not in new :
@@ -593,6 +605,6 @@ if __name__ == '__main__' :
 	#proteom_alpha()
 	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*_VS_*.out')
 	#correspondance_acc('Predictions/dataframe_all.csv')
-	adressage_alpha('alpha_Arabi.txt', 'alpha_Chlamy.txt')
+	adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt')
 
 
