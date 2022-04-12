@@ -690,12 +690,78 @@ def adressage_alpha(file1, file2) :
 
 def is_ppr_opr(file) :
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/')
 
-	files = glob.glob(file) 
-	files.sort()
-	print(files)
+	df = pd.read_csv(file, sep = '\t')
+	df = df.set_index(df['protein_id'], inplace = False)
+	del df['protein_id']
+
+	#for col in df :
+	#	print(df[col])
+
+	lidt_opr = []
+	k = 0
+	for index, elem in enumerate(df['source']) :
+		k += 1
+		print(elem)
+		if elem.startswith('Cre') :
+			lidt_opr.append(elem.split()[0])
+		else :
+			lelem = []
+			print("-----------")
+			print(elem)
+			print(elem.split())
+			lelem = elem.split()
+			for el in lelem :
+				if el.startswith('Cre') :
+					lidt_opr.append(el)
+	#print(lidt_opr, len(lidt_opr))
+
+	for i in range(len(lidt_opr)) :
+		if '|' in lidt_opr[i] :
+			lidt_opr[i] = lidt_opr[i].split('|')[0]
+	print(lidt_opr, len(lidt_opr))
+
+	#print(df.loc['Chlre_OPR102', 'source'])
+	lidt_alpha = []
+	with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Chlamy.txt') as filin :
+		for line in filin :
+			lidt_alpha.append(line.strip())
+
+	print("nb of opr in file :", k)
+	print(len(lidt_alpha))
+
+	alpha_opr = []
+	for idt in lidt_opr :
+		idt = '>'+idt
+		if idt in lidt_alpha :
+			#print(idt)
+			alpha_opr.append(idt)
+
+	with open('opr_in_alpha_pred_Chlamy.txt', 'w') as filout :
+		for idt in alpha_opr :
+			filout.write(idt+'\n')
 	
+
+	
+	fich = path_to_script+'Celine/methode_1_2_Celine/M1_OPR_Chlre/cat_loops+blastp_motifs.fasta_PROTEINS_2rep_chlre_M1OPR_CHL'
+	Cel_opr = read_proteom(fich)
+
+	Cel_opr_in = []
+	print(len(Cel_opr.keys()))
+	for idt in lidt_opr :
+		idt = '>'+idt
+		if idt in Cel_opr.keys() :
+			#print(idt)
+			Cel_opr_in.append(idt)
+
+
+	print("MOI :", alpha_opr)
+	print("CÉLINE :", Cel_opr_in)
+
+	#for col in df :
+	#	print(df[col])
+
 
 
 
@@ -727,5 +793,5 @@ if __name__ == '__main__' :
 	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*_VS_*.out')
 	#correspondance_acc('Predictions/dataframe_all.csv')
 	#adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt')
-	is_ppr_opr(path_to_script+'script/Celine/methode_1_2_Celine/*_*_*/*')
+	is_ppr_opr(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt')
 
