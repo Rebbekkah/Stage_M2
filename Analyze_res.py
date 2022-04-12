@@ -764,8 +764,63 @@ def is_ppr_opr(file) :
 
 
 
+def comp_Hedi(file) :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Comp_Hedi/')
+
+	alpha_Hedi = []
+	non_alpha_Hedi = []
+	with open(path_Chlamy_arabi+file, 'r') as filin :
+		for line in filin :
+			line = line.split(' ')
+			line[-1] = line[-1].strip()
+			if line[-1] == '1' :
+				alpha_Hedi.append('>'+line[1])
+			else : 
+				non_alpha_Hedi.append('>'+line[1])
+	print("prot alpha_Hedi", len(alpha_Hedi))
+	print("prot non alpha_Hedi", len(non_alpha_Hedi))
+
+	alpha = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/prot_alpha.txt')
+
+	same = []
+	not_same = []
+	his_pred = []
+	for a in alpha :
+		if a in alpha_Hedi :
+			same.append(a)
+		else :
+			not_same.append(a)
+
+	for a in alpha_Hedi :
+		if a not in alpha :
+			his_pred.append(a)
+
+	with open('same_pred_1746.txt', 'w') as filout1 :
+		with open('my_pred_1025.txt', 'w') as filout2 :
+			with open('his_pred_6853.txt', 'w') as filout3 :
+				for prot in same :
+					filout1.write(prot+'\n')
+				for prot in not_same :
+					filout2.write(prot+'\n')
+				for prot in his_pred :
+					filout3.write(prot+'\n')
 
 
+def right_proteom_opr(file) :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/')
+
+	dico = {}
+	with open(file, 'r') as filin :
+		for line in filin :
+			line = line.split('\t')
+			#print(line)
+			dico[line[0]] = line[1]
+
+	print(dico, len(dico.keys()))
+
+	proteom = read_proteom(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/chlamydomonas_opr_table961897.txt')
 
 
 
@@ -793,5 +848,13 @@ if __name__ == '__main__' :
 	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*_VS_*.out')
 	#correspondance_acc('Predictions/dataframe_all.csv')
 	#adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt')
-	is_ppr_opr(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt')
+	#is_ppr_opr(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt')
+	#comp_Hedi('Predictions/comp_Hedi/arabi_chlamy_2022_02_24_predicition_ingrid.txt')
+	right_proteom_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/alpha_Chlamy_VS_OPR_Chlamy.out')
+
+
+
+
+
+
 
