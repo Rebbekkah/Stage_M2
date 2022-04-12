@@ -495,7 +495,6 @@ def adressage_alpha(file1, file2) :
 	#print("-------------------\n", df_adr)
 	
 
-
 	for org, lidt in dico.items() :
 		for idt in lidt :
 			for software in adress :
@@ -524,14 +523,28 @@ def adressage_alpha(file1, file2) :
 	truc = []
 	print("--------------")
 	for d in ldf :
-		truc.append(d[(d['wolfpsort'] < 0.5) & (d['deeploc'] < 0.5) & (d['trp2'] == 1.0) |\
-			(d['deeploc'] == 2.0) & (d['localizer'] == 1.0)])
+		#truc.append(d[(d['wolfpsort'] > 0.5) & (d['deeploc'] > 0.5) & (d['trp2'] == 1.0) |\
+		#	(d['deeploc'] == 2.0) & (d['localizer'] == 1.0)])
+		truc.append(d[(d.wolfpsort > 0.5) & (d.deeploc > 0.5) & ((d.trp2 == 1.0) | \
+							(d.trp2 == 2.0)) & (d.localizer == 1.0)])
 	print(truc)
 
+	print("-----LALAALLALALALALA-----")
+
+
 	for t in truc :
-		for index, elem in enumerate(t) :
-			t.iloc[index, :] = df.loc[t.index[index], adress]
+		pass
+		#for index, elem in enumerate(t) :
+			#t.iloc[index, :] = df.loc[t.index[index], adress]
+		#print(list(t.index), len(list(t.index)))
+		#for index in list(t.index) :
+			#print(df.loc[index, :])
+			#print(t[t[index, :]])
+			#t.loc[index, :] = df.loc[index, adress]
+		#	t.loc[index, adress].replace(['NaN'], df.loc[index, adress], inplace = True)
+			#t[t[index]]
 	print(truc)
+
 
 
 '''
@@ -675,6 +688,24 @@ def adressage_alpha(file1, file2) :
 '''
 
 
+def is_ppr_opr(file) :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/')
+
+	files = glob.glob(file) 
+	files.sort()
+	print(files)
+	
+
+
+
+
+
+
+
+
+
+
 if __name__ == '__main__' :
 
 	#path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/neg_pos/'
@@ -695,6 +726,6 @@ if __name__ == '__main__' :
 	#proteom_alpha()
 	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*_VS_*.out')
 	#correspondance_acc('Predictions/dataframe_all.csv')
-	adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt')
-
+	#adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt')
+	is_ppr_opr(path_to_script+'script/Celine/methode_1_2_Celine/*_*_*/*')
 
