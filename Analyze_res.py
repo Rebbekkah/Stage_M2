@@ -816,13 +816,26 @@ def right_proteom_opr(file) :
 		for line in filin :
 			line = line.split('\t')
 			#print(line)
-			###############################condition if pour que ça prenne le bon idt et pas le dernier
-			dico[line[0]] = line[1]
+			if line[2] == '0.0' :
+				if line[0] not in dico.keys() :
+					dico[line[0]] = line[1]
 
-	#print(dico, len(dico.keys()))
+	print(len(dico.keys()))
 
 	proteom = read_proteom(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/chlamydomonas_opr.fasta')
-	print(proteom)
+	print(len(proteom))
+
+	new_prot = {}
+	for idt, seq in proteom.items() :
+		for old, new in dico.items() :
+			old = '>'+old
+			new = '>'+new
+			if old == idt :
+				new_prot[new] = seq
+
+	print(len(new_prot))
+
+
 
 
 
