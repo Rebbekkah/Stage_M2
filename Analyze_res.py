@@ -822,11 +822,12 @@ def right_proteom_opr(file) :
 
 	print(len(dico.keys()))
 
-	proteom = read_proteom(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/chlamydomonas_opr.fasta')
-	print(len(proteom))
+	proteom_opr = read_proteom(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/chlamydomonas_opr.fasta')
+	proteom_Chlamy = read_proteom(path_Chlamy_arabi+'Predictions/Proteom_alpha_Chlamydomonas.txt')
+	#print(len(proteom))
 
 	new_prot = {}
-	for idt, seq in proteom.items() :
+	for idt, seq in proteom_opr.items() :
 		for old, new in dico.items() :
 			old = '>'+old
 			new = '>'+new
@@ -836,8 +837,37 @@ def right_proteom_opr(file) :
 	print(len(new_prot))
 
 
+	with open('New_proteom_OPR_alpha_pred_Chlamy.fasta', 'w') as filout1 :
+		with open('prot_alpha_opr_Chlamy.txt', 'w') as filout2 :
+			for idt, seq in new_prot.items() :
+				filout1.write(idt+'\n'+seq+'\n')
+			for idt in new_prot.keys() :
+				filout2.write(idt+'\n')
 
 
+	
+	'''
+	#print(proteom_Chlamy, len(proteom_Chlamy))
+	proteom_C = {}
+	key = list(proteom_Chlamy.keys())
+	i = 0
+	for k in key :
+		k = k.strip()
+		key[i] = k
+		i += 1
+	print(len(key))
+	for k in key :
+		for idt, seq in proteom_Chlamy.items() :
+			proteom_C[k] = seq
+	#print(proteom_C, len(proteom_C))
+
+	opr_not_pred = []
+	print(new_prot.keys(), len(new_prot))
+	for idt in new_prot.keys() :
+		if idt not in proteom_C.keys() :
+			opr_not_pred.append(idt)
+	print(opr_not_pred, len(opr_not_pred))
+	'''
 
 
 
