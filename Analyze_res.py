@@ -521,13 +521,31 @@ def adressage_alpha(file1, file2) :
 	idt_adr_Chl = []
 	idt_adr_Arabi = []
 	truc = []
-	print("--------------")
+	#print("--------------")
 	for d in ldf :
+		print("--------------")
 		#truc.append(d[(d['wolfpsort'] > 0.5) & (d['deeploc'] > 0.5) & (d['trp2'] == 1.0) |\
 		#	(d['deeploc'] == 2.0) & (d['localizer'] == 1.0)])
-		truc.append(d[(d.wolfpsort > 0.5) & (d.deeploc > 0.5) & ((d.trp2 == 1.0) | \
-							(d.trp2 == 2.0)) & (d.localizer == 1.0)])
-	print(truc)
+		#new_d = (d['deeploc'] > 0.6 == True)
+		#print(new_d)
+		#d = d['wolfpsort'] > 0.5
+		#truc.append(d)
+		#truc.append(d[(d.wolfpsort > 0.6 == True) & (d.deeploc > 0.6 == True)])
+		print(d, type(d))
+		#d_mask = d['deeploc'] >= 0.25
+		#filtered_df = d.query('deeploc > "0.5"')
+		#filtered_df = d[d_mask]
+		#indexNames = filtered_df[filtered_df['deeploc'] == 'NaN'].index
+		#filtered_df.drop(indexNames, inplace = True)
+		indexNames = d[(d['deeploc'] >= 0.25) & (d['wolfpsort'] > 0.6)].index
+		d.drop(indexNames, inplace = True)
+		#print(indexNames)
+		#print(filtered_df)
+		print(d)
+	#print(truc)
+
+	#print(df.loc['>NP_974807.2', adress])
+	#print(df.loc['>NP_974807.2', adress])
 
 	print("-----LALAALLALALALALA-----")
 
@@ -543,7 +561,7 @@ def adressage_alpha(file1, file2) :
 			#t.loc[index, :] = df.loc[index, adress]
 		#	t.loc[index, adress].replace(['NaN'], df.loc[index, adress], inplace = True)
 			#t[t[index]]
-	print(truc)
+	#print(truc)
 
 
 
@@ -872,7 +890,6 @@ def read_blast(file) :
 	with open(file, 'r') as filin :
 		for line in filin :
 			line = line.split('\t')
-			#print(line)
 			if line[2] == '0.0' :
 				if line[0] not in dico.keys() :
 					dico[line[0]] = line[1]
@@ -880,9 +897,43 @@ def read_blast(file) :
 	return dico
 
 
-def comp_pos_neg() :
+def comp_pos_neg(Arabi_vs_neg, Arabi_vs_pos, Chlamy_vs_neg, Chlamy_vs_pos) :
 
-	dico_Arabi = {}
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Res_blast/')
+
+	dico_Arabi = {'positive' : read_blast(Arabi_vs_pos), 'negative' : read_blast(Arabi_vs_neg)}
+	dico_Chlamy = {'positive' : read_blast(Chlamy_vs_pos), 'negative' : read_blast(Chlamy_vs_neg)}
+
+	print(dico_Chlamy, len(dico_Chlamy))
+	#print(dico_Arabi, len(dico_Arabi))
+
+	ldico = [dico_Arabi, dico_Chlamy]
+	p = 0
+	n = 0
+	for dico in ldico :
+		for tpe, dic_idt in dico.items() :
+			if dico is dico_Arabi :
+				print("Arabi -------")
+			else :
+				print("Chlamy -------")
+			print(tpe, '\n', len(dic_idt))
+			#print(len(dic_idt))
+			print("----------")
+			if dico is dico_Arabi :
+				with open('Arabi_alpha_pred_found_in_'+str(tpe)+'.txt', 'w') as filout :
+					for old, new in dic_idt.items() :
+						filout.write(new+'\n')
+			else : 
+				with open('Chlamy_alpha_pred_found_in'+str(tpe)+'.txt', 'w') as filout :
+					for old, new in dic_idt.items() :
+						if old.startswith('Cre') :
+							if tpe == 'positive' :
+								p += 1
+							else : 
+								n += 1
+							filout.write(new+'\n')
+	print(p, n)
 
 
 
@@ -935,12 +986,13 @@ if __name__ == '__main__' :
 	#proteom_alpha()
 	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*_VS_*.out')
 	#correspondance_acc('Predictions/dataframe_all.csv')
-	#adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt')
+	adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt')
 	#is_ppr_opr(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt')
 	#comp_Hedi('Predictions/comp_Hedi/arabi_chlamy_2022_02_24_predicition_ingrid.txt')
 	#right_proteom_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/alpha_Chlamy_VS_OPR_Chlamy.out')
 	#for_cytoscape()
-	comp_pos_neg()
+	#comp_pos_neg(path_Chlamy_arabi+'Predictions/Res_blast/alpha_Arabi_VS_neg.out', path_Chlamy_arabi+'Predictions/Res_blast/alpha_Arabi_VS_pos.out', \
+	#	path_Chlamy_arabi+'Predictions/Res_blast/alpha_Chlamy_VS_neg.out', path_Chlamy_arabi+'Predictions/Res_blast/alpha_Chlamy_VS_pos.out')
 
 
 
