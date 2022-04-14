@@ -811,14 +811,7 @@ def right_proteom_opr(file) :
 
 	os.chdir(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/')
 
-	dico = {}
-	with open(file, 'r') as filin :
-		for line in filin :
-			line = line.split('\t')
-			#print(line)
-			if line[2] == '0.0' :
-				if line[0] not in dico.keys() :
-					dico[line[0]] = line[1]
+	dico = read_blast(file)
 
 	print(len(dico.keys()))
 
@@ -862,12 +855,63 @@ def right_proteom_opr(file) :
 	#print(proteom_C, len(proteom_C))
 
 	opr_not_pred = []
+	z = 0
 	print(new_prot.keys(), len(new_prot))
 	for idt in new_prot.keys() :
 		if idt not in proteom_C.keys() :
 			opr_not_pred.append(idt)
+		else :
+			z += 1
 	print(opr_not_pred, len(opr_not_pred))
+	print(z)
 	'''
+
+def read_blast(file) :
+
+	dico = {}
+	with open(file, 'r') as filin :
+		for line in filin :
+			line = line.split('\t')
+			#print(line)
+			if line[2] == '0.0' :
+				if line[0] not in dico.keys() :
+					dico[line[0]] = line[1]
+
+	return dico
+
+
+def comp_pos_neg() :
+
+	dico_Arabi = {}
+
+
+
+
+def for_cytoscape() :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/')
+
+	opr = []
+	with open(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/prot_alpha_opr_Chlamy.txt', 'r') as filin :
+		for line in filin :
+			opr.append(line.strip())
+	#print(opr, len(opr))
+
+	alpha_chl = []
+	with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Chlamy.txt', 'r') as filin :
+		for line in filin :
+			alpha_chl.append(line.strip())
+
+	with open('for_cytoscape_col_OPR_2.txt', 'w') as filout :
+		for idt in alpha_chl :
+			if idt in opr :
+				filout.write('Yes'+'\n')
+			else :
+				filout.write('No'+'\n')
+
+
+
+
 
 
 
@@ -894,8 +938,9 @@ if __name__ == '__main__' :
 	#adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt')
 	#is_ppr_opr(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt')
 	#comp_Hedi('Predictions/comp_Hedi/arabi_chlamy_2022_02_24_predicition_ingrid.txt')
-	right_proteom_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/alpha_Chlamy_VS_OPR_Chlamy.out')
-
+	#right_proteom_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/alpha_Chlamy_VS_OPR_Chlamy.out')
+	#for_cytoscape()
+	comp_pos_neg()
 
 
 
