@@ -538,10 +538,16 @@ def adressage_alpha(file1, file2) :
 		#indexNames = filtered_df[filtered_df['deeploc'] == 'NaN'].index
 		#filtered_df.drop(indexNames, inplace = True)
 		indexNames = d[(d['deeploc'] >= 0.25) & (d['wolfpsort'] > 0.6)].index
-		d.drop(indexNames, inplace = True)
+		print(len(indexNames))
+		new_d = pd.DataFrame(index = indexNames, columns = [adress])
+
+		#for ind in indexNames :
+		#	print(d.loc[ind])
+		#	new_d.loc[ind] = d.loc[ind]
+		#d.drop(indexNames, inplace = True)
 		#print(indexNames)
 		#print(filtered_df)
-		print(d)
+		#print(new_d)
 	#print(truc)
 
 	#print(df.loc['>NP_974807.2', adress])
