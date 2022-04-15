@@ -528,18 +528,39 @@ def adressage_alpha(file1, file2) :
 		#	(d['deeploc'] == 2.0) & (d['localizer'] == 1.0)])
 		#new_d = (d['deeploc'] > 0.6 == True)
 		#print(new_d)
-		#d = d['wolfpsort'] > 0.5
+		#new_d2 = ((d['wolfpsort'] > 0.5) == True).index
+		#print("LALALALALALA")
+		#print(new_d2)
+		#print(d[new_d2])
+		#print("ok")
+		print(d)
+		print(d.loc[d.index])
+		#print(d.index)
 		#truc.append(d)
 		#truc.append(d[(d.wolfpsort > 0.6 == True) & (d.deeploc > 0.6 == True)])
-		print(d, type(d))
-		#d_mask = d['deeploc'] >= 0.25
+		#print(d, type(d))
+		d_mask = d['deeploc'] >= 0.25
 		#filtered_df = d.query('deeploc > "0.5"')
-		#filtered_df = d[d_mask]
+		print(d_mask)
+		filtered_df = d['deeploc'][d_mask].dropna().index
+		print("FILTERED DF -----> ", filtered_df)
+		new_df = d.loc[filtered_df]
+		print(new_df)
+		print("------hhihihiihihi------")
+		d_mask = new_df['wolfpsort'] >= 0.5
+		#filtered_df = d.query('deeploc > "0.5"')
+		print(d_mask)
+		filtered_df = new_df['wolfpsort'][d_mask].dropna().index
+		print("FILTERED DF -----> ", filtered_df)
+		new_df = new_df.loc[filtered_df]
+		print(new_df)
 		#indexNames = filtered_df[filtered_df['deeploc'] == 'NaN'].index
 		#filtered_df.drop(indexNames, inplace = True)
-		indexNames = d[(d['deeploc'] >= 0.25) & (d['wolfpsort'] > 0.6)].index
-		print(len(indexNames))
-		new_d = pd.DataFrame(index = indexNames, columns = [adress])
+		#indexNames = d.index
+		#& (d['wolfpsort'] > 0.6)].index
+		#print(len(indexNames))
+		#new_d = pd.DataFrame(index = indexNames, columns = [adress])
+		#print(new_d)
 
 		#for ind in indexNames :
 		#	print(d.loc[ind])
@@ -992,7 +1013,7 @@ if __name__ == '__main__' :
 	#proteom_alpha()
 	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*_VS_*.out')
 	#correspondance_acc('Predictions/dataframe_all.csv')
-	adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt')
+	adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt') # utiliser plutot alpha_pred total
 	#is_ppr_opr(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt')
 	#comp_Hedi('Predictions/comp_Hedi/arabi_chlamy_2022_02_24_predicition_ingrid.txt')
 	#right_proteom_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/alpha_Chlamy_VS_OPR_Chlamy.out')
