@@ -523,214 +523,33 @@ def adressage_alpha(file1, file2) :
 	truc = []
 	#print("--------------")
 	for d in ldf :
-		print("--------------")
-		#truc.append(d[(d['wolfpsort'] > 0.5) & (d['deeploc'] > 0.5) & (d['trp2'] == 1.0) |\
-		#	(d['deeploc'] == 2.0) & (d['localizer'] == 1.0)])
-		#new_d = (d['deeploc'] > 0.6 == True)
-		#print(new_d)
-		#new_d2 = ((d['wolfpsort'] > 0.5) == True).index
-		#print("LALALALALALA")
-		#print(new_d2)
-		#print(d[new_d2])
-		#print("ok")
-		print(d)
-		#print(d.loc[d.index])
-		#print(d.index)
-		#truc.append(d)
-		#truc.append(d[(d.wolfpsort > 0.6 == True) & (d.deeploc > 0.6 == True)])
-		#print(d, type(d))
+		#print("--------------")
+		#print(d)
 		d_mask = d['deeploc'] >= 0.25
-		#filtered_df = d.query('deeploc > "0.5"')
-		#print(d_mask)
 		filtered_df = d['deeploc'][d_mask].dropna().index
-		#print("FILTERED DF -----> ", filtered_df)
 		new_df = d.loc[filtered_df]
-		#print(new_df)
-		#print("------hhihihiihihi------")
 		d_mask = new_df['wolfpsort'] >= 0.5
-		#filtered_df = d.query('deeploc > "0.5"')
-		#print(d_mask)
-		#filtered_df = new_df['wolfpsort'][d_mask].dropna().index
-		#print("FILTERED DF -----> ", filtered_df)
 		new_df = new_df.loc[filtered_df]
-		print("NEW DF ---------------\n", new_df)
-		#indexNames = filtered_df[filtered_df['deeploc'] == 'NaN'].index
-		#filtered_df.drop(indexNames, inplace = True)
-		#indexNames = d.index
-		#& (d['wolfpsort'] > 0.6)].index
-		#print(len(indexNames))
-		#new_d = pd.DataFrame(index = indexNames, columns = [adress])
-		#print(new_d)
+		#print("NEW DF ---------------\n", new_df)
+		#print(len(d))
+		truc.append(new_df)
 
-		#for ind in indexNames :
-		#	print(d.loc[ind])
-		#	new_d.loc[ind] = d.loc[ind]
-		#d.drop(indexNames, inplace = True)
-		#print(indexNames)
-		#print(filtered_df)
-		#print(new_d)
-	#print(truc)
-
-	#print(df.loc['>Cre12.g526700.t1.1', adress])
-	#print(df.loc['>NP_974807.2', adress])
-
-	print("-----LALAALLALALALALA-----")
+	print(truc)
 
 
+	index = []
 	for t in truc :
-		pass
-		#for index, elem in enumerate(t) :
-			#t.iloc[index, :] = df.loc[t.index[index], adress]
-		#print(list(t.index), len(list(t.index)))
-		#for index in list(t.index) :
-			#print(df.loc[index, :])
-			#print(t[t[index, :]])
-			#t.loc[index, :] = df.loc[index, adress]
-		#	t.loc[index, adress].replace(['NaN'], df.loc[index, adress], inplace = True)
-			#t[t[index]]
-	#print(truc)
-
-
-
-'''
-		#for software in adress :
-			#for elem in df[software] :
-		#for k in range(len(d)) :
-		#	print(d['wolfpsort'].iloc[k] > 0.5)
-		#	if (d['wolfpsort'].iloc[k] > 0.5) == True :
-		#		if (d['deeploc'].iloc[k] > 0.5) == True :
-		#			if d['trp2'].iloc[k] == 1.0 :
-		#				if d['trp2'].iloc[k] == 1.0 :
-		#					if d['localizer'.iloc[k]] == 1.0 :
-		#						print('ok')
-					
-
-
-
-			#print(d.iloc[k, 'wolfpsort'])
-			#if d['wolfpsort'].iloc[k] > 0.5 | d['deeploc'].iloc[k] > 0.5 and \
-			#	d.iloc[k, 'trp2'] == 1.0 | d.iloc[k, 'trp2'] == 2.0 and d.iloc[k, 'localizer'] == 1.0 :
-			#	if d.index[k] not in idt_adr :
-			#		idt_adr.append(d.index[k])
-			#	if d is df_adr_Chl :
-			#		if d.index[k] not in idt_adr_Chl :
-			#			idt_adr_Chl.append(d.index[k])
-			#	elif d is df_adr_Arabi :
-			#		if d.index[k] not in idt_adr_Arabi :
-			#			idt_adr_Arabi.append(d.index[k])
-
-			
-			if d.iloc[k, 'wolfpsort'] > 0.5 or d.iloc[k, 'deeploc'] > 0.5 and \
-				d.iloc[k, 'trp2'] == 1.0 or d.iloc[k, 'trp2'] == 2.0 and d.iloc[k, 'localizer'] == 1.0 :
-				if d.index[k] not in idt_adr :
-					idt_adr.append(d.index[k])
-				if d is df_adr_Chl :
-					if d.index[k] not in idt_adr_Chl :
-						idt_adr_Chl.append(d.index[k])
-				elif d is df_adr_Arabi :
-					if d.index[k] not in idt_adr_Arabi :
-						idt_adr_Arabi.append(d.index[k])
-			
-
-
-				
-				if software == 'wolfpsort' or software == 'deeploc' :
-					if elem > 0.5 :
-						if d.index[k] not in idt_adr :
-							idt_adr.append(d.index[k])
-						if d is df_adr_Chl :
-							if d.index[k] not in idt_adr_Chl :
-								idt_adr_Chl.append(d.index[k])
-						elif d is df_adr_Arabi :
-							if d.index[k] not in idt_adr_Arabi :
-								idt_adr_Arabi.append(d.index[k])
-				if software == 'trp2' :
-					if elem == 1.0 or elem == 2.0 :
-						if d.index[k] not in idt_adr :
-							idt_adr.append(d.index[k])
-						if d is df_adr_Chl :
-							if d.index[k] not in idt_adr_Chl :
-								idt_adr_Chl.append(d.index[k])
-						elif d is df_adr_Arabi :
-							if d.index[k] not in idt_adr_Arabi :
-								idt_adr_Arabi.append(d.index[k])
-				if software == 'localizer' :
-					if elem == 1.0 :
-						if d.index[k] not in idt_adr :
-							idt_adr.append(d.index[k])
-						if d is df_adr_Chl :
-							if d.index[k] not in idt_adr_Chl :
-								idt_adr_Chl.append(d.index[k])
-						elif d is df_adr_Arabi :
-							if d.index[k] not in idt_adr_Arabi :
-								idt_adr_Arabi.append(d.index[k])
-				
-			#k += 1
-
-	
-	lidt = [idt_adr, idt_adr_Chl, idt_adr_Arabi]
+		index.append(list(t.index))
 
 	print("----------------------")
-	print(idt_adr, len(idt_adr))
-	print(idt_adr_Chl, len(idt_adr_Chl))
-	print(idt_adr_Arabi, len(idt_adr_Arabi))
-
 	l = ['all', 'Chl', 'Arabi']
 
 	i = 0
-	for newf in lidt :
+	for ind in index :
 		with open('prot_adress_'+l[i]+'.txt', 'w') as filout :
-			for idt in newf :
+			for idt in ind :
 				filout.write(idt+"\n")
 		i += 1
-
-
-	print(df.loc['>NP_001030886.1', adress])
-	print(df.loc['>NP_001030703.1', adress])
-	print(df.loc['>NP_001030656.1', adress])
-	print(df.loc['>NP_001030887.1', adress])
-	
-
-
-	
-	i = 0
-	for l in lidt :
-		new = []
-		for elem in l :
-			if elem not in new :
-				new.append(elem)
-		#print(len(new))
-		#print("---")
-		lidt[i] = new
-	
-	
-	i = 0
-	for idt in lidt :
-		break
-		new = []
-		for ident in idt :
-			if ident not in new :
-				new.append(ident)
-		print(len(new))
-		print("lalalal")
-		lidt[i] = new
-		i += 1
-	
-	#print(lidt)
-	#print(len(lidt[0]))
-	#print("----------\n", idt_adr_Arabi)
-
-	
-	for idt in lidt :
-		print(len(idt))
-		idt = list(set(idt))
-		print(len(idt))
-		break
-		lidt[i] = idt
-		i += 1
-
-	
-'''
 
 
 def is_ppr_opr(file) :
@@ -970,25 +789,63 @@ def for_cytoscape() :
 	os.chdir(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/')
 
 	opr = []
-	with open(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/prot_alpha_opr_Chlamy.txt', 'r') as filin :
+	with open(path_Chlamy_arabi+'Predictions/Res_blast/Chlamy_alpha_pred_found_in_postitive.txt', 'r') as filin :
 		for line in filin :
-			opr.append(line.strip())
+			opr.append('>'+line.strip())
 	#print(opr, len(opr))
 
 	alpha_chl = []
 	with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Chlamy.txt', 'r') as filin :
 		for line in filin :
 			alpha_chl.append(line.strip())
+	#print(opr)
+	#print(alpha_chl)
 
-	with open('for_cytoscape_col_OPR_2.txt', 'w') as filout :
+	with open('for_cytoscape_col_OPR_3.txt', 'w') as filout :
 		for idt in alpha_chl :
 			if idt in opr :
-				filout.write('Yes'+'\n')
+				filout.write(idt+'\t'+'Yes'+'\n')
 			else :
-				filout.write('No'+'\n')
+				filout.write(idt+'\t'+'No'+'\n')
 
 
 
+def which_opr(file) :
+
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/')
+	yes = []
+	with open(file, 'r') as filin :
+		for line in filin :
+			idt = '>'+line.split()[0]
+			if line.split()[1].startswith('Yes') :
+				yes.append(idt)
+
+	with open('Chlamy_OPR_idt.txt', 'w') as filout :
+		for idt in yes :
+			filout.write(idt+'\n')
+
+
+
+def adressage_alpha_2(path1, path2) :
+
+	files_adr = glob.glob(path+'*.csv')
+	files_adr.sort()
+	print(files_adr, len(files_adr))
+
+	ldf = []
+	idt = []
+	for f in files_adr :
+		df = pd.read_csv(f, sep = '\t')
+		df = df.set_index(df['Unnamed: 0'], inplace = False)
+		del df['Unnamed: 0']
+		idt.append(list(df.index))
+		ldf.append(df)
+	print(ldf)
+	print(idt)
+
+	deeploc = []
+	files_dploc = glob.glob(path2)
 
 
 
@@ -1013,14 +870,18 @@ if __name__ == '__main__' :
 	#proteom_alpha()
 	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*_VS_*.out')
 	#correspondance_acc('Predictions/dataframe_all.csv')
-	adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt') # utiliser plutot alpha_pred total
+	#adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt') # utiliser plutot alpha_pred total
+	#adressage_alpha('alpha_Arabi.txt', 'alpha_Chlamy.txt')
+	adressage_alpha_2(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/', \
+		)
 	#is_ppr_opr(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt')
 	#comp_Hedi('Predictions/comp_Hedi/arabi_chlamy_2022_02_24_predicition_ingrid.txt')
 	#right_proteom_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/alpha_Chlamy_VS_OPR_Chlamy.out')
 	#for_cytoscape()
 	#comp_pos_neg(path_Chlamy_arabi+'Predictions/Res_blast/alpha_Arabi_VS_neg.out', path_Chlamy_arabi+'Predictions/Res_blast/alpha_Arabi_VS_pos.out', \
-	#	path_Chlamy_arabi+'Predictions/Res_blast/alpha_Chlamy_VS_neg.out', path_Chlamy_arabi+'Predictions/Res_blast/alpha_Chlamy_VS_pos.out')
-
+	#path_Chlamy_arabi+'Predictions/Res_blast/alpha_Chlamy_VS_neg.out', path_Chlamy_arabi+'Predictions/Res_blast/alpha_Chlamy_VS_pos.out')
+	#for_cytoscape()
+	#which_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/for_cytoscape_col_OPR_3.txt')
 
 
 
