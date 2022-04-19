@@ -827,25 +827,49 @@ def which_opr(file) :
 
 
 
-def adressage_alpha_2(path1, path2) :
+def adressage_alpha_2(path1, path_deeploc, path_wolfpsort) :
 
-	files_adr = glob.glob(path+'*.csv')
+	'''
+	files_adr = glob.glob(path1+'*.csv')
 	files_adr.sort()
 	print(files_adr, len(files_adr))
 
-	ldf = []
+	ldf_adr = []
 	idt = []
 	for f in files_adr :
 		df = pd.read_csv(f, sep = '\t')
 		df = df.set_index(df['Unnamed: 0'], inplace = False)
 		del df['Unnamed: 0']
 		idt.append(list(df.index))
-		ldf.append(df)
-	print(ldf)
-	print(idt)
+		ldf_adr.append(df)
+	#print(ldf_adr)
+	#print(idt)
+	'''
 
-	deeploc = []
-	files_dploc = glob.glob(path2)
+	df = pd.read_csv(path1+'df_adr.csv', sep = '\t')
+	df = df.set_index(df['Unnamed: 0'], inplace = False)
+	del df['Unnamed: 0']
+	#print(df)
+	idt = list(df.index)
+	#print(idt)
+
+	files_dploc = glob.glob(path_deeploc+'*DEEPLOC.txt')
+	files_dploc.sort()
+	print(files_dploc, len(files_dploc))
+
+	files_wlf = glob.glob(path_wolfpsort+'*.wolfpsort')
+	files_wlf.sort()
+	print(files_wlf, len(files_wlf))
+
+	idt_dploc = []
+	idt_wlf = []
+
+	for f in files_dploc : 
+		df = pd.read_csv(f, sep = '\t')
+		df = df.set_index('>'+df['ID'], inplace = False)
+		del df['ID']
+		print(df)
+
 
 
 
@@ -873,7 +897,7 @@ if __name__ == '__main__' :
 	#adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt') # utiliser plutot alpha_pred total
 	#adressage_alpha('alpha_Arabi.txt', 'alpha_Chlamy.txt')
 	adressage_alpha_2(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/', \
-		)
+		path_Chlamy_arabi+'DEEPLOC/', path_Chlamy_arabi+'WOLFPSORT/')
 	#is_ppr_opr(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt')
 	#comp_Hedi('Predictions/comp_Hedi/arabi_chlamy_2022_02_24_predicition_ingrid.txt')
 	#right_proteom_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/alpha_Chlamy_VS_OPR_Chlamy.out')
