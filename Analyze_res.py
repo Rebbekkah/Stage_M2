@@ -870,66 +870,76 @@ def adressage_alpha_2(path1, path_deeploc, path_wolfpsort) :
 	#k = 0
 	print("----------")
 
-	for f in files_dploc : 
-		k = 0
-		print("-----------------", basename(f), "-----------------")
-		idt_dploc = []
-		idt_wlf = []
-		df_ = pd.read_csv(f, sep = '\t')
-		df_ = df_.set_index('>'+df_['ID'], inplace = False)
-		del df_['ID']
-		#print(list(df_.index))
-		print(df_)
-		print(df)
-		print("--------pppppp-------")
-		print(df_.index)
-		if f is files_dploc[1] :
-			print(df_.loc['>Cre02.g095550.t1.1', :])
-		print("----------tttttt-------")
-		for ident in idt :
-			#if f is files_dploc[1] :
-			#	print("ok1")
+	#for f in files_dploc : 
+	k = 0
+	z = 0
+	#print("-----------------", basename(f), "-----------------")
+	idt_dploc = []
+	idt_wlf = []
+	df_ = pd.read_csv(files_dploc[1], sep = '\t')
+	df_ = df_.set_index('>'+df_['ID'], inplace = False)
+	del df_['ID']
+	#print(list(df_.index))
+	print(df_)
+	print(df)
+	#print(files_dploc)
+	#print("--------pppppp-------")
+	#print(df_.index)
+	#if f is files_dploc[1] :
+	#	print(df_.loc['>Cre02.g095550.t1.1', :])
+	print("----------tttttt-------")
+	for ident in idt :
+		#if f is files_dploc[1] :
+		#	print("ok1")
+		#print(ident)
+		if ident in list(df_.index) :
+			k += 1
 			#print(ident)
-			if ident in list(df_.index) :
-				k += 1
-				if f is files_dploc[1] :
-					print("ok2")
-				#print(basename(f))
-				if df_.loc[ident, 'Location'] == 'Mitochondrion' or df_.loc[ident, 'Location'] == 'Plastid' :
-					idt_dploc.append(ident)
-					#print(df_.loc[ident, 'Location'])
-		print(k)
-		print(len(idt_dploc))
-		if 'Arabidopsis' in f :
-			with open('Filtrage_deeploc_alpha_Arabi.txt', 'w') as filout :
-				for index in idt_dploc :
-					filout.write(index+'\n')
+			#print("ok")
+			#print(basename(f))
+			if df_.loc[ident, 'Location'] == 'Mitochondrion' or df_.loc[ident, 'Location'] == 'Plastid' :
+				idt_dploc.append(ident)
+				#print(df_.loc[ident, 'Location'])
 		else :
-			with open('Filtrage_deeploc_alpha_Chlamy.txt', 'w') as filout :
-				for index in idt_dploc :
-					filout.write(index+'\n')
+			z += 1
+			#print(ident)
+	print("k = ", k)
+	print("z = ", z)
+	print(len(idt_dploc))
+	'''
+	if 'Arabidopsis' in f :
+		with open('Filtrage_deeploc_alpha_Arabi.txt', 'w') as filout :
+			for index in idt_dploc :
+				filout.write(index+'\n')
+	else :
+	'''
+	with open('Filtrage_deeploc_alpha_Chlamy.txt', 'w') as filout :
+		for index in idt_dploc :
+			filout.write(index+'\n')
 
-		new_ = df_.loc[idt_dploc, :].dropna().index
-		new_df = df_.loc[new_]
-		print("NEW DF ---->\n", new_df)
-		idt = list(new_df.index)
+	new_ = df_.loc[idt_dploc, :].dropna().index
+	new_df = df_.loc[new_]
+	print("NEW DF ---->\n", new_df)
 
-		'''
-		col = new_df.columns[1:]
-		#print(col)
-		for ident in idt :
-			print("-------------ICI")
-			machin = list(new_df.loc[ident, col])
-			#print(machin)
-			#print(max(machin))
-			if df.loc[ident, 'wolfpsort'] == max(machin) :
-				idt_wlf.append(ident)
-			break
-			#print("--------")
-			#print(max(new_df.loc[ident, 1], new_df.loc[ident, 1]))
-			#pass
-				#if df.loc[ident, 'wolfpsort'] is max()
-		'''
+	new_df.to_csv('new_df_Chlamy.csv', sep = '\t', header = True, index = True)
+
+
+'''
+col = new_df.columns[1:]
+#print(col)
+for ident in idt :
+	print("-------------ICI")
+	machin = list(new_df.loc[ident, col])
+	#print(machin)
+	#print(max(machin))
+	if df.loc[ident, 'wolfpsort'] == max(machin) :
+		idt_wlf.append(ident)
+	break
+	#print("--------")
+	#print(max(new_df.loc[ident, 1], new_df.loc[ident, 1]))
+	#pass
+		#if df.loc[ident, 'wolfpsort'] is max()
+'''
 
 
 
