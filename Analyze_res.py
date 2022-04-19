@@ -534,26 +534,26 @@ def adressage_alpha(file1, file2) :
 		#print(d[new_d2])
 		#print("ok")
 		print(d)
-		print(d.loc[d.index])
+		#print(d.loc[d.index])
 		#print(d.index)
 		#truc.append(d)
 		#truc.append(d[(d.wolfpsort > 0.6 == True) & (d.deeploc > 0.6 == True)])
 		#print(d, type(d))
 		d_mask = d['deeploc'] >= 0.25
 		#filtered_df = d.query('deeploc > "0.5"')
-		print(d_mask)
+		#print(d_mask)
 		filtered_df = d['deeploc'][d_mask].dropna().index
-		print("FILTERED DF -----> ", filtered_df)
+		#print("FILTERED DF -----> ", filtered_df)
 		new_df = d.loc[filtered_df]
-		print(new_df)
-		print("------hhihihiihihi------")
+		#print(new_df)
+		#print("------hhihihiihihi------")
 		d_mask = new_df['wolfpsort'] >= 0.5
 		#filtered_df = d.query('deeploc > "0.5"')
-		print(d_mask)
-		filtered_df = new_df['wolfpsort'][d_mask].dropna().index
-		print("FILTERED DF -----> ", filtered_df)
+		#print(d_mask)
+		#filtered_df = new_df['wolfpsort'][d_mask].dropna().index
+		#print("FILTERED DF -----> ", filtered_df)
 		new_df = new_df.loc[filtered_df]
-		print(new_df)
+		print("NEW DF ---------------\n", new_df)
 		#indexNames = filtered_df[filtered_df['deeploc'] == 'NaN'].index
 		#filtered_df.drop(indexNames, inplace = True)
 		#indexNames = d.index
@@ -571,7 +571,7 @@ def adressage_alpha(file1, file2) :
 		#print(new_d)
 	#print(truc)
 
-	#print(df.loc['>NP_974807.2', adress])
+	#print(df.loc['>Cre12.g526700.t1.1', adress])
 	#print(df.loc['>NP_974807.2', adress])
 
 	print("-----LALAALLALALALALA-----")
