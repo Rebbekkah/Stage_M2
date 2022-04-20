@@ -876,7 +876,7 @@ def adressage_alpha_2(path1, path_deeploc, path_wolfpsort) :
 	#print("-----------------", basename(f), "-----------------")
 	idt_dploc = []
 	idt_wlf = []
-	df_ = pd.read_csv(files_dploc[1], sep = '\t')
+	df_ = pd.read_csv(files_dploc[0], sep = '\t')
 	df_ = df_.set_index('>'+df_['ID'], inplace = False)
 	del df_['ID']
 	#print(list(df_.index))
@@ -913,7 +913,7 @@ def adressage_alpha_2(path1, path_deeploc, path_wolfpsort) :
 				filout.write(index+'\n')
 	else :
 	'''
-	with open('Filtrage_deeploc_alpha_Chlamy.txt', 'w') as filout :
+	with open('Filtrage_deeploc_alpha_Arabi.txt', 'w') as filout :
 		for index in idt_dploc :
 			filout.write(index+'\n')
 
@@ -921,7 +921,7 @@ def adressage_alpha_2(path1, path_deeploc, path_wolfpsort) :
 	new_df = df_.loc[new_]
 	print("NEW DF ---->\n", new_df)
 
-	new_df.to_csv('new_df_Chlamy.csv', sep = '\t', header = True, index = True)
+	new_df.to_csv('new_df_Arabi.csv', sep = '\t', header = True, index = True)
 
 
 '''
@@ -941,6 +941,35 @@ for ident in idt :
 		#if df.loc[ident, 'wolfpsort'] is max()
 '''
 
+
+def adressage_alpha_3(path_file) :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+
+	#files = glob.glob(path_df+'new_df_*.csv')
+	files = glob.glob(path_file+'Filtrage_deeploc_*.txt')
+	files.sort()
+	print(files, len(files))
+
+	lidt = []
+	for f in files :
+		with open(f, 'r') as filin :
+			for line in filin :
+				lidt.append(line.strip())
+	print(lidt, len(lidt))
+
+
+	
+
+	'''
+	ldf = []
+	for f in files :
+		df = pd.read_csv(f, sep = '\t')
+		df = df.set_index(df['ID'], inplace = False)
+		del df['ID']
+		ldf.append(df)
+	print(ldf)
+	'''
 
 
 
@@ -967,8 +996,9 @@ if __name__ == '__main__' :
 	#correspondance_acc('Predictions/dataframe_all.csv')
 	#adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt') # utiliser plutot alpha_pred total
 	#adressage_alpha('alpha_Arabi.txt', 'alpha_Chlamy.txt')
-	adressage_alpha_2(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/', \
-		path_Chlamy_arabi+'DEEPLOC/', path_Chlamy_arabi+'WOLFPSORT/')
+	#adressage_alpha_2(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/', \
+	#	path_Chlamy_arabi+'DEEPLOC/', path_Chlamy_arabi+'WOLFPSORT/')
+	adressage_alpha_3(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
 	#is_ppr_opr(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt')
 	#comp_Hedi('Predictions/comp_Hedi/arabi_chlamy_2022_02_24_predicition_ingrid.txt')
 	#right_proteom_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/alpha_Chlamy_VS_OPR_Chlamy.out')
