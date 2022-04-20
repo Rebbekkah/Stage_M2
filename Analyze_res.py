@@ -1038,16 +1038,11 @@ def adressage_alpha_localizer(path_file) :
 
 def intersection(path_files) :
 	
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+
 	files = glob.glob(path_files+'Filtrage_*.txt')
 	files.sort()
 	print(files, len(files))
-
-
-	'''
-	idt_loca = []
-	idt_wlf = []
-	idt_dploc = []
-	'''
 
 	chl = []
 	arabi = []
@@ -1089,9 +1084,15 @@ def intersection(path_files) :
 		if idt in arabi[2] :
 			wlf_loca_arabi.append(idt)
 
-	print(wlf_loca_chl, len(wlf_loca_chl))
-	print(wlf_loca_arabi, len(wlf_loca_arabi))
+	liste = [inter_chl, inter_arabi, dp_wlf_chl, dp_wlf_arabi, dp_loca_chl, dp_loca_arabi, wlf_loca_chl, wlf_loca_arabi]
+	lstr = ['inter_chl', 'inter_arabi', 'dp_wlf_chl', 'dp_wlf_arabi', 'dp_loca_chl', 'dp_loca_arabi', 'wlf_loca_chl', 'wlf_loca_arabi']
 
+	i = 0
+	for l in liste :
+		with open('Intersection_'+lstr[i]+'.txt', 'w') as filout :
+			for idt in l :
+				filout.write(idt+'\n')
+		i += 1
 
 
 
@@ -1121,7 +1122,7 @@ if __name__ == '__main__' :
 	#	path_Chlamy_arabi+'DEEPLOC/', path_Chlamy_arabi+'WOLFPSORT/')
 	#adressage_alpha_wolfpsort(path_Chlamy_arabi+'WOLFPSORT/')
 	#adressage_alpha_localizer(path_Chlamy_arabi+'LOCALIZER/')
-	intersection(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+	#intersection(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
 	#is_ppr_opr(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt')
 	#comp_Hedi('Predictions/comp_Hedi/arabi_chlamy_2022_02_24_predicition_ingrid.txt')
 	#right_proteom_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/alpha_Chlamy_VS_OPR_Chlamy.out')
