@@ -827,7 +827,7 @@ def which_opr(file) :
 
 
 
-def adressage_alpha_2(path1, path_deeploc, path_wolfpsort) :
+def adressage_alpha_deeploc(path1, path_deeploc, path_wolfpsort) :
 
 	'''
 	files_adr = glob.glob(path1+'*.csv')
@@ -942,34 +942,155 @@ for ident in idt :
 '''
 
 
-def adressage_alpha_3(path_file) :
+def adressage_alpha_wolfpsort(path_file) :
 
 	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
 
 	#files = glob.glob(path_df+'new_df_*.csv')
-	files = glob.glob(path_file+'Filtrage_deeploc_*.txt')
+	#files = glob.glob(path_file+'Filtrage_deeploc_*.txt')
+	files = glob.glob(path_file+'*wolfpsort')
 	files.sort()
 	print(files, len(files))
 
-	lidt = []
+	alpha = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/prot_alpha.txt')
+	#print(alpha, len(alpha))
+
+
+	ident = []
 	for f in files :
 		with open(f, 'r') as filin :
 			for line in filin :
-				lidt.append(line.strip())
-	print(lidt, len(lidt))
+				idt = '>'+line.split()[0]
+				res = line.split()[1]
+				if res == 'mito' or res == 'chlo' :
+					ident.append(idt)
+	#print(ident, len(ident))
+
+	new_alpha = []
+	chl = []
+	arabi = []
+	for a in alpha :
+		if a in ident :
+			new_alpha.append(a)
+			if a.startswith('>Cre') :
+				chl.append(a)
+			else :
+				arabi.append(a)
+
+	print(len(new_alpha))
+	print(len(chl))
+	print(len(arabi))
+
+	with open('Filtrage_wolpsort_Chlamy.txt', 'w') as filout :
+		for new in chl :
+			filout.write(new+'\n')
+	with open('Filtrage_wolpsort_Arabi.txt', 'w') as filout :
+		for new in arabi :
+			filout.write(new+'\n')
+
+
+def adressage_alpha_localizer(path_file) :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+	alpha = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/prot_alpha.txt')
+
+	files = glob.glob(path_file+'*LOCALIZER')
+	files.sort()
+	print(files, len(files))
+
+	ident = []
+	chl = []
+	arabi = []
+	new = []
+	non = ['Over', '#', 'Identifier', '-', '\n']
+	for f in files :
+		with open(f, 'r') as filin :
+			for line in filin :
+				first = line.split(" ")[0]
+				if first not in non :
+					one = line.split("\t")[0]
+					if one[0] not in non :
+						idt = line.split("\t")[0]
+						idt = idt.split()[0]
+						elem = line.split("\t")[1]
+						if elem.split()[0] == 'Y' :
+							ident.append('>'+idt)
+					else :
+						break
+	print(ident, len(ident))
+	for a in alpha :
+		if a in ident :
+			new.append(a)
+			if a.startswith('>Cre') :
+				chl.append(a)
+			else :
+				arabi.append(a)
+	#print(arabi, len(arabi))
+
+	with open('Filtrage_localizer_Chlamy.txt', 'w') as filout :
+		for p in chl :
+			filout.write(p+'\n')
+	with open('Filtrage_localizer_Arabi.txt', 'w') as filout :
+		for p in arabi :
+			filout.write(p+'\n')
+
+
+
+def intersection(path_files) :
+	
+	files = glob.glob(path_files+'Filtrage_*.txt')
+	files.sort()
+	print(files, len(files))
+
+
+	'''
+	idt_loca = []
+	idt_wlf = []
+	idt_dploc = []
+	'''
+
+	chl = []
+	arabi = []
+	for f in files :
+		if 'Chlamy.txt' in f :
+			chl.append(get_idt(f))
+		if 'Arabi.txt' in f :
+			arabi.append(get_idt(f))
+
+	inter_chl = []
+	inter_arabi = []
+	dp_wlf_chl = []
+	dp_wlf_arabi = []
+	dp_loca_chl = []
+	dp_loca_arabi = []
+	wlf_loca_chl = []
+	wlf_loca_arabi = []
 
 
 	
+	for idt in chl[0] :
+		if idt in chl[1] and idt in chl[2] :
+			inter_chl.append(idt)
+		if idt in chl[1] :
+			dp_loca_chl.append(idt)
+		if idt in chl[2] :
+			dp_wlf_chl.append(idt)
+	for idt in chl[1] :
+		if idt in chl[2] :
+			wlf_loca_chl.append(idt)
+	for idt in arabi[0] :
+		if idt in arabi[1] and idt in arabi[2] :
+			inter_arabi.append(idt)
+		if idt in arabi[1] :
+			dp_loca_arabi.append(idt)
+		if idt in arabi[2] :
+			dp_wlf_arabi.append(idt)
+	for idt in arabi[1] :
+		if idt in arabi[2] :
+			wlf_loca_arabi.append(idt)
 
-	'''
-	ldf = []
-	for f in files :
-		df = pd.read_csv(f, sep = '\t')
-		df = df.set_index(df['ID'], inplace = False)
-		del df['ID']
-		ldf.append(df)
-	print(ldf)
-	'''
+	print(wlf_loca_chl, len(wlf_loca_chl))
+	print(wlf_loca_arabi, len(wlf_loca_arabi))
 
 
 
@@ -996,9 +1117,11 @@ if __name__ == '__main__' :
 	#correspondance_acc('Predictions/dataframe_all.csv')
 	#adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt') # utiliser plutot alpha_pred total
 	#adressage_alpha('alpha_Arabi.txt', 'alpha_Chlamy.txt')
-	#adressage_alpha_2(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/', \
+	#adressage_alpha_deeploc(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/', \
 	#	path_Chlamy_arabi+'DEEPLOC/', path_Chlamy_arabi+'WOLFPSORT/')
-	adressage_alpha_3(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+	#adressage_alpha_wolfpsort(path_Chlamy_arabi+'WOLFPSORT/')
+	#adressage_alpha_localizer(path_Chlamy_arabi+'LOCALIZER/')
+	intersection(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
 	#is_ppr_opr(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt')
 	#comp_Hedi('Predictions/comp_Hedi/arabi_chlamy_2022_02_24_predicition_ingrid.txt')
 	#right_proteom_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/alpha_Chlamy_VS_OPR_Chlamy.out')
