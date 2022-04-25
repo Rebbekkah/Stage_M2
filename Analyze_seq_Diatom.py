@@ -832,30 +832,16 @@ def Data_Create(pattern_ard2, pattern_ard2_2, pattern_radar, pattern_radar_2) :
 
 	dico_ard2 = {}
 	for file in file_ard2 :
-		if basename(file) == 'STDOUT_neg' :
-			dico_ard2['neg'] = {}
-			dico_ard2['neg'] = ard2(file, pattern_ard2_2)
-		elif basename(file) == 'STDOUT_pos' :
-			dico_ard2['pos'] = {}
-			dico_ard2['pos'] = ard2(file, pattern_ard2_2)
-		else : 
-			dico_ard2[basename(file)] = ard2(file, pattern_ard2_2)	
+		dico_ard2[basename(file)] = ard2(file, pattern_ard2_2)	
 
 
 	dico_radar = {}
 	for file in file_radar :
-		if basename(file) == 'New_Proteom_1196_tem_neg.fasta_line.txt_radar' :
-			dico_radar['neg'] = {}
-			dico_radar['neg'] = radar(file, pattern_radar_2)
-		elif basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_radar' :
-			dico_radar['pos'] = {}
-			dico_radar['pos'] = radar(file, pattern_radar_2)
-		else : 
-			dico_radar[basename(file)] = radar(file, pattern_radar_2)
+		dico_radar[basename(file)] = radar(file, pattern_radar_2)
 
 
-	print(dico_ard2.values())
-	print(dico_ard2)
+	#print(dico_ard2.values())
+	#print(dico_ard2)
 	#print(dico_radar)
 	return dico_ard2, dico_radar
 
@@ -882,7 +868,7 @@ def dataframe_maker(dico_ard2, dico_radar, pattern_prot_all) :
 
 	'''
 
-	dico_all = Proteom_all(path_output+pattern_prot_all)
+	dico_all = Proteom_all(pattern_prot_all)
 	idt_all = []
 
 	for idt in dico_all.keys() :
@@ -930,7 +916,7 @@ def dataframe_maker(dico_ard2, dico_radar, pattern_prot_all) :
 	return df
 
 
-def Modification(dataframe) :
+def Modification(dataframe, pattern_prot_all) :
 	''' Function that modify the dataframe of the parsing results 
 		in order to replace its results by numerics as floats
 
@@ -956,50 +942,13 @@ def Modification(dataframe) :
 
 	'''
 
-	dico_all = Proteom_all(path_output)
+	dico_all = Proteom_all(pattern_prot_all)
 	
 	for col in dataframe :
 		print(dataframe[col], type(dataframe[col]))	
 
 	for elem in dataframe['type'] :
 		dataframe.replace(elem, float(elem), inplace = True)
-
-	possible = []
-	for res in dataframe['trp2'] :
-		if res not in possible :
-			possible.append(res)
-
-
-	for index, poss in enumerate(possible) :
-		for elem in dataframe['trp2'] :
-			if elem == poss :
-				dataframe.replace(elem, float(index), inplace = True)
-	'''
-	for elem in dataframe['wolfpsort'] :
-		if elem == 'chlo' or elem == 'mito' :
-			dataframe.replace(elem, float(1), inplace = True)
-		else : 
-			dataframe.replace(elem, float(0), inplace = True)
-	'''
-
-	for elem in dataframe['localizer'] :
-		if elem == 'Y' :
-			dataframe.replace(elem, float(1), inplace = True)
-		else :
-			dataframe.replace(elem, float(0), inplace = True)
-	
-
-	for index, elem in enumerate(dataframe['deeploc']) :
-		probability = []
-		for key, prob in elem[0].items() :
-			probability.append(float(prob))
-		p = max(probability)
-		dataframe['deeploc'].iloc[index] = p
-		#if p == 0 :
-		#	dataframe['deeploc'].iloc[index] = p
-		#else : 
-		#	dataframe['deeploc'].iloc[index] = p
-
 
 	for index, elem in enumerate(dataframe['ard2']) :
 		nb = 0
@@ -1580,6 +1529,8 @@ def add_df(idt, pattern1, path, file) :
 		print(df[col])
 
 	print(df)
+	df.to_csv('dataframe_all.csv', sep = '\t', header = True, index = True)
+
 
 	return df
 
@@ -1657,8 +1608,8 @@ if __name__ == '__main__' :
 	path_radar = path_output+"RADAR/*/"
 
 	results_ard2, results_radar = Data_Create("STDOUT_"+"*", 'TMHMM/Pour_Celine/*.txt', '*'+'RADAR', 'TMHMM/files/')
-	#final_results = dataframe_maker(results_ard2, results_radar, 'TMHMM/files/')
-	#df = Modification(final_results)
+	final_results = dataframe_maker(results_ard2, results_radar, path_output+'TMHMM/files/')
+	df = Modification(final_results, path_output+'TMHMM/files/')
 	#idt = rows_acc(path_output, 'ACC/rownames_*')
 	#df_f = add_df(idt, 'ACC/Acc_output_*', path_output, 'dataframe_interm.csv')
 	#writing(df_f)
