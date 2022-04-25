@@ -883,35 +883,7 @@ def Data_Create(pattern_ard2, pattern_ard2_2, pattern_wlf, pattern_trgp2, patter
 	'''
 
 	file_ard2 = glob.glob(path_ard2+pattern_ard2)
-	file_wlf = glob.glob(path_wpsort+pattern_wlf)
-	file_trgp2 = glob.glob(path_trgp2+pattern_trgp2)
-	file_dploc = glob.glob(path_dploc+pattern_dploc)
-	file_loca = glob.glob(path_loca+pattern_loca)
 	file_radar = glob.glob(path_radar+pattern_radar)
-
-	dico_trgp2 = {}
-	for file in file_trgp2 :
-		if basename(file) == 'short_output_neg' :
-			dico_trgp2['neg'] = {}
-			dico_trgp2['neg'] = targetp2(file)
-		elif basename(file) == 'short_output_pos' :
-			dico_trgp2['pos'] = {}
-			dico_trgp2['pos'] = targetp2(file)
-		else : 
-			dico_trgp2[basename(file)] = targetp2(file)
-
-
-	dico_wlf = {}
-	for file in file_wlf :
-		if basename(file) == 'output_neg.wolfpsort' :
-			dico_wlf['neg'] = {}
-			dico_wlf['neg'] = wolfpsort(file)
-		elif basename(file) == 'output_pos.wolfpsort' :
-			dico_wlf['pos'] = {}
-			dico_wlf['pos'] = wolfpsort(file)
-		else : 
-			dico_wlf[basename(file)] = wolfpsort(file)
-
 
 	dico_ard2 = {}
 	for file in file_ard2 :
@@ -923,30 +895,6 @@ def Data_Create(pattern_ard2, pattern_ard2_2, pattern_wlf, pattern_trgp2, patter
 			dico_ard2['pos'] = ard2(file, pattern_ard2_2)
 		else : 
 			dico_ard2[basename(file)] = ard2(file, pattern_ard2_2)	
-
-
-	dico_loca = {}
-	for file in file_loca : 
-		if basename(file) == 'New_Proteom_1196_tem_neg.fasta_line.txt_localizer' :
-			dico_loca['neg'] = {}
-			dico_loca['neg'] = localizer(file)
-		elif basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_localizer' :
-			dico_loca['pos'] = {}
-			dico_loca['pos'] = localizer(file)
-		else : 
-			dico_loca[basename(file)] = localizer(file)
-	
-
-	dico_dploc = {}
-	for file in file_dploc :
-		if basename(file) == 'New_Proteom_1196_tem_neg.fasta_line.txt_deeploc.txt' :
-			dico_dploc['neg'] = {}
-			dico_dploc['neg'] = deeploc(file)
-		elif basename(file) == 'New_Proteom_1081_tem_pos.fasta_line.txt_deeploc.txt' :
-			dico_dploc['pos'] = {}
-			dico_dploc['pos'] = deeploc(file)	
-		else : 
-			dico_dploc[basename(file)] = deeploc(file)
 
 
 	dico_radar = {}
@@ -961,7 +909,7 @@ def Data_Create(pattern_ard2, pattern_ard2_2, pattern_wlf, pattern_trgp2, patter
 			dico_radar[basename(file)] = radar(file)
 
 
-	return dico_trgp2, dico_wlf, dico_ard2, dico_loca, dico_dploc, dico_radar
+	return dico_ard2, dico_radar
 
 
 
@@ -1753,250 +1701,6 @@ def freq_aa(sequence) :
 
 
 
-def check_up(df) :
-
-	#for index, elem in enumerate(df['radar']) :
-	l = []
-	lpos = []
-	lneg = []
-
-	for index, elem in enumerate(df['radar']) :
-		if elem == 0.0 :
-			l.append(df.index[index])
-		if elem == 0.0 and df['type'].iloc[index] == 0 : 
-			lpos.append(df.index[index])
-		elif elem == 0.0 and df['type'].iloc[index] == 1 : 
-			lneg.append(df.index[index])
-
-
-	print(len(l))
-	print(len(lpos)/len(df[df['type'] == 0]))
-	print(len(lneg)/len(df[df['type'] == 1]))
-	#print(df.iloc[])
-
-
-
-
-
-
-def Plotting_by_col(df, to_plot) :
-
-	#for index, elem in enumerate(df['ard2']) :
-	#	df['ard2'].iloc[index] = elem[to_plot]
-
-	#print(df['ard2'])
-
-	sns.set(style = "darkgrid")
-
-	#for elem in df['ard2'] :
-		#print(elem[to_plot])
-	#	sns.histplot(data = df, x = elem[to_plot], y = df.index)
-	#plt.show()
-
-
-	for elem in df['radar'] :
-		if type(elem) != type(float(1)) :
-			print(elem, type(elem))
-
-
-	for column in df.columns :
-		#values = [0:1]
-		plt.figure()
-		print("--------------", column, "--------------")
-		if column != 'ard2' :
-			#sns.histplot(df[column])
-			sns.countplot(df[column])
-			#if column == 'trp2' : 
-				#plt.legend(['NoTP', 'cTP', 'mTP', 'LuTP'])
-				#plt.legend()
-			if column == 'wolfpsort' :
-				#values = list(range(2))
-				#plt.xticks(ticks = values)
-				#plt.xlim([0, 1])
-				#plt.xlim(np.arange(0, 1, step = 0.001))
-				plt.xticks(np.arange(0, 1, step = 0.002))
-				plt.ylim(0, 100)
-				#plt.xticks(rotation = 'vertical')
-			if column == 'radar' :
-				#plt.xlim([0, 1])
-				#plt.bar(x = column, col = 'darkred', height = )
-				#sns.countplot(df[column], color = 'darkred')
-				plt.xticks(np.arange(0, 1, step = 0.002))
-				#plt.xticks(rotation = 'vertical')
-				#plt.yticks(np.arange(0, 1))
-				#plt.xlim(0, 1, step = 0.002)
-				plt.ylim(0, 10)
-
-		elif column == 'ard2' : 
-			for index, elem in enumerate(df['ard2']) :
-				df['ard2'].iloc[index] = elem[to_plot]
-			#sns.histplot(df[column])
-			sns.countplot(df[column])
-			#plt.xlim([0, 1])
-			plt.xticks(np.arange(0, 1, step = 0.001))
-			#plt.xlim(0, 2)
-			#plt.xticks(rotation = 'vertical')
-
-		plt.legend(column, prop = {'size' : 5.7})
-
-		if df is df_pos :
-			plt.title("Histogram of the distribution of postitive samples", fontsize = 15)
-		elif df is df_neg : 
-			plt.title("Histogram of the distribution of negative samples", fontsize = 15)
-		else :
-			plt.title("Histogram of the distribution of samples", fontsize = 15)
-
-		plt.show()
-
-
-
-	#sns.set(style = "darkgrid")
-
-	#sns.histplot(data = df, x = col, kde = True)
-	#plt.show()
-
-	'''
-	plt.hist(df['ard2'], hist = True, kde = False, \
-		hist_kws = {'edgecolor' : 'black'})
-	plt.show()
-	'''
-
-
-
-def Plotting_pos_neg(df, df_pos, def_neg, col, to_plot) :
-
-	#plt.figure()
-	#plt.subplots(2, 2)
-
-	if col == 'ard2' :
-		nb_pos = []
-		med_pos = []
-		for index, elem in enumerate(df_pos['ard2']) :
-				df_pos['ard2'].iloc[index] = elem[to_plot]
-				nb_pos.append(elem[0])
-				med_pos.append(elem[2])
-		sns.scatterplot(data = df_pos, x = range(len(df_pos)), y = df_pos[col], color = 'darkred', label = 'pos')
-		
-		nb_neg = []
-		med_neg = []
-
-		for index, elem in enumerate(df_neg['ard2']) :
-				df_neg['ard2'].iloc[index] = elem[to_plot]
-				nb_neg.append(elem[0])
-				med_neg.append(elem[2])
-		sns.scatterplot(data = df_neg, x = range(len(df_neg)), y = df_neg[col], label = 'neg')
-		if to_plot == 0 :
-			plt.suptitle('with number of linker')
-		elif to_plot == 2 :
-			plt.suptitle('with median of linker')
-	else :
-		sns.scatterplot(data = df_pos, x = range(len(df_pos)), y = df_pos[col], color = 'darkred', label = 'pos')
-		sns.scatterplot(data = df_neg, x = range(len(df_neg)), y = df_neg[col], label = 'neg')
-		plt.legend()
-	plt.title("Scatterplot of the distribution between positive and negative samples")
-	plt.xticks([])
-
-	plt.show()
-
-	#for index, elem in enumerate(df['ard2']) :
-	#	df['ard2'].iloc[index] = elem[to_plot]
-	sns.boxplot(x = df['type'], y = df[col], hue = df['type'])
-	plt.legend()
-	plt.title('Boxplot on all sequences')
-
-	if col == 'ard2' :
-		if to_plot == 0 :
-			plt.suptitle('with number of linker')
-		elif to_plot == 2 :
-			plt.suptitle('with median of linker')
-	plt.show()
-
-	if nb_pos or nb_neg :
-		sns.scatterplot(x = med_pos, y = nb_pos, color = 'darkred', label = 'pos')
-		sns.scatterplot(x = med_neg, y = nb_neg, label = 'neg')
-		plt.xlabel("median")
-		plt.ylabel("number")
-		plt.title("Scatterplot for linkers")
-		plt.legend()
-		plt.show()
-
-
-
-
-def boxplot(df, x) :
-	
-	os.chdir(path_boxplot)
-	i = 1
-	for col in df :
-		print(col)
-		#plt.subplot(2, len(df.columns)+1, i)
-		sns.boxplot(x = df[x], y = df[col], hue = df['type'])
-		plt.legend()
-		plt.title("Boxplot de "+col+" en fonction du type de données")
-		plt.xlabel("Type")
-		plt.ylabel(col)
-		plt.savefig("Boxplot_"+col+".png")
-		plt.show()
-		i += 1
-		print("--> done")
-	#plt.legend()
-	#plt.title("Boxplot de "+col+" en fonction du type de données")
-	#plt.xlabel("Type")
-	#plt.ylabel(col)
-	#plt.savefig("Boxplot_"+col+".png")
-	#plt.show()
-
-
-
-def UMAP(df_pos, df_neg) :
-
-	df_pos = np.array(df_pos)
-	df_neg = np.array(df_neg)
-	
-	emb_pos = umap.UMAP(n_neighbors = 5, min_dist = 0.3,
-		metric = 'correlation').fit(df_pos)
-		#metric = 'neighborhood').fit_transform(df)
-
-	emb_neg = umap.UMAP(n_neighbors = 5, min_dist = 0.3,
-		metric = 'correlation').fit(df_neg)
-
-
-	#embedding = umap.UMAP(n_neighbors = 5, min_dist = 0.3,
-	#	metric = 'correlation').fit(df)
-	#umap.plot.points(embedding, labels = df['type'])
-	#print(embedding, type(embedding), embedding.shape)
-	#for arr in embedding :
-	#	if arr.shape != (2,) :
-	#		print(arr, type(arr), arr.shape)
-	#sns.scatterplot(embedding)
-	#sns.scatterplot(x = df_pos, y = emb_pos, color = 'darkred', label = 'pos')
-	#sns.scatterplot(x = df_neg, y = emb_neg, label = 'neg')
-
-	#plt.plot(emb_pos, emb_neg)
-	fig, ax = plt.subplots()
-	ax.scatter(emb_pos, emb_neg)
-	plt.show()
-
-
-def PCA(df) :
-
-	sys.setrecursionlimit(10000000)
-	
-	#df = np.array(df)
-
-	pca = PCA(2)
-	fit_ = pca.fit_transform(df)
-
-	print(pca.n_components_)
-	print(pca.explained_variance_)
-
-	plt.scatter(fit_[:,0], fit_[:,1])
-	plt.xlabel('component 1')
-	plt.ylabel('component 2')
-	plt.colobar()
-	plt.show()
-
-
 if __name__ == '__main__' :
 
 
@@ -2116,7 +1820,7 @@ if __name__ == '__main__' :
 	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'ard2')
 	'''
 
-	# Diatom
+	# Diatoms
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/TMHMM/Pour_Celine/"
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
@@ -2146,7 +1850,7 @@ if __name__ == '__main__' :
 	# RADAR
 	path_radar = path_output+"RADAR/*/"
 
-	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create("STDOUT_"+"*", 'TMHMM/prote/*.txt', "*.wolfpsort", "short_output_"+"*", "*"+"DEEPLOC"+"*", '*'+'LOCALIZER', '*'+'RADAR')
+	results_ard2, results_radar = Data_Create("STDOUT_"+"*", 'TMHMM/prote/*.txt', '*'+'RADAR')
 	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
 	#df = Modification(final_results)
 	#idt = rows_acc(path_output, 'ACC/rownames_*')
