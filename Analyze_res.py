@@ -809,6 +809,33 @@ def for_cytoscape() :
 				filout.write(idt+'\t'+'No'+'\n')
 
 
+def for_cytoscape_2() :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+
+	new = []
+	with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/not_in_pos_chl.txt', 'r') as filin :
+		for line in filin :
+			new.append(line.strip())
+	#print(new, len(new))
+
+	alpha_chl = []
+	with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Chlamy.txt', 'r') as filin :
+		for line in filin :
+			alpha_chl.append(line.strip())
+	#print(new)
+	#print(alpha_chl)
+
+	with open('for_cytoscape_col_new.txt', 'w') as filout :
+		for idt in alpha_chl :
+			if idt in new :
+				filout.write(idt+'\t'+'New'+'\n')
+			else :
+				filout.write(idt+'\t'+'Else'+'\n')
+
+
+
+
 
 def which_opr(file) :
 
@@ -1095,6 +1122,104 @@ def intersection(path_files) :
 		i += 1
 
 
+def what_is_in_filtrage_deeploc(path_file, file_pos) :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+
+	files = glob.glob(path_file+'Filtrage_deeploc_*')
+	files.sort()
+	print(files, len(files))
+
+	for f in files :
+		if 'Chlamy.txt' in f :
+			idt_chl = get_idt(f)
+		elif 'Arabi.txt' in f :
+			idt_arabi = get_idt(f)
+	#print(idt_chl, len(idt_chl))
+
+	dico = read_proteom(file_pos)
+	#print(dico, len(dico))
+	#print(dico.keys())
+
+	in_pos_chl = []
+	not_in_pos_chl = []
+	for idt in idt_chl :
+		if idt in dico.keys() :
+			in_pos_chl.append(idt)
+		else :
+			not_in_pos_chl.append(idt)
+	#print(not_in_pos_chl, len(not_in_pos_chl))
+	#print(in_pos_chl, len(in_pos_chl))
+
+	with open('in_pos_chl.txt', 'w') as filout :
+		for idt in in_pos_chl :
+			filout.write(idt+'\n')
+	with open('not_in_pos_chl.txt', 'w') as filout :
+		for idt in not_in_pos_chl :
+			filout.write(idt+'\n')
+
+	################################## arabi --> idt différents --> blast ?
+
+
+def comp_new_Cel() :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+
+	files = glob.glob(path_method_Cel+'*/*')
+	print(files, len(files))
+	new = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/not_in_pos_chl.txt')
+	idt = []
+	for f in files :
+		dico = read_proteom(f)
+		idt.append(list(dico.keys()))
+	#print(idt, len(idt))
+
+	already = []
+	new_new = []
+	her = []
+	for liste in idt :
+		for ident in liste :
+			if ident.startswith('>Cre') :
+				her.append(ident)
+	print(her, len(her))
+
+	for ident in new :
+		if ident in her :
+			already.append(ident)
+		else :
+			new_new.append(ident)
+
+	print(new_new, len(new_new))
+
+	with open('new_new_Chl.txt', 'w') as filout_1 :
+		with open('already_Chl.txt', 'w') as filout_2 :
+			for prot in new_new :
+				filout_1.write(prot+'\n')
+			for prot in already :
+				filout_2.write(prot+'\n')
+
+
+
+def for_eggNOG() :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+
+	dico_all = Proteom_all(path_Chlamy_arabi)
+	new = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/new_new_Chl.txt')
+
+	dico_new = {}
+	for idt in new : 
+		if idt in dico_all.keys() :
+			dico_new[idt] = ""
+			dico_new[idt] = dico_all[idt]
+
+	with open('new_Chlamy.fasta', 'w') as filout :
+		for idt, seq in dico_new.items() :
+			filout.write(idt+'\n'+seq+'\n')
+
+
+
+
 
 if __name__ == '__main__' :
 
@@ -1123,6 +1248,7 @@ if __name__ == '__main__' :
 	#adressage_alpha_wolfpsort(path_Chlamy_arabi+'WOLFPSORT/')
 	#adressage_alpha_localizer(path_Chlamy_arabi+'LOCALIZER/')
 	#intersection(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+	#what_is_in_filtrage_deeploc(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/', path_pos_neg+'1081_tem_pos.fasta_line')
 	#is_ppr_opr(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt')
 	#comp_Hedi('Predictions/comp_Hedi/arabi_chlamy_2022_02_24_predicition_ingrid.txt')
 	#right_proteom_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/alpha_Chlamy_VS_OPR_Chlamy.out')
@@ -1131,8 +1257,9 @@ if __name__ == '__main__' :
 	#path_Chlamy_arabi+'Predictions/Res_blast/alpha_Chlamy_VS_neg.out', path_Chlamy_arabi+'Predictions/Res_blast/alpha_Chlamy_VS_pos.out')
 	#for_cytoscape()
 	#which_opr(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/for_cytoscape_col_OPR_3.txt')
-
-
+	#for_cytoscape_2()
+	#comp_new_Cel()
+	#for_eggNOG()
 
 
 
