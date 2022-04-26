@@ -48,6 +48,19 @@ def data_reading(file) :
 
 	return df
 
+
+def df_for_Diatoms(df) :
+	
+	del df['trp2']
+	del df['wolfpsort']
+	del df['deeploc']
+	del df['localizer']
+
+	print(df)
+	return df
+
+
+
 def app_test_val(df, len_app_test, len_val, len_app, len_test) :
 	''' Use a dataframe to split and create learning, test and validation dataframes
 	--> Dire l'organisation des données
@@ -282,7 +295,7 @@ def Importance(rf, train, important) :
 	plt.xlabel('Feature importance Score')
 	plt.ylabel('Features')
 	plt.title('Visualizing important features')
-	#plt.show()
+	plt.show()
 
 
 	return df_desc
@@ -694,16 +707,17 @@ def select_imp(file) :
 
 if __name__ == '__main__' :
 
-	#path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/neg_pos/'
+	path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/neg_pos/'
 	#path_prote = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/proteomes/other/'
 	path_Chlamy_arabi = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
 	path_pos_neg = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
 	path_method_Cel = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/'
 
-	os.chdir(path_Chlamy_arabi)
 
 	'''
 	#Chlamydomonas & Arabidopsis
+
+	os.chdir(path_Chlamy_arabi)
 
 	df = data_reading(path+'dataframe_all.csv')
 	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
@@ -721,6 +735,24 @@ if __name__ == '__main__' :
 	'''
 
 	#Diatoms
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/')
+
+	df_1 = data_reading(path+'dataframe_all.csv')
+	df = df_for_Diatoms(df_1)
+
+	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
+
+	random_forest = model()
+	#Optimal_parameters(app)
+
+	model_res_, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
+	df_imp = Importance(random_forest, app, importance)
+	Perf_calculator(predictions, val_pred)
+
+	#clade = which_clade(predictions, val_pred)
+
+	#alphasol, nonalphasol, df_pred = To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi')
 
 
 
