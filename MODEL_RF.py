@@ -295,7 +295,7 @@ def Importance(rf, train, important) :
 	plt.xlabel('Feature importance Score')
 	plt.ylabel('Features')
 	plt.title('Visualizing important features')
-	plt.show()
+	#plt.show()
 
 
 	return df_desc
@@ -598,7 +598,7 @@ def idt_(path) :
 
 
 
-def To_Predict(path, rf, file, name) :
+def To_Predict(path, rf, file, name, adressage) :
 	''' Use the model to predict its alpha_solenoid carateristics on a dataset
 
 	Parameters
@@ -630,9 +630,12 @@ def To_Predict(path, rf, file, name) :
 	'''
 
 	print('----------NEW PREDICTIONS----------')
-	os.chdir(path_Chlamy_arabi+'Predictions/')
+	#os.chdir(path_Chlamy_arabi+'Predictions/')
 
 	df = data_reading(path+file)
+
+	if adressage == 'none' :
+		df = df_for_Diatoms(df)
 
 	pred = rf.predict(df.iloc[:, 1:])
 	print('PRED\n', pred, len(pred))
@@ -752,7 +755,7 @@ if __name__ == '__main__' :
 
 	#clade = which_clade(predictions, val_pred)
 
-	#alphasol, nonalphasol, df_pred = To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi')
+	alphasol, nonalphasol, df_pred = To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi', 'none')
 
 
 
