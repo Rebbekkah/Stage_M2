@@ -814,19 +814,19 @@ def for_cytoscape_2() :
 	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
 
 	new = []
-	with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/not_in_pos_chl.txt', 'r') as filin :
+	with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/new_new_arabi.txt', 'r') as filin :
 		for line in filin :
 			new.append(line.strip())
 	#print(new, len(new))
 
 	alpha_chl = []
-	with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Chlamy.txt', 'r') as filin :
+	with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Arabi.txt', 'r') as filin :
 		for line in filin :
 			alpha_chl.append(line.strip())
 	#print(new)
 	#print(alpha_chl)
 
-	with open('for_cytoscape_col_new.txt', 'w') as filout :
+	with open('for_cytoscape_col_new_arabi.txt', 'w') as filout :
 		for idt in alpha_chl :
 			if idt in new :
 				filout.write(idt+'\t'+'New'+'\n')
@@ -1122,7 +1122,7 @@ def intersection(path_files) :
 		i += 1
 
 
-def what_is_in_filtrage_deeploc(path_file, file_pos) :
+def what_is_in_filtrage_deeploc_chl(path_file, file_pos) :
 
 	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
 
@@ -1167,7 +1167,7 @@ def comp_new_Cel() :
 
 	files = glob.glob(path_method_Cel+'*/*')
 	print(files, len(files))
-	new = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/not_in_pos_chl.txt')
+	new = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/not_in_pos_arabi.txt')
 	idt = []
 	for f in files :
 		dico = read_proteom(f)
@@ -1179,7 +1179,7 @@ def comp_new_Cel() :
 	her = []
 	for liste in idt :
 		for ident in liste :
-			if ident.startswith('>Cre') :
+			if ident.startswith('>NP') :
 				her.append(ident)
 	print(her, len(her))
 
@@ -1191,8 +1191,8 @@ def comp_new_Cel() :
 
 	print(new_new, len(new_new))
 
-	with open('new_new_Chl.txt', 'w') as filout_1 :
-		with open('already_Chl.txt', 'w') as filout_2 :
+	with open('new_new_arabi.txt', 'w') as filout_1 :
+		with open('already_arabi.txt', 'w') as filout_2 :
 			for prot in new_new :
 				filout_1.write(prot+'\n')
 			for prot in already :
@@ -1205,7 +1205,7 @@ def for_eggNOG() :
 	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
 
 	dico_all = Proteom_all(path_Chlamy_arabi)
-	new = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/new_new_Chl.txt')
+	new = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/new_new_arabi.txt')
 
 	dico_new = {}
 	for idt in new : 
@@ -1213,12 +1213,86 @@ def for_eggNOG() :
 			dico_new[idt] = ""
 			dico_new[idt] = dico_all[idt]
 
-	with open('new_Chlamy.fasta', 'w') as filout :
+	with open('new_Arabi.fasta', 'w') as filout :
 		for idt, seq in dico_new.items() :
 			filout.write(idt+'\n'+seq+'\n')
 
 
+def diff_adr() :
 
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/')
+
+	with_adr = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/prot_alpha.txt')
+	not_adr = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/prot_alpha.txt')
+
+	new_pred = []
+	common = []
+	adr_pred_only = []
+
+	for idt in not_adr :
+		if idt in with_adr :
+			common.append(idt)
+		else :
+			new_pred.append(idt)
+	for idt in with_adr :
+		if idt not in not_adr :
+			adr_pred_only.append(idt)
+
+	with open('Diffrence_new_pred.txt', 'w') as filout_1 :
+		with open('Diffrence_common.txt', 'w') as filout_2 :
+			with open('Diffrence_adr_pred_only.txt', 'w') as filout_3 :
+				for idt in new_pred :
+					filout_1.write(idt+'\n')
+				for idt in common :
+					filout_2.write(idt+'\n')
+				for idt in adr_pred_only :
+					filout_3.write(idt+'\n')
+
+
+def Proteom_arabi_Filtrage_dploc() :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/blast/')
+
+	idt = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Filtrage_deeploc_alpha_Arabi.txt')
+	dico_all = Proteom_all(path_Chlamy_arabi)
+
+	dico = {}
+	for ident in idt :
+		if ident in dico_all.keys() :
+			dico[ident] = ""
+			dico[ident] = dico_all[ident]
+
+	with open('Arabi_filtrage_dploc.fasta', 'w') as filout :
+		for ident, seq in dico.items() :
+			filout.write(ident+'\n'+seq+'\n')
+
+
+def what_is_in_filtrage_deeploc_arabi() :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+	dico = read_blast(path_pos_neg+'db_pos/Tem_pos_VS_alpha_Arabi_Filtrage_Dploc.out')
+	#print(dico, len(dico))
+
+	in_pos = list(dico.keys())
+	#print(in_pos, len(in_pos))
+	for i in range(len(in_pos)) :
+		in_pos[i] = '>'+in_pos[i]
+	#print(in_pos, len(in_pos))
+
+	filtrage_dploc = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Filtrage_deeploc_alpha_Arabi.txt')
+	#print(filtrage_dploc, len(filtrage_dploc))
+	not_in_pos = []
+	for idt in filtrage_dploc :
+		if idt not in in_pos :
+			not_in_pos.append(idt)
+	#print(not_in_pos, len(not_in_pos))
+
+	with open('in_pos_arabi.txt', 'w') as filout_1 :
+		with open('not_in_pos_arabi.txt', 'w') as filout_2 :
+			for idt in in_pos :
+				filout_1.write(idt+'\n')
+			for idt in not_in_pos :
+				filout_2.write(idt+'\n')
 
 
 if __name__ == '__main__' :
@@ -1260,6 +1334,9 @@ if __name__ == '__main__' :
 	#for_cytoscape_2()
 	#comp_new_Cel()
 	#for_eggNOG()
-
-
-
+	#diff_adr()
+	#Proteom_arabi_Filtrage_dploc()
+	#what_is_in_filtrage_deeploc_arabi()
+	#comp_new_Cel()
+	#for_eggNOG()
+	for_cytoscape_2()
