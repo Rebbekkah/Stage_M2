@@ -1296,7 +1296,7 @@ def what_is_in_filtrage_deeploc_arabi() :
 
 
 
-def annotation_eggnog(path_files, path_new) :
+def dataframe_eggnog(path_files, path_new) :
 
 	os.chdir(path_files+'Parsing/')
 
@@ -1364,15 +1364,73 @@ def annotation_eggnog(path_files, path_new) :
 			#print(len(lignes[i]))
 		#print(lignes, len(lignes))
 
+		#for liste in lignes :
+		#	for i in range(len(liste)) :
+		#		print(liste[i])
 
+		print(len(df.columns))
+		print(len(df))
+		print(len(lignes))
+		#print(lignes)
+		#for i in range(len(df.columns)) :
+		#for i in range(len(df)) :
+			#print()
+			#pass
 
+		#for liste in lignes : 
+		#	liste = liste[1:]
+		for i in range(len(lignes)) :
+			lignes[i] = lignes[i][1:]
+		#print(lignes, len(lignes))
+		k = 0
+		for r in range(len(df)) :
+			#liste[0] = '>'+liste[0]
+			for c in range(len(df.columns)) :
+				#print(lignes[i][c])
+				df.iloc[r, c] = lignes[k][c]
+			k += 1
+
+		print(df)
+
+		df.to_csv('df_'+name+'.csv', sep = '\t', header = True, index = True)
+
+				
 
 		
 
-def parsing_eggnog(file) :
+def parsing_eggnog(path_df) :
 
-	pass
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
 
+	files = glob.glob(path_df+'df_*.csv')
+	files.sort()
+	print(files, len(files))
+	col = ['Description', 'PFAMs']
+
+	for f in files : 
+		print("----------------", basename(f), "----------------")
+		new_df = pd.DataFrame()
+		df = pd.read_csv(f, sep = '\t')
+		df = df.set_index(df['Unnamed: 0'], inplace = False)
+		del df['Unnamed: 0']
+		print(df)
+
+
+		prot = []
+		for c in col :
+			for index, elem in enumerate(df[c]) :
+				for word in keywords :
+					if word in elem :
+						if word not in prot :
+							prot.append(df.index[index])
+		print(prot, len(prot))
+
+		name = basename(f).split('.')[0]
+		name = name.split('_')[1]
+
+		with open('Keywords_'+name+'.txt', 'w') as filout :
+			for idt in prot :
+				filout.write(idt+'\n')
 
 
 
@@ -1384,6 +1442,12 @@ if __name__ == '__main__' :
 	path_pos_neg = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
 	path_method_Cel = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/'
 	path_to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/"
+	keywords = ['TPR', 'PPR', 'OPR', 'RNA', 'binding', 'Binding', 'GTP', 'ATP', 'mito', 'Mito', 'chlo', 'Chlo', \
+		'Synthase', 'synthase', 'helicase', 'Helicase', 'transferase', 'protease', 'maturation', 'exonuclease', \
+		'endonuclease', 'exonuc', 'endonuc', 'Ribo', 'Armadillo', 'Tetratricopeptide', 'Pentatricopeptide', 'Octatricopeptide', \
+		'transcription', 'traduction', 'histone', 'Rubis', 'rubis', 'repeat', 'mTERF', 'PPDK', 'AMPK']
+
+
 
 	os.chdir(path_Chlamy_arabi)
 
@@ -1421,8 +1485,8 @@ if __name__ == '__main__' :
 	#comp_new_Cel()
 	#for_eggNOG()
 	#for_cytoscape_2()
-	annotation_eggnog(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/', path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/REEL_NEW/')
-
+	#dataframe_eggnog(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/', path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/REEL_NEW/')
+	parsing_eggnog(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
 
 
 
