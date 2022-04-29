@@ -1316,6 +1316,7 @@ def annotation_eggnog(path_files, path_new) :
 		#print(df)
 		idt_egg = []
 		dico = {}
+		lignes = []
 		with open(f, 'r') as filin :
 			for line in filin :
 				if line.startswith('#query') :
@@ -1325,9 +1326,9 @@ def annotation_eggnog(path_files, path_new) :
 				if not line.startswith('#') :
 					idt = '>'+line.split()[0]
 					idt_egg.append(idt)
+					lignes.append(line.strip())
 					#print(line.split()[0])
 		#print(idt_egg, len(idt_egg))
-
 		with open('idt_egg_'+name+'.txt', 'w') as filout :
 			for prot in idt_egg :
 				filout.write(prot+'\n')
@@ -1357,6 +1358,12 @@ def annotation_eggnog(path_files, path_new) :
 		df = pd.DataFrame(index = [idt_egg], columns = [col[1:]])
 		#df = pd.DataFrame(zip(idt_egg), columns = [col])
 		print(df)
+
+		for i in range(len(lignes)) :
+			lignes[i] = lignes[i].split('\t')
+			#print(len(lignes[i]))
+		#print(lignes, len(lignes))
+
 
 
 
