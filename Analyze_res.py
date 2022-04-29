@@ -136,7 +136,7 @@ def get_idt(file) :
 	with open(file, 'r') as filin :
 		for line in filin :
 			idt.append(line.strip())
-	print("idt ", len(idt))
+	print("Number of idt --> ", len(idt))
 
 	return idt
 
@@ -1295,6 +1295,80 @@ def what_is_in_filtrage_deeploc_arabi() :
 				filout_2.write(idt+'\n')
 
 
+
+def annotation_eggnog(path_files, path_new) :
+
+	os.chdir(path_files+'Parsing/')
+
+	files = glob.glob(path_files+'*/*.tsv')
+	files.sort()
+	#print(files, len(files))
+	files_new = glob.glob(path_new+'*.txt')
+	files_new.sort()
+	#print(files_new, len(files_new))
+
+	for f in files :
+		name = f.split('/')[-2]
+		print("---------------------", name, "---------------------")
+		#df = pd.read_excel(f, header = None)
+		#df = pd.read_excel(f)
+		#df = pd.read_csv(f, sep = '\t')
+		#print(df)
+		idt_egg = []
+		dico = {}
+		with open(f, 'r') as filin :
+			for line in filin :
+				if line.startswith('#query') :
+					col = list(line.split('\t'))
+					col[-1] = col[-1].strip()
+					print(col, len(col))
+				if not line.startswith('#') :
+					idt = '>'+line.split()[0]
+					idt_egg.append(idt)
+					#print(line.split()[0])
+		#print(idt_egg, len(idt_egg))
+
+		with open('idt_egg_'+name+'.txt', 'w') as filout :
+			for prot in idt_egg :
+				filout.write(prot+'\n')
+		for n in files_new :
+			if name+'.txt' in n :
+				new = get_idt(n)
+		#print(new, len(new))
+
+		non_annot = []
+		annot = []
+		for prot in new :
+			if prot not in idt_egg :
+				non_annot.append(prot)
+			else :
+				annot.append(prot)
+		#print(non_annot, len(non_annot))
+		#print(annot, len(annot))
+
+		with open('annoted_'+name+'.txt', 'w') as filout_1 :
+			with open('non_annoted_'+name+'.txt', 'w') as filout_2 :
+				for prot in annot :
+					filout_1.write(prot+'\n')
+				for prot in non_annot :
+					filout_2.write(prot+'\n')
+
+		#print([col])
+		df = pd.DataFrame(index = [idt_egg], columns = [col[1:]])
+		#df = pd.DataFrame(zip(idt_egg), columns = [col])
+		print(df)
+
+
+
+		
+
+def parsing_eggnog(file) :
+
+	pass
+
+
+
+
 if __name__ == '__main__' :
 
 	#path = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/neg_pos/'
@@ -1339,4 +1413,12 @@ if __name__ == '__main__' :
 	#what_is_in_filtrage_deeploc_arabi()
 	#comp_new_Cel()
 	#for_eggNOG()
-	for_cytoscape_2()
+	#for_cytoscape_2()
+	annotation_eggnog(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/', path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/REEL_NEW/')
+
+
+
+
+
+
+
