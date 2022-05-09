@@ -1467,8 +1467,6 @@ def df_homology(path_files) :
 	for f in files :
 		dico = {}
 		lidt = []
-		lhomo = []
-		l = 0
 		print("------------------", basename(f), "------------------")
 
 		with open(f, 'r') as filin :
@@ -1477,7 +1475,6 @@ def df_homology(path_files) :
 				if idt not in lidt :
 					lidt.append(idt)
 
-		print(lidt, len(lidt))
 		for prot in lidt :
 			dico[prot] = []
 
@@ -1486,9 +1483,15 @@ def df_homology(path_files) :
 				homo = line.split()[4]
 				first = line.split()[0]
 				dico[first].append(homo)
-		print(dico)
 
-		break
+		df = pd.DataFrame(index = [lidt], columns = ['homologuous to'])
+		for i in range(len(lidt)) :
+			ind = list(df.index[i])
+			df.iloc[i, 0] = dico[ind[0]]
+		print(df)
+
+		df.to_csv('df_homologuous_'+basename(f)+'.csv', sep = '\t', header = True, index = True)
+
 
 
 
