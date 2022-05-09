@@ -1433,6 +1433,66 @@ def parsing_eggnog(path_df) :
 				filout.write(idt+'\n')
 
 
+def interactions(path_files) :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/')
+
+	files = glob.glob(path_files+'interactions*.csv')
+	files.sort()
+	print(files, len(files))
+
+	for f in files :
+		interac = []
+		df = pd.read_csv(f, sep = ',')
+		print(df['shared name'])
+		for index, elem in enumerate(df['shared name']) :
+			if '(interacts with)' in elem :
+				elem = elem.replace('(interacts with)', "is homologuous to")
+			interac.append(elem)
+		print(len(interac))
+		print("ok")
+
+		with open('interactions_'+basename(f)+'.txt', 'w') as filout :
+			for elem in interac :
+				filout.write(elem+'\n')
+
+def df_homology(path_files) : 
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/')
+
+	files = glob.glob(path_files+'interactions*.txt')
+	files.sort()
+	print(files, len(files))
+
+	for f in files :
+		dico = {}
+		lidt = []
+		lhomo = []
+		l = 0
+		print("------------------", basename(f), "------------------")
+
+		with open(f, 'r') as filin :
+			for line in filin :
+				idt = line.split()[0]
+				if idt not in lidt :
+					lidt.append(idt)
+
+		print(lidt, len(lidt))
+		for prot in lidt :
+			dico[prot] = []
+
+		with open(f, 'r') as filin :
+			for line in filin :
+				homo = line.split()[4]
+				first = line.split()[0]
+				dico[first].append(homo)
+		print(dico)
+
+		break
+
+
+
+
 
 if __name__ == '__main__' :
 
@@ -1486,9 +1546,9 @@ if __name__ == '__main__' :
 	#for_eggNOG()
 	#for_cytoscape_2()
 	#dataframe_eggnog(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/', path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/REEL_NEW/')
-	parsing_eggnog(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
-
-
+	#parsing_eggnog(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
+	#interactions(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/')
+	df_homology(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/')
 
 
 
