@@ -1494,6 +1494,130 @@ def df_homology(path_files) :
 
 
 
+def annotation_for_cytoscape(path_idt, path_annot) :
+	
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
+
+	files_idt = glob.glob(path_idt+'*.txt')
+	files_idt.sort()
+	print(files_idt, len(files_idt))
+
+	files_keyword = glob.glob(path_annot+'Keywords_*')
+	files_keyword.sort()
+	print(files_keyword, len(files_keyword))
+
+
+	for i in range(len(files_idt)) :
+		idt_all = get_idt(files_idt[i])
+		idt_key = get_idt(files_keyword[i])
+		with open('for_cytoscape_'+basename(files_keyword[i])+'.txt', 'w') as filout :
+			for idt in idt_all :
+				if idt in idt_key :
+					filout.write(idt+'\t'+'Yes'+'\n')
+				else :
+					filout.write(idt+'\t'+'No'+'\n')
+		print(idt_all, len(idt_all))
+		print(idt_key, len(idt_key))
+		break
+	'''
+	idt_all = []
+	for f in files_idt :
+		print("---------------", basename(f), "All ---------------")
+		idt_all.append(get_idt(f))	
+	#print(idt_all)
+
+	idt_annot = []
+	for f in files_annoted :
+		print("---------------", basename(f), "Annoted ---------------")
+		idt_annot.append(get_idt(f))
+
+
+	
+	i = 0
+	for liste in idt_all :
+		print(len(liste))
+		print(liste)
+		print(len(idt_annot[i]))
+		print(idt_annot[i])
+		with open('for_cytoscape_'+basename(files_annoted[i])+'.txt', 'w') as filout :
+			for prot in liste :
+				if prot in idt_annot[i] :
+					filout.write(prot+'\t'+'Yes'+'\n')
+				else :
+					filout.write(prot+'\t'+'No'+'\n')
+		i += 1
+	'''
+
+
+def cluster_homo(path_homo, path_annot) :
+	
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/')
+
+	files_homo = glob.glob(path_homo+'df_homologuous_*')
+	files_homo.sort()
+	print(files_homo, len(files_homo))
+
+	files_annot = glob.glob(path_annot+'annoted_*')
+	files_annot.sort()
+	print(files_annot, len(files_annot))
+
+	annot = []
+	for f in files_annot :
+		annot.append(get_idt(f))
+	print(annot)
+
+	for f in files_homo :
+		dico = {}
+		df = pd.read_csv(f, sep = '\t')
+		df = df.set_index(df['Unnamed: 0'], inplace = False)
+		del df['Unnamed: 0']
+		print(df)
+
+		for index, elem in enumerate(df['homologuous to']) :
+			if len(elem) >= 2 :
+				for liste in annot :
+					if elem in liste :
+						pass
+						#######voir lesquels sont annotées --> rajouter une colonne annoted
+				#print(elem)
+		break
+
+
+'''
+def comp_new_VS_Cel_M2(path_Cel, path_new) :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/REEL_NEW/Comp_M2_cel/')
+
+	new = glob.glob(path_new+'*.fasta')
+	new.sort()
+	print(new, len(new))
+	cel = glob.glob(path_Cel+'M2*/*')
+	cel.sort()
+	print(cel, len(cel))
+
+	proteom_cel = []
+	for file in cel :
+		dico = read_proteom(file)
+		proteom_cel.append(dico)
+
+	proteom_new = []
+	for file in new :
+		dico = read_proteom(file)
+		proteom_new.append(dico)
+
+	print(proteom_new, len(proteom_new))
+'''
+
+def cluster_annot() :
+
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/')
+
+
+
+def diff_models() :
+	pass
+
+
 
 
 
@@ -1551,8 +1675,8 @@ if __name__ == '__main__' :
 	#dataframe_eggnog(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/', path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/REEL_NEW/')
 	#parsing_eggnog(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
 	#interactions(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/')
-	df_homology(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/')
-
-
-
+	#df_homology(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/')
+	#annotation_for_cytoscape(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/REEL_NEW/', path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
+	#cluster_homo(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/',  path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
+	comp_new_VS_Cel_M2(path_method_Cel, path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/REEL_NEW/')
 
