@@ -216,17 +216,17 @@ def comp_res_Celine(path) :
 					filout_2.write(ident+'\n')
 
 
-def comp_methode_2(path) :
+def comp_methode_2(path_cel) :
 
 	print("----------- MÉTHODE 2 -----------")
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/comp_M2/')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/')
 
 
-	file = path_Chlamy_arabi+'Predictions/prot_alpha.txt'
+	file = path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/prot_alpha_filtred.txt'
 	print(file, len(file), type(file))
 
-	res = glob.glob(path)
+	res = glob.glob(path_cel)
 	res.sort()
 	print(res, len(res))
 
@@ -303,12 +303,12 @@ def is_in(dico, list_idt) :
 	return yes, no, new_pred
 
 
-def sep_alpha() :
+def sep_alpha(osdir, prot_alpha) :
 
 	print("---------- SEP ALPHA ----------")
-	os.chdir(path_Chlamy_arabi+'Predictions/')
+	os.chdir(path_Chlamy_arabi+osdir)
 
-	file = path_Chlamy_arabi+'Predictions/prot_alpha.txt'
+	file = path_Chlamy_arabi+prot_alpha
 
 	alpha = get_idt(file)
 
@@ -324,12 +324,12 @@ def sep_alpha() :
 
 def proteom_alpha() :
 
-	os.chdir(path_Chlamy_arabi+'Predictions/')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/')
 	
 	all_proteom = Proteom_all(path_Chlamy_arabi)
 
-	alpha_Chlamy = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Chlamy.txt')
-	alpha_Arabi = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Arabi.txt')
+	alpha_Chlamy = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/new_pred_Arabidopsis_vs_m2.txt')
+	alpha_Arabi = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/new_pred_Chlamy_vs_m2.txt')
 
 	list_alpha = [alpha_Arabi, alpha_Chlamy]
 
@@ -349,8 +349,8 @@ def proteom_alpha() :
 			proteom['Chlamydomonas'] = dic
 
 
-	with open('Proteom_alpha_Arabidopsis.txt', 'w') as filout_1 :
-		with open('Proteom_alpha_Chlamydomonas.txt', 'w') as filout_2 :
+	with open('Proteom_my_pred_Arabidopsis.txt', 'w') as filout_1 :
+		with open('Proteom_my_pred_Chlamydomonas.txt', 'w') as filout_2 :
 				for org, dic in proteom.items() :
 					if org == 'Arabidopsis' :
 						for prot, seq in dic.items() :
@@ -476,7 +476,7 @@ def correspondance_acc(file) :
 
 def adressage_alpha(file1, file2) :
 
-	df = read_df(path_Chlamy_arabi+'Predictions/')
+	df = read_df(path_Chlamy_arabi)
 
 	#df_2 = df.iloc[:150, :]
 
@@ -873,7 +873,7 @@ def adressage_alpha_deeploc(path1, path_deeploc, path_wolfpsort) :
 	#print(idt)
 	'''
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/')
 
 	df = pd.read_csv(path1+'df_adr.csv', sep = '\t')
 	df = df.set_index(df['Unnamed: 0'], inplace = False)
@@ -903,7 +903,7 @@ def adressage_alpha_deeploc(path1, path_deeploc, path_wolfpsort) :
 	#print("-----------------", basename(f), "-----------------")
 	idt_dploc = []
 	idt_wlf = []
-	df_ = pd.read_csv(files_dploc[0], sep = '\t')
+	df_ = pd.read_csv(files_dploc[1], sep = '\t')
 	df_ = df_.set_index('>'+df_['ID'], inplace = False)
 	del df_['ID']
 	#print(list(df_.index))
@@ -940,7 +940,7 @@ def adressage_alpha_deeploc(path1, path_deeploc, path_wolfpsort) :
 				filout.write(index+'\n')
 	else :
 	'''
-	with open('Filtrage_deeploc_alpha_Arabi.txt', 'w') as filout :
+	with open('Filtrage_deeploc_alpha_Chlamy.txt', 'w') as filout :
 		for index in idt_dploc :
 			filout.write(index+'\n')
 
@@ -948,7 +948,7 @@ def adressage_alpha_deeploc(path1, path_deeploc, path_wolfpsort) :
 	new_df = df_.loc[new_]
 	print("NEW DF ---->\n", new_df)
 
-	new_df.to_csv('new_df_Arabi.csv', sep = '\t', header = True, index = True)
+	new_df.to_csv('new_df_Chlamy.csv', sep = '\t', header = True, index = True)
 
 
 '''
@@ -1124,7 +1124,7 @@ def intersection(path_files) :
 
 def what_is_in_filtrage_deeploc_chl(path_file, file_pos) :
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/')
 
 	files = glob.glob(path_file+'Filtrage_deeploc_*')
 	files.sort()
@@ -1618,6 +1618,15 @@ def diff_models() :
 	pass
 
 
+def Filtrage_model2() :
+
+	#sep_alpha('Predictions/Pour_celine_comp/df_adressage/Model_without_adr/', \
+	#	'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/prot_alpha.txt')
+	#adressage_alpha('df_adressage/Model_without_adr/alpha_Arabi.txt', 'df_adressage/Model_without_adr/alpha_Chlamy.txt')
+	#adressage_alpha_deeploc(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/', \
+	#	path_Chlamy_arabi+'DEEPLOC/', path_Chlamy_arabi+'WOLFPSORT/')
+	comp_methode_2(path_method_Cel+'M2_*/*')
+
 
 
 
@@ -1643,8 +1652,8 @@ if __name__ == '__main__' :
 	#dico_imp = select_imp('Importance_desc.csv')
 	#comp_res_Celine(path_method_Cel+'*/*')
 	#comp_methode_2(path_method_Cel+'M2_*/*')
-	#sep_alpha()
-	#proteom_alpha()
+	#sep_alpha('Predictions/', 'Predictions/prot_alpha.txt')
+	proteom_alpha()
 	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*_VS_*.out')
 	#correspondance_acc('Predictions/dataframe_all.csv')
 	#adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt') # utiliser plutot alpha_pred total
@@ -1678,5 +1687,5 @@ if __name__ == '__main__' :
 	#df_homology(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/')
 	#annotation_for_cytoscape(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/REEL_NEW/', path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
 	#cluster_homo(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/',  path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
-	comp_new_VS_Cel_M2(path_method_Cel, path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/REEL_NEW/')
-
+	#comp_new_VS_Cel_M2(path_method_Cel, path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/REEL_NEW/')
+	#Filtrage_model2()
