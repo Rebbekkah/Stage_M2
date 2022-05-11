@@ -1126,12 +1126,12 @@ def what_is_in_filtrage_deeploc_chl(path_file, file_pos) :
 
 	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/')
 
-	files = glob.glob(path_file+'Filtrage_deeploc_*')
+	files = glob.glob(path_file+'pred_pred_*')
 	files.sort()
 	print(files, len(files))
 
 	for f in files :
-		if 'Chlamy.txt' in f :
+		if 'Chlamy_m2.txt' in f :
 			idt_chl = get_idt(f)
 		elif 'Arabi.txt' in f :
 			idt_arabi = get_idt(f)
@@ -1269,8 +1269,8 @@ def Proteom_arabi_Filtrage_dploc() :
 
 def what_is_in_filtrage_deeploc_arabi() :
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/')
-	dico = read_blast(path_pos_neg+'db_pos/Tem_pos_VS_alpha_Arabi_Filtrage_Dploc.out')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Communes_comp/')
+	dico = read_blast(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/blast/Proteom_common_Arabi_VS_Positive.out') #pos?
 	#print(dico, len(dico))
 
 	in_pos = list(dico.keys())
@@ -1279,7 +1279,7 @@ def what_is_in_filtrage_deeploc_arabi() :
 		in_pos[i] = '>'+in_pos[i]
 	#print(in_pos, len(in_pos))
 
-	filtrage_dploc = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Filtrage_deeploc_alpha_Arabi.txt')
+	filtrage_dploc = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage//Model_without_adr/comp_M2/Apres_Filtrage/Filtrage_deeploc_alpha_Arabi.txt')
 	#print(filtrage_dploc, len(filtrage_dploc))
 	not_in_pos = []
 	for idt in filtrage_dploc :
@@ -1653,7 +1653,7 @@ if __name__ == '__main__' :
 	#comp_res_Celine(path_method_Cel+'*/*')
 	#comp_methode_2(path_method_Cel+'M2_*/*')
 	#sep_alpha('Predictions/', 'Predictions/prot_alpha.txt')
-	proteom_alpha()
+	#proteom_alpha()
 	#minus_log_evalue('Predictions/Pour_celine_comp/db_*/*_VS_*.out')
 	#correspondance_acc('Predictions/dataframe_all.csv')
 	#adressage_alpha('new_pred_Arabidopsis.txt', 'new_pred_Chlamy.txt') # utiliser plutot alpha_pred total
@@ -1689,3 +1689,5 @@ if __name__ == '__main__' :
 	#cluster_homo(path_Chlamy_arabi+'Predictions/Pour_celine_comp/interactions/',  path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
 	#comp_new_VS_Cel_M2(path_method_Cel, path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/REEL_NEW/')
 	#Filtrage_model2()
+	#what_is_in_filtrage_deeploc_chl(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/', path_pos_neg+'1081_tem_pos.fasta_line')
+	#what_is_in_filtrage_deeploc_arabi()

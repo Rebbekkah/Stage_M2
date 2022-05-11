@@ -869,6 +869,7 @@ def dataframe_maker(dico_ard2, dico_radar, pattern_prot_all) :
 	'''
 
 	dico_all = Proteom_all(pattern_prot_all)
+	print(dico_all)
 	idt_all = []
 
 	for idt in dico_all.keys() :
@@ -886,11 +887,11 @@ def dataframe_maker(dico_ard2, dico_radar, pattern_prot_all) :
 		#i = 0
 		for idt, val in dic.items() :
 			idt_l.append(idt)
-		if prote == 'neg' :
-			for idt in df.index :
-				idt = str(idt)
-				if idt in idt_l :
-					df.loc[idt, 'type'] = 1
+		#if prote == 'neg' :
+		#	for idt in df.index :
+		#		idt = str(idt)
+		#		if idt in idt_l :
+		#			df.loc[idt, 'type'] = 1
 		#else : 
 		#	for idt in df.index :
 		#		df.loc[idt, 'type'] = i
@@ -910,6 +911,8 @@ def dataframe_maker(dico_ard2, dico_radar, pattern_prot_all) :
 
 	print("---------df1")
 	print(df)
+	df.to_csv('dataframe_first.csv', sep = '\t', header = True, index = True)
+
 	#print("------------------------DICO ard2------------------------")
 	#print(dico_ard2.values())
 	#print("------------------------END DICO ard2------------------------")
@@ -1427,8 +1430,6 @@ def add_df(idt, pattern1, path, file) :
 	list_idt = list(df.index)
 
 	print(df)
-	#print(idt[:10], len(idt))
-
 
 	to_del = []
 	for ident in idt :
@@ -1576,15 +1577,30 @@ def freq_aa(sequence) :
 
 if __name__ == '__main__' :
 
-
-	# Diatoms
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/TMHMM/Pour_Celine/"
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
-
-
+	
 	os.chdir(path_output)
 
+
+	# Phaedodactylum
+
+	# ARD2
+	path_ard2 = path_output+"ARD2/Phaedodactylum/"
+
+	# RADAR
+	path_radar = path_output+"RADAR/Phaedodactylum/"
+
+	results_ard2, results_radar = Data_Create("STDOUT_Phaedodactylum", 'TMHMM/Pour_Celine/*.txt', 'Phaedodactylum_RADAR.txt', 'TMHMM/files/')
+	final_results = dataframe_maker(results_ard2, results_radar, path_output+'TMHMM/files/')
+	df = Modification(final_results, path_output+'TMHMM/files/')
+	#idt = rows_acc(path_output, 'ACC/rownames_*')
+	#df_f = add_df(idt, 'ACC/Acc_output_*', path_output, 'dataframe_interm.csv')
+	#writing(df_f)
+
+	'''
+	# All Diatoms 
 
 	# ARD2
 	path_ard2 = path_output+"ARD2/*/"
@@ -1614,7 +1630,7 @@ if __name__ == '__main__' :
 	#df_f = add_df(idt, 'ACC/Acc_output_*', path_output, 'dataframe_interm.csv')
 	#writing(df_f)
 	#tsne = Tsne(df_f)
-	
+	'''
 
 
 
