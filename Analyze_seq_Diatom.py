@@ -920,21 +920,23 @@ def dataframe_maker(dico_ard2, dico_radar, pattern_prot_all) :
 				print(df[idt, :])
 			print("--------------")
 	'''
-
+	'''
 	for i in range(len(df)) :
 		#print(df.index[i])
 		if df.index[i].startswith('>jgi|Phatr1|') :
+		#if df.index[i].startswith('>GAX') :
 			print(df.index[i])
-			print(df[i, :])
+			print(df.iloc[i, :])
 			print("----------")
-
+	'''
 
 	print("---------df1")
 	print(df)
 	df.to_csv('dataframe_first.csv', sep = '\t', header = True, index = True)
 
 	#print("------------------------DICO ard2------------------------")
-	print(dico_ard2)
+	#print(dico_ard2, len(dico_ard2))
+	#print(dico_ard2.keys())
 	#print("------------------------END DICO ard2------------------------")
 	return df
 
@@ -1426,7 +1428,6 @@ def rows_acc(path, file) :
 	for f in files :
 		with open(f, 'r') as filin :
 			for line in filin :
-				#pass
 				line = line.strip()
 				line = line.split('"')[1]
 				line = '>'+line
@@ -1612,7 +1613,7 @@ if __name__ == '__main__' :
 	# RADAR
 	path_radar = path_output+"RADAR/Phaedodactylum/"
 
-	results_ard2, results_radar = Data_Create("STDOUT_Phaedodactylum", 'TMHMM/Pour_Celine/*.txt', 'Phaedodactylum_RADAR.txt', 'TMHMM/files/')
+	results_ard2, results_radar = Data_Create("STDOUT_Phaedodactylum", 'TMHMM/Pour_Celine/New_Proteom_Phaedodactylum.fasta.txt', 'Phaedodactylum_RADAR.txt', 'TMHMM/files/')
 	final_results = dataframe_maker(results_ard2, results_radar, path_output+'TMHMM/files/')
 	#df = Modification(final_results, path_output+'TMHMM/files/')
 	#idt = rows_acc(path_output, 'ACC/rownames_*')
