@@ -598,7 +598,7 @@ def idt_(path) :
 
 
 
-def To_Predict(path, rf, file, name, adressage) :
+def To_Predict(path, rf, file, name) :
 	''' Use the model to predict its alpha_solenoid carateristics on a dataset
 
 	Parameters
@@ -634,8 +634,8 @@ def To_Predict(path, rf, file, name, adressage) :
 
 	df = data_reading(path+file)
 
-	if adressage == 'none' :
-		df = df_for_Diatoms(df)
+	#if adressage == 'none' :
+	#	df = df_for_Diatoms(df)
 
 	pred = rf.predict(df.iloc[:, 1:])
 	print('PRED\n', pred, len(pred))
@@ -683,7 +683,7 @@ def To_Predict(path, rf, file, name, adressage) :
 
 def select_imp(file) :
 
-	os.chdir(path_Chlamy_arabi+'Predictions/')
+	#os.chdir(path_Chlamy_arabi+'Predictions/')
 
 	df = pd.read_csv(path_Chlamy_arabi+file, sep = '\t')
 	df = df.set_index(df['Unnamed: 0'], inplace = False)
@@ -715,10 +715,10 @@ if __name__ == '__main__' :
 	path_Chlamy_arabi = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
 	path_pos_neg = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
 	path_method_Cel = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/'
-
+	path_script = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/'
 
 	'''
-	#Chlamydomonas & Arabidopsis
+	# Chlamydomonas & Arabidopsis
 
 	os.chdir(path_Chlamy_arabi)
 
@@ -737,7 +737,8 @@ if __name__ == '__main__' :
 	alphasol, nonalphasol, df_pred = To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi')
 	'''
 
-	#Diatoms
+	'''
+	# Diatoms
 
 	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/')
 
@@ -756,8 +757,28 @@ if __name__ == '__main__' :
 	#clade = which_clade(predictions, val_pred)
 
 	alphasol, nonalphasol, df_pred = To_Predict(path_Chlamy_arabi, random_forest, 'dataframe_all.csv', 'Chlamy_Arabi', 'none')
+	'''
 
+	# Phaedodactylum 
 
+	os.chdir(path_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/')
+
+	df_1 = data_reading(path+'dataframe_all.csv')
+	df = df_for_Diatoms(df_1)
+
+	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
+
+	random_forest = model()
+	#Optimal_parameters(app)
+
+	model_res_, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
+	df_imp = Importance(random_forest, app, importance)
+	Perf_calculator(predictions, val_pred)
+
+	#clade = which_clade(predictions, val_pred)
+
+	alphasol, nonalphasol, df_pred = To_Predict(path_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/',\
+		random_forest, 'dataframe_all.csv', 'Phaedodactylum')
 
 
 

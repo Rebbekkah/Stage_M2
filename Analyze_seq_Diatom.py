@@ -872,31 +872,20 @@ def dataframe_maker(dico_ard2, dico_radar, pattern_prot_all) :
 	idt_all = []
 
 	for idt in dico_all.keys() :
-		idt_all.append(idt)
+		if idt.startswith('>jgi|Phatr1|') :
+			idt_all.append(idt)
+
+	#to_drop = []
+	#for idt in idt_all :
+	#	if not idt.startswith('>jgi|Phatr1|') :
+	#		to_drop.append(idt)
 
 	idt_all = np.array(idt_all)
 	
-	#print(idt_all, len(idt_all))
+
 
 	col = ['type', 'ard2', 'radar']
 	df = pd.DataFrame(0, index = idt_all, columns = col)
-
-
-
-	#for prote, dic in dico_ard2.items() :
-	#	idt_l = []
-		#i = 0
-		#for idt, val in dic.items() :
-		#	idt_l.append(idt)
-		#if prote == 'neg' :
-		#	for idt in df.index :
-		#		idt = str(idt)
-		#		if idt in idt_l :
-		#			df.loc[idt, 'type'] = 1
-		#else : 
-		#	for idt in df.index :
-		#		df.loc[idt, 'type'] = i
-		#		i += 1
 				
 
 	for prote, dic in dico_ard2.items() :
@@ -912,23 +901,9 @@ def dataframe_maker(dico_ard2, dico_radar, pattern_prot_all) :
 				df.loc[idt, 'radar'] = [res]
 
 
-	'''
-	for idt in idt_all :
-		if idt.startswith('>jgi|Phatr1') :
-			print(idt)
-			if idt in df.index :
-				print(df[idt, :])
-			print("--------------")
-	'''
-	'''
-	for i in range(len(df)) :
-		#print(df.index[i])
-		if df.index[i].startswith('>jgi|Phatr1|') :
-		#if df.index[i].startswith('>GAX') :
-			print(df.index[i])
-			print(df.iloc[i, :])
-			print("----------")
-	'''
+
+
+
 
 	print("---------df1")
 	print(df)
@@ -1076,264 +1051,6 @@ def Modification(dataframe, pattern_prot_all) :
 def writing(df) :
 
 	df.to_csv('dataframe_all.csv', sep = '\t', header = True, index = True)
-
-
-def splitting(df) :
-	''' Here we split the dataframe into 2 dataframes : 
-	- 1 contains postive samples
-	- the other contains negative samples
-
-	Parameters
-	----------
-	df : Dataframe
-		Dataframe to split
-
-	Returns
-	-------
-	df_pos, df_neg : new dataframes of positive and negative samples
-
-
-	'''
-
-
-	df_pos = df[df['type'] == 0]
-	df_neg = df[df['type'] == 1]
-
-
-	print("-----df pos")
-	print(df_pos)
-	print("-----df neg")
-	print(df_neg)
-
-	df_pos.to_csv('dataframe_pos.csv', sep = '\t', header = True, index = True)
-	df_neg.to_csv('dataframe_neg.csv', sep = '\t', header = True, index = True)
-
-	return df_pos, df_neg
-
-
-
-
-def Tsne_by_tools(dataframe) :
-	''' Perform a tsne on the modified dataframe 
-
-	Parameters
-	----------
-	dataframe : Dataframe
-		Dataframe to perform t-sne on
-
-	Returns
-	-------
-	None
-
-	Plot
-	----
-	A t-sne of the dataframe for each columns
-
-
-	'''
-	arr_list = []
-	for data in dataframe :
-		x = dataframe[data]
-		data = np.array(x)
-		arr_list.append(data)
-	print(arr_list, len(arr_list))
-
-
-	tsne = []
-	i = 0
-	for array in arr_list :
-		print(array, type(array), array.shape, len(array))
-		for i in range(len(array)) :
-			if type(array[i]) == type([1]) :
-				print(array, array[i])
-				array[i] = np.asarray(array[i])
-
-		array = array.reshape(-1, 1)
-		tsne.append(tsne_data(array))
-		#i += 1
-
-
-
-	label = list(dataframe.columns)
-	print(label, type(label))
-	
-	print("--------------TSNE PERFORMING--------------")
-	for data in tsne :
-		sns.scatterplot(x = 'x', y = 'y', data = data)
-	plt.legend(label, prop = {'size' : 5.7})
-	if dataframe is df_pos :
-		plt.title("Tsne of positive set", fontsize = 15)
-	if dataframe is df_neg :
-		plt.title("Tsne of negative set", fontsize = 15)
-	plt.show()
-
-
-
-def tsne_data(to_data) :
-	''' Computes the values to perform a tsne
-
-	Parameters
-	----------
-	to_data : array
-		Data to compute a tsne on
-
-	Returns
-	-------
-	data : array
-		Results of the computed values of a tsne
-
-	'''
-
-	tsne = TSNE(n_components = 2, random_state = 0, perplexity = 50) #### OR default perplex = 30
-
-	X_2d = tsne.fit_transform(to_data)
-
-	data = pd.DataFrame()
-	data['x'] = X_2d[:,0]
-	data['y'] = X_2d[:,1]
-
-	return data
-
-
-def Tsne_all(pos, neg) :
-
-	print("---------------TSNE POS/NEG---------------")
-	arr_list = []
-	tsne = []
-	list_df = [pos, neg]
-
-	for df in list_df :
-		if df is pos :
-			print("df pos")
-			print(df)
-		elif df is neg :
-			print("df neg")
-			print(df)
-
-		#for index, elem in enumerate(df['ard2']) :
-		#	df['ard2'].iloc[index] = elem[to_plot] 
-
-		df = np.array(df)
-		print(df, len(df), type(df))
-
-		#for arr in df :
-		#	print(arr, len(arr), type(arr))
-
-
-		tsne.append(tsne_data(df))
-		label = list(pos.columns)
-		print(label, type(label))
-
-	
-		print("--------------TSNE PERFORMING--------------")
-		for data in tsne :
-			sns.scatterplot(x = 'x', y = 'y', data = data)
-	if list_df[0] is pos :
-		plt.legend(['pos', 'neg'], prop = {'size' : 5.7})
-	elif list_df[0] is neg :
-		plt.legend(['neg', 'pos'], prop = {'size' : 5.7})
-	plt.title("Tsne on positive and negative sets", fontsize = 15)
-	plt.show()
-	
-
-
-
-
-
-def Prop_Test(df1, df2, fold, col, to_plot) :
-	''' Calculates and computes a proportion test between two dataframes
-
-	Parameters
-	----------
-	df1, df2 : Dataframes
-		Dataframes to compute the test on
-
-	fold : int
-		Fold of pvalue (if computed pvalue > fold --> test is significant)
-
-	col : str (' ')
-		Column name of the results to be performed
-
-	'''
-
-	#if col == 'ard2' :
-	#	for index, elem in enumerate(df1[col]) :
-	#			df1['ard2'].iloc[index] = elem[to_plot]
-	#	for index, elem in enumerate(df2[col]) :
-	#			df2['ard2'].iloc[index] = elem[to_plot]
-
-	m_df1 = df1[col].mean()
-	m_df2 = df2[col].mean()
-	total = m_df1 + m_df2
-	print("Moyenne prop linker des df :", m_df1, m_df2)
-	print("H0 : même proportion\n", "H1 : proportions différentes")
-
-	# Conditions of application
-	assert len(df1)*m_df1 > 10, "Condition non validée"
-	assert len(df2)*m_df2 > 10, "Condition non validée"
-	assert len(df1)*(1-m_df1) > 10, "Condition non validée"
-	assert len(df2)*(1-m_df2) > 10, "Condition non validée"
-
-	print("Conditions de validité passées")
-
-	# Computation of the residual standard error
-	variance = (total*(1-total))
-	#variance = abs(total*(1-total))
-
-	std_error = np.sqrt(variance*(1/len(df1) + 1/len(df2)))
-	print("Erreur standard = ", std_error)
-
-	# Calculation of the statistic test
-	best = m_df1 - m_df2
-	print("Estimation :", best)
-	hyp_estimation = 0
-	test_stat = (best - hyp_estimation)/std_error
-	print("Résultat du test statistique : ", test_stat)
-	print("Difference : ", test_stat - best)
-
-	# Computation of pvalue
-	pvalue = 2*dist.norm.cdf(-np.abs(test_stat))
-	print("Pvalue = ", pvalue)
-
-	if pvalue <= fold : 
-		print("Pvalue < 0.05 --> pas de différence significative")
-	else : 
-		print("Pvalue > 0.05 --> existe une différence significative")
-
-
-def Mean_test(df1, df2, col) :
-	
-	print("Mean Test (Student t-test)")
-	print("----------------", col, "----------------")
-
-	#Control of the normaliy of the samples --> pvalue of shapiro test must be > fold
-	# (null hypothesis of a normal distribution)
-	x1, pval1 = shapiro(df1[col])
-	x2, pval2 = shapiro(df2[col])
-
-
-	#Control of the variance equality
-	# Fisher-Snedecor F-test
-	f(df1[col], df2[col])
-
-	#Anova unidirectional
-	stats.f_oneway(df1[col], df2[col])
-
-	#We compare the samples in order to see if there is a significant difference
-	y = stats.ttest_ind(df1[col], df2[col])
-	print("Computed pvalue : ", y[1])
-	pvalue = y[1]
-
-	if pvalue < 0.05 :
-		if pvalue < 0.001 : 
-			print("pvalue significant --> there is a difference, ***")
-		elif pvalue < 0.01 : 
-			print("pvalue significant --> there is a difference, **")
-		else :
-			print("pvalue significant --> there is a difference, *")
-	else : 
-		print("There is no significant difference")
-
 
 
 def Sep_long_proteom(path, pattern1, pattern2, fold) :
@@ -1613,12 +1330,12 @@ if __name__ == '__main__' :
 	# RADAR
 	path_radar = path_output+"RADAR/Phaedodactylum/"
 
-	results_ard2, results_radar = Data_Create("STDOUT_Phaedodactylum", 'TMHMM/Pour_Celine/New_Proteom_Phaedodactylum.fasta.txt', 'Phaedodactylum_RADAR.txt', 'TMHMM/files/')
-	final_results = dataframe_maker(results_ard2, results_radar, path_output+'TMHMM/files/')
+	#results_ard2, results_radar = Data_Create("STDOUT_Phaedodactylum", 'TMHMM/Pour_Celine/New_Proteom_Phaedodactylum.fasta.txt', 'Phaedodactylum_RADAR.txt', 'TMHMM/files/')
+	#final_results = dataframe_maker(results_ard2, results_radar, path_output+'TMHMM/files/')
 	#df = Modification(final_results, path_output+'TMHMM/files/')
-	#idt = rows_acc(path_output, 'ACC/rownames_*')
-	#df_f = add_df(idt, 'ACC/Acc_output_*', path_output, 'dataframe_interm.csv')
-	#writing(df_f)
+	idt = rows_acc(path_output, 'ACC/rownames_Phatr1_models_proteins.fasta.txt')
+	df_f = add_df(idt, 'ACC/Acc_output_Phatr1_models_proteins.fasta.txt', path_output, 'dataframe_interm.csv')
+	writing(df_f)
 
 	'''
 	# All Diatoms 
