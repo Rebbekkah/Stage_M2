@@ -869,24 +869,25 @@ def dataframe_maker(dico_ard2, dico_radar, pattern_prot_all) :
 	'''
 
 	dico_all = Proteom_all(pattern_prot_all)
-	print(dico_all)
 	idt_all = []
 
 	for idt in dico_all.keys() :
 		idt_all.append(idt)
 
 	idt_all = np.array(idt_all)
+	
+	#print(idt_all, len(idt_all))
 
 	col = ['type', 'ard2', 'radar']
 	df = pd.DataFrame(0, index = idt_all, columns = col)
 
 
 
-	for prote, dic in dico_ard2.items() :
-		idt_l = []
+	#for prote, dic in dico_ard2.items() :
+	#	idt_l = []
 		#i = 0
-		for idt, val in dic.items() :
-			idt_l.append(idt)
+		#for idt, val in dic.items() :
+		#	idt_l.append(idt)
 		#if prote == 'neg' :
 		#	for idt in df.index :
 		#		idt = str(idt)
@@ -901,12 +902,31 @@ def dataframe_maker(dico_ard2, dico_radar, pattern_prot_all) :
 	for prote, dic in dico_ard2.items() :
 		for idt, res in dic.items() :
 			if idt in idt_all : 
+				#print("yes adr2")
 				df.loc[idt, 'ard2'] = [res]	
 
 	for prote, dic in dico_radar.items() :
 		for idt, res in dic.items() :
 			if idt in idt_all : 
+				#print("yes radar")
 				df.loc[idt, 'radar'] = [res]
+
+
+	'''
+	for idt in idt_all :
+		if idt.startswith('>jgi|Phatr1') :
+			print(idt)
+			if idt in df.index :
+				print(df[idt, :])
+			print("--------------")
+	'''
+
+	for i in range(len(df)) :
+		#print(df.index[i])
+		if df.index[i].startswith('>jgi|Phatr1|') :
+			print(df.index[i])
+			print(df[i, :])
+			print("----------")
 
 
 	print("---------df1")
@@ -914,7 +934,7 @@ def dataframe_maker(dico_ard2, dico_radar, pattern_prot_all) :
 	df.to_csv('dataframe_first.csv', sep = '\t', header = True, index = True)
 
 	#print("------------------------DICO ard2------------------------")
-	#print(dico_ard2.values())
+	print(dico_ard2)
 	#print("------------------------END DICO ard2------------------------")
 	return df
 
@@ -1594,7 +1614,7 @@ if __name__ == '__main__' :
 
 	results_ard2, results_radar = Data_Create("STDOUT_Phaedodactylum", 'TMHMM/Pour_Celine/*.txt', 'Phaedodactylum_RADAR.txt', 'TMHMM/files/')
 	final_results = dataframe_maker(results_ard2, results_radar, path_output+'TMHMM/files/')
-	df = Modification(final_results, path_output+'TMHMM/files/')
+	#df = Modification(final_results, path_output+'TMHMM/files/')
 	#idt = rows_acc(path_output, 'ACC/rownames_*')
 	#df_f = add_df(idt, 'ACC/Acc_output_*', path_output, 'dataframe_interm.csv')
 	#writing(df_f)
