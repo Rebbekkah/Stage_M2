@@ -873,12 +873,12 @@ def adressage_alpha_deeploc(path1, path_deeploc, path_wolfpsort) :
 	#print(idt)
 	'''
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/')
+	#os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/')
 
 	df = pd.read_csv(path1+'df_adr.csv', sep = '\t')
 	df = df.set_index(df['Unnamed: 0'], inplace = False)
 	del df['Unnamed: 0']
-	#print(df)
+	print(df)
 	idt = list(df.index)
 	#print(idt)
 	#print(len(idt))
@@ -1628,6 +1628,81 @@ def Filtrage_model2() :
 	comp_methode_2(path_method_Cel+'M2_*/*')
 
 
+def Filtrage_deeploc_Phaedo(file_dploc, file_alpha) :
+
+	print(file_dploc)
+	print(file_alpha)
+	idt_filtred = []
+	idt_dploc = []
+
+	df_ = pd.read_csv(file_dploc, sep = '\t')
+	df_ = df_.set_index('>'+df_['ID'], inplace = False)
+	del df_['ID']
+	print(df_)
+	idt = list(df_.index)
+	alpha = get_idt(file_alpha)
+
+	for ident in idt :
+		if df_.loc[ident, 'Location'] == 'Mitochondrion' or df_.loc[ident, 'Location'] == 'Plastid' :
+			idt_dploc.append(ident)
+
+	print(len(idt_dploc))
+
+	for ident in alpha :
+		if ident in idt_dploc :
+			idt_filtred.append(ident)
+
+	print(idt_filtred, len(idt_filtred))
+
+	with open('prot_alpha_filtred_Phaedo.txt', 'w') as filout :
+		for ident in idt_filtred :
+			filout.write(ident+'\n')
+
+
+def Proteom_alpha_Phaedo() :
+
+
+	os.chdir(path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/Apres_filtrage/')
+
+
+
+'''	
+	all_proteom = Proteom_all(path_Chlamy_arabi)
+
+	alpha_Chlamy = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/new_pred_Arabidopsis_vs_m2.txt')
+	alpha_Arabi = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/new_pred_Chlamy_vs_m2.txt')
+
+	list_alpha = [alpha_Arabi, alpha_Chlamy]
+
+
+	proteom = {}
+	for l in list_alpha :
+		dic = {}
+		if l is alpha_Arabi :
+			print("Arabi")
+			for prot in l :
+				dic[prot] = all_proteom[prot]
+			proteom['Arabidopsis'] = dic
+		if l is alpha_Chlamy :
+			print("Chlamy")
+			for prot in l :
+				dic[prot] = all_proteom[prot]
+			proteom['Chlamydomonas'] = dic
+
+
+	with open('Proteom_my_pred_Arabidopsis.txt', 'w') as filout_1 :
+		with open('Proteom_my_pred_Chlamydomonas.txt', 'w') as filout_2 :
+				for org, dic in proteom.items() :
+					if org == 'Arabidopsis' :
+						for prot, seq in dic.items() :
+							filout_1.write(prot+'\n'+seq+'\n')
+					if org == 'Chlamydomonas' :
+						for prot, seq in dic.items() :
+							filout_2.write(prot+'\n'+seq+'\n')
+'''
+
+
+
 
 
 if __name__ == '__main__' :
@@ -1644,8 +1719,9 @@ if __name__ == '__main__' :
 		'transcription', 'traduction', 'histone', 'Rubis', 'rubis', 'repeat', 'mTERF', 'PPDK', 'AMPK']
 
 
+	# Chlamydomonas & Arabidopsis
 
-	os.chdir(path_Chlamy_arabi)
+	#os.chdir(path_Chlamy_arabi)
 
 	#which_proteom()
 	#is_pos_neg()
@@ -1691,3 +1767,29 @@ if __name__ == '__main__' :
 	#Filtrage_model2()
 	#what_is_in_filtrage_deeploc_chl(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/', path_pos_neg+'1081_tem_pos.fasta_line')
 	#what_is_in_filtrage_deeploc_arabi()
+
+	# Phaedodactylum
+
+	os.chdir(path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/')
+
+	#Filtrage_deeploc_Phaedo(path_to_script+'Celine/proteomes_diatom/outputs/DEEPLOC/Phaedodactylum/New_Proteom_Phatr1_models_proteins.fasta.txt_DEEPLOC.txt', \
+	#	path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/prot_alpha.txt')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
