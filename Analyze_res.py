@@ -220,10 +220,9 @@ def comp_methode_2(path_cel) :
 
 	print("----------- MÉTHODE 2 -----------")
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/comp_M2/')
 
-
-	file = path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/prot_alpha_filtred.txt'
+	file = path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/comp_M2/prot_alpha_filtred_dploc_Chl_Ara.txt'
 	print(file, len(file), type(file))
 
 	res = glob.glob(path_cel)
@@ -324,12 +323,12 @@ def sep_alpha(osdir, prot_alpha) :
 
 def proteom_alpha() :
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/comp_M2/')
 	
 	all_proteom = Proteom_all(path_Chlamy_arabi)
 
-	alpha_Chlamy = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/new_pred_Arabidopsis_vs_m2.txt')
-	alpha_Arabi = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/new_pred_Chlamy_vs_m2.txt')
+	alpha_Chlamy = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Filtrage_deeploc_alpha_Chlamy.txt')
+	alpha_Arabi = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Filtrage_deeploc_alpha_Arabi.txt')
 
 	list_alpha = [alpha_Arabi, alpha_Chlamy]
 
@@ -349,8 +348,8 @@ def proteom_alpha() :
 			proteom['Chlamydomonas'] = dic
 
 
-	with open('Proteom_my_pred_Arabidopsis.txt', 'w') as filout_1 :
-		with open('Proteom_my_pred_Chlamydomonas.txt', 'w') as filout_2 :
+	with open('Proteom_filtred_dploc_Arabidopsis.txt', 'w') as filout_1 :
+		with open('Proteom_filtred_dploc_Chlamydomonas.txt', 'w') as filout_2 :
 				for org, dic in proteom.items() :
 					if org == 'Arabidopsis' :
 						for prot, seq in dic.items() :
@@ -1662,46 +1661,63 @@ def Filtrage_deeploc_Phaedo(file_dploc, file_alpha) :
 def Proteom_alpha_Phaedo() :
 
 
-	os.chdir(path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/Apres_filtrage/')
+	os.chdir(path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/Apres_filtrage_Hectar/')
+
+	all_proteom = Proteom_all(path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/')
+	alpha = get_idt(path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/Apres_filtrage_Hectar/prot_alpha_filtred_hectar_Phaedo.txt')
+
+	dico = {}
+	for prot in alpha : 
+		dico[prot] = all_proteom[prot]
+
+	with open('Proteom_alpha_filtred_hectar_Phaedo.txt', 'w') as filout :
+		for idt, seq in dico.items() :
+			filout.write(idt+'\n'+seq+'\n')
 
 
 
-'''	
-	all_proteom = Proteom_all(path_Chlamy_arabi)
+def Parsing_Hectar(file) :
 
-	alpha_Chlamy = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/new_pred_Arabidopsis_vs_m2.txt')
-	alpha_Arabi = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/new_pred_Chlamy_vs_m2.txt')
+	os.chdir(path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/Apres_filtrage_Hectar/')
 
-	list_alpha = [alpha_Arabi, alpha_Chlamy]
+	df = pd.read_csv(file, sep = '\t')
+	df = df.set_index(df['protein id'], inplace = False)
+	del df['protein id']
+	print(df)
 
+	idt = []
+	for index, elem in enumerate(df['predicted targeting category']) :
+		if elem == 'signal peptide' :
+			idt.append(df.index[index])
+	print(idt, len(idt))
 
-	proteom = {}
-	for l in list_alpha :
-		dic = {}
-		if l is alpha_Arabi :
-			print("Arabi")
-			for prot in l :
-				dic[prot] = all_proteom[prot]
-			proteom['Arabidopsis'] = dic
-		if l is alpha_Chlamy :
-			print("Chlamy")
-			for prot in l :
-				dic[prot] = all_proteom[prot]
-			proteom['Chlamydomonas'] = dic
+	with open('prot_alpha_filtred_hectar_Phaedo.txt', 'w') as filout :
+		for prot in idt :
+			prot = '>'+prot
+			filout.write(prot+'\n')
 
 
-	with open('Proteom_my_pred_Arabidopsis.txt', 'w') as filout_1 :
-		with open('Proteom_my_pred_Chlamydomonas.txt', 'w') as filout_2 :
-				for org, dic in proteom.items() :
-					if org == 'Arabidopsis' :
-						for prot, seq in dic.items() :
-							filout_1.write(prot+'\n'+seq+'\n')
-					if org == 'Chlamydomonas' :
-						for prot, seq in dic.items() :
-							filout_2.write(prot+'\n'+seq+'\n')
-'''
+def Prot_finales_Phaedo(file_dploc, file_hctr) :
+	
+	os.chdir(path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/Prot_finales/')
+	
+	dploc = get_idt(file_dploc)
+	hctr = get_idt(file_hctr)
+	print(len(dploc), len(hctr))
 
+	final = []
+	for idt in dploc :
+		if idt not in hctr :
+			final.append(idt)
+	for idt in hctr :
+		if idt not in dploc :
+			if idt not in final :
+				final.append(idt)
+	print(final, len(final))
 
+	with open('idt_alpha_filtred_Phaedo.txt', 'w') as filout :
+		for idt in final :
+			filout.write(idt+'\n')
 
 
 
@@ -1774,9 +1790,11 @@ if __name__ == '__main__' :
 
 	#Filtrage_deeploc_Phaedo(path_to_script+'Celine/proteomes_diatom/outputs/DEEPLOC/Phaedodactylum/New_Proteom_Phatr1_models_proteins.fasta.txt_DEEPLOC.txt', \
 	#	path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/prot_alpha.txt')
-
-
-
+	#Proteom_alpha_Phaedo()
+	#Parsing_Hectar(path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/Apres_filtrage_Hectar/Galaxy-History-Unnamed-history/datasets/HECTAR_results_on_Proteom_alpha_Phaedo.txt_8.tabular')
+	#Prot_finales_Phaedo(path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/Apres_filtrage_Deeploc/prot_alpha_filtred_dploc_Phaedo.txt', \
+	#	path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/Apres_filtrage_Hectar/prot_alpha_filtred_hectar_Phaedo.txt')
+	comp_methode_2(path_method_Cel+'M2_*/*')
 
 
 
