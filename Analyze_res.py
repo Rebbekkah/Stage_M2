@@ -1823,41 +1823,90 @@ def comp_RF1_RF2(path_comp) :
 
 
 
-def res_table(path_comp) :
+def res_table_notin(path_comp) :
 
 	os.chdir(path_comp)
 
-	col = get_idt(path_comp+'col_table_chlamy.txt')
-	#print(col, len(col))
+	col = get_idt(path_comp+'col_table_arabi.txt')
 
-	rf1 = path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Filtrage_deeploc_alpha_Chlamy.txt'
-	rf2 = path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Filtrage_deeploc_alpha_Chlamy.txt'
+	rf1 = path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Arabi.txt'
+	rf2 = path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/alpha_Arabi.txt'
 	lrf = [rf1, rf2]
 
+	new = []
 	i = 1
 	for rf in lrf :
-		new = []
-		idt = get_idt(rf)
-		idt = sorted(idt)
-		print(idt, len(idt))
-
-		for prot in col :
-			if prot in idt :
-				new.append(prot)
-
-		with open('new_prot_RF'+str(i)+'_filtred_Chlamy.txt', 'w') as filout :
-			for prot in new :
-				filout.write(prot+'\n')
-
-		i += 1
+		idt = []
+		idt_ = get_idt(rf)
+		for prot in idt_ :
+			prot = prot.split('>')[1]
+			if prot not in idt :
+				idt.append(prot)
 		
-		#for prot in col :
+		for prot in idt :
+			if prot not in col :
+				if prot not in new :
+					new.append(prot)
+
+	print(new, len(new))
+
+	with open('not_in_excel_Arabi.txt', 'w') as filout :
+		for prot in new :
+			filout.write(prot+'\n')
 
 
+def res_table_comp(path_comp) :
+
+	os.chdir(path_comp)
+
+	comp = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/eggNOG_res/Parsing/annoted_Chlamy.txt')
+	col_ = get_idt(path_comp+'col_table_all_Chlamy.txt')
+
+	col = []
+	for idt in col_ :
+		idt = '>'+idt
+		col.append(idt)
+	col = col[:-1]
 	
+	print(len(col), len(comp))
+
+	cross = []
+	for idt in col :
+		if idt in comp :
+			cross.append('x')
+		else :
+			cross.append('')
+	print(cross, len(cross))
 
 
+	with open('Annot_Chlamy.txt', 'w') as filout :
+		for c in cross :
+			filout.write(c+'\n')
 
+
+def res_table_annot(path_comp) :
+
+	os.chdir(path_comp)
+
+	annot = pd.read_csv(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/eggNOG_res/Parsing/df_Chlamy.csv', sep = '\t')
+	annot = annot.set_index(annot['Unnamed: 0'], inplace = False)
+	del annot['Unnamed: 0']
+
+
+	col_ = get_idt(path_comp+'col_table_all_Chlamy.txt')
+	col = []
+	for idt in col_ :
+		idt = '>'+idt
+		col.append(idt)
+	col = col[:-1]
+
+	print(annot)
+	print(annot[:, 'Description'])
+	
+	lannot = []
+	for idt in col :
+		if idt in annot.index :
+			lannot = []
 
 
 if __name__ == '__main__' :
@@ -1940,9 +1989,9 @@ if __name__ == '__main__' :
 	# Comparaison RF1 & RF2
 	#mat_conf_RF1_RF2(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/')
 	#comp_RF1_RF2(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/')
-	res_table(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
-
-
+	#res_table_notin(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
+	#res_table_comp(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
+	res_table_annot(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
 
 
 
