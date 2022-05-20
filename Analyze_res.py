@@ -1859,8 +1859,8 @@ def res_table_comp(path_comp) :
 
 	os.chdir(path_comp)
 
-	comp = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/eggNOG_res/Parsing/annoted_Chlamy.txt')
-	col_ = get_idt(path_comp+'col_table_all_Chlamy.txt')
+	comp = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Apres_filtrage_comp/not_in_pos_arabi.txt')
+	col_ = get_idt(path_comp+'col_table_all_Arabi.txt')
 
 	col = []
 	for idt in col_ :
@@ -1879,7 +1879,7 @@ def res_table_comp(path_comp) :
 	print(cross, len(cross))
 
 
-	with open('Annot_Chlamy.txt', 'w') as filout :
+	with open('New_Arabi.txt', 'w') as filout :
 		for c in cross :
 			filout.write(c+'\n')
 
@@ -1888,26 +1888,59 @@ def res_table_eggnog(path_comp) :
 
 	os.chdir(path_comp)
 
-	annot = pd.read_csv(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/eggNOG_res/Parsing/df_Chlamy.csv', sep = '\t')
-	annot = annot.set_index(annot['Unnamed: 0'], inplace = False)
-	del annot['Unnamed: 0']
-
-
-	col_ = get_idt(path_comp+'col_table_all_Chlamy.txt')
-	col = []
-	for idt in col_ :
-		idt = '>'+idt
-		col.append(idt)
-	col = col[:-1]
-
+	annot = pd.read_excel(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/eggNOG_res/Chlamy/MM_ouj_rbwn.emapper.annotations.xlsx')
 	print(annot)
-	print(annot[:, 'Description'])
+	annot = annot.set_index(annot['query'], inplace = False)
+	del annot['query']
+
+	non_annot = []
+	non_annot_ = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/eggNOG_res/Parsing/non_annoted_Chlamy.txt')
+	for truc in non_annot_ :
+		truc = truc.split('>')[1]
+		non_annot.append(truc)
+
+	col = get_idt(path_comp+'col_table_all_Chlamy.txt')
+	col = col[:-1]
+	print(annot)
 
 	lannot = []
+	pfam = []
+	nonan = []
 	for idt in col :
 		if idt in annot.index :
-			lannot = []
+			if annot.loc[idt, 'Description'] != '-' :
+				lannot.append(annot.loc[idt, 'Description'])
+			elif annot.loc[idt, 'Description'] == '-' :
+				lannot.append('')
+		elif idt not in annot.index:
+			lannot.append('')
 
+		if idt in annot.index :
+			if annot.loc[idt, 'PFAMs'] != '-' :
+				pfam.append(annot.loc[idt, 'PFAMs'])
+			elif annot.loc[idt, 'PFAMs'] == '-' :
+				pfam.append('')
+		elif idt not in annot.index:
+			pfam.append('')
+		if idt in non_annot :
+			nonan.append('~')
+		else :
+			nonan.append('')
+
+
+	print(lannot, len(lannot))
+	print(pfam, len(pfam))
+	print(nonan, len(nonan))
+
+	with open('pfam_domain_Chlamy.txt', 'w') as filout :
+		for domain in pfam :
+			filout.write(domain+'\n')
+	with open('annot_eggnog_Chlamy.txt', 'w') as filout :
+		for annotation in lannot :
+			filout.write(annotation+'\n')
+	with open('non_annot_eggnog_Chlamy.txt', 'w') as filout :
+		for annotation in nonan :
+			filout.write(annotation+'\n')
 
 
 def res_table_annot(path_comp) :
@@ -1929,17 +1962,32 @@ def res_table_annot(path_comp) :
 	print(df)
 	
 	name = []
+	definition = []
 	for idt in col :
 		if idt in list(df.index) :
 			if df.loc[idt, 'GENENAME_V5_5'] != 0 :
 				name.append(df.loc[idt, 'GENENAME_V5_5'])
 			elif df.loc[idt, 'genesymbol'] != 0 :
 				name.append(df.loc[idt, 'genesymbol'])
-			else :
+			elif df.loc[idt, 'GENENAME_V5_5'] == 0 and df.loc[idt, 'genesymbol'] == 0 :
 				name.append('')
-	print(name, len(name))
+			if df.loc[idt, 'DESCRIPTION_V5_5'] != 0 and df.loc[idt, 'definition'] != 0 :
+				definition.append(df.loc[idt, 'DESCRIPTION_V5_5']+' // '+df.loc[idt, 'definition'])
+			elif df.loc[idt, 'DESCRIPTION_V5_5'] != 0 and df.loc[idt, 'definition'] == 0 :
+				definition.append(df.loc[idt, 'DESCRIPTION_V5_5'])
+			elif df.loc[idt, 'DESCRIPTION_V5_5'] == 0 and df.loc[idt, 'definition'] != 0 :
+				definition.append(df.loc[idt, 'definition'])
+			elif df.loc[idt, 'DESCRIPTION_V5_5'] == 0 and df.loc[idt, 'definition'] == 0 :
+				definition.append('')
+	print(definition, len(definition))
 
-	with open()
+	with open('Genename_Chlamy_test.txt', 'w') as filout :
+		for idt in name :
+			filout.write(idt+'\n')
+
+	with open('Annotation_Chlamy.txt', 'w') as filout :
+		for words in definition :
+			filout.write(words+'\n')
 
 
 
@@ -2025,9 +2073,9 @@ if __name__ == '__main__' :
 	#mat_conf_RF1_RF2(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/')
 	#comp_RF1_RF2(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/')
 	#res_table_notin(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
-	#res_table_comp(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
+	res_table_comp(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
 	#res_table_eggnog(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
-	res_table_annot(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
+	#res_table_annot(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
 
 
 
