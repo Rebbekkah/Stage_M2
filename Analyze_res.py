@@ -1884,7 +1884,7 @@ def res_table_comp(path_comp) :
 			filout.write(c+'\n')
 
 
-def res_table_annot(path_comp) :
+def res_table_eggnog(path_comp) :
 
 	os.chdir(path_comp)
 
@@ -1902,11 +1902,46 @@ def res_table_annot(path_comp) :
 
 	print(annot)
 	print(annot[:, 'Description'])
-	
+
 	lannot = []
 	for idt in col :
 		if idt in annot.index :
 			lannot = []
+
+
+
+def res_table_annot(path_comp) :
+
+	os.chdir(path_comp)
+
+	col_ = get_idt(path_comp+'not_in_excel_Chlamy.txt')
+	col = []
+	for idt in col_ :
+		idt = idt.split('.t')[0]
+		col.append(idt)
+	col = col[:-1]
+	#print(col, len(col))
+
+	df = pd.read_excel(path_comp+'CHLAMY_v5_6_annotation_20180801.xlsx')
+	df = df.set_index(df['LOCUS_ID'], inplace = False)
+	del df['LOCUS_ID']
+	df.fillna(0, inplace = True)
+	print(df)
+	
+	name = []
+	for idt in col :
+		if idt in list(df.index) :
+			if df.loc[idt, 'GENENAME_V5_5'] != 0 :
+				name.append(df.loc[idt, 'GENENAME_V5_5'])
+			elif df.loc[idt, 'genesymbol'] != 0 :
+				name.append(df.loc[idt, 'genesymbol'])
+			else :
+				name.append('')
+	print(name, len(name))
+
+	with open()
+
+
 
 
 if __name__ == '__main__' :
@@ -1991,6 +2026,7 @@ if __name__ == '__main__' :
 	#comp_RF1_RF2(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/')
 	#res_table_notin(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
 	#res_table_comp(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
+	#res_table_eggnog(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
 	res_table_annot(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
 
 
