@@ -6,7 +6,8 @@ import glob
 import seaborn as sns
 from os.path import basename
 import matplotlib.pyplot as plt
-
+from matplotlib_venn import venn3, venn3_circles
+from matplotlib_venn import venn2, venn2_circles
 
 
 def which_proteom() :
@@ -1991,6 +1992,36 @@ def res_table_annot(path_comp) :
 
 
 
+def Venn_diagram() :
+
+	#venn3(subsets = (1081, 1196, 0, 2271, 545, 12, 0), 
+	#	set_labels = ('Positifs', 'Négatifs', 'Machine Learning : α-solénoïdes prédites'),
+	#	set_colors = ('green', 'red', 'brown'))
+	#venn3_circles(subsets = (1081, 1196, 0, 2271, 545, 12, 0), linewidth = 0.4)
+	#plt.title('A')
+	#plt.show()
+
+	v = venn2(subsets = (2271, 1067, 497), 
+	set_labels = ('Machine Learning', 'Comparaison et alignement de motifs'),
+	set_colors = ('brown', 'blue'))
+	v = venn2_circles(subsets = (2271, 1067, 497), linewidth = 0.4)
+	label = ['11 OPR', '107 OPR', '390 PPR', '304 PPR']
+	for lab in label: 
+		v.get_label_by_id(lab).set_text(lab)
+
+	'''
+	plt.axhline(0, linestyle = '--')
+	plt.axvline(0, linestyle = '--')
+	plt.plot(0, 0, '107 OPR & 390 PPR')
+	plt.plot(-0.5, -0.2, '11 OPR')
+	plt.plot(0.5, 0.5, '304 PPR')
+	'''
+	plt.title('B')
+	plt.show()
+
+
+
+
 
 if __name__ == '__main__' :
 
@@ -2073,13 +2104,13 @@ if __name__ == '__main__' :
 	#mat_conf_RF1_RF2(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/')
 	#comp_RF1_RF2(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/')
 	#res_table_notin(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
-	res_table_comp(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
+	#res_table_comp(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
 	#res_table_eggnog(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
 	#res_table_annot(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
 
 
 
-
+	Venn_diagram()
 
 
 
