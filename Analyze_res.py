@@ -1402,7 +1402,7 @@ def parsing_eggnog(path_df) :
 
 	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
 
-	files = glob.glob(path_df+'df_*.csv')
+	files = glob.glob(path_df+'df_*.tsv')
 	files.sort()
 	print(files, len(files))
 	col = ['Description', 'PFAMs']
@@ -1994,20 +1994,21 @@ def res_table_annot(path_comp) :
 
 def Venn_diagram() :
 
-	#venn3(subsets = (1081, 1196, 0, 2271, 545, 12, 0), 
+	#venn3(subsets = (536, 1184, 0, 1714, 545, 12, 0), 
 	#	set_labels = ('Positifs', 'Négatifs', 'Machine Learning : α-solénoïdes prédites'),
 	#	set_colors = ('green', 'red', 'brown'))
-	#venn3_circles(subsets = (1081, 1196, 0, 2271, 545, 12, 0), linewidth = 0.4)
+	#venn3_circles(subsets = (536, 1184, 0, 1714, 545, 12, 0), linewidth = 0.4)
 	#plt.title('A')
 	#plt.show()
 
-	v = venn2(subsets = (2271, 1067, 497), 
-	set_labels = ('Machine Learning', 'Comparaison et alignement de motifs'),
-	set_colors = ('brown', 'blue'))
-	v = venn2_circles(subsets = (2271, 1067, 497), linewidth = 0.4)
-	label = ['11 OPR', '107 OPR', '390 PPR', '304 PPR']
-	for lab in label: 
-		v.get_label_by_id(lab).set_text(lab)
+	
+	venn2(subsets = (1774, 570, 497), 
+		set_labels = ('Machine Learning', 'Comparaison et alignement de motifs'),
+		set_colors = ('brown', 'blue'))
+	venn2_circles(subsets = (1774, 570, 497), linewidth = 0.4)
+	#label = ['11 OPR', '107 OPR', '390 PPR', '304 PPR']
+	#for lab in label: 
+	#	v.get_label_by_id(lab).set_text(lab)
 
 	'''
 	plt.axhline(0, linestyle = '--')
@@ -2097,6 +2098,7 @@ if __name__ == '__main__' :
 	#Prot_finales_Phaedo(path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/Apres_filtrage_Deeploc/prot_alpha_filtred_dploc_Phaedo.txt', \
 	#	path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/Apres_filtrage_Hectar/prot_alpha_filtred_hectar_Phaedo.txt')
 	#comp_methode_2(path_method_Cel+'M2_*/*')
+	#parsing_eggnog(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
 
 
 
