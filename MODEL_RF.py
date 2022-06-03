@@ -731,7 +731,7 @@ def multiple(N, percent) :
 		df_imp = Importance(random_forest, app, importance)
 		imp.append(df_imp)
 
-		wp, bd, accuracy, sensibility, specificity = Perf_calculator(predictions, val_pred)
+		wp, bp, accuracy, sensibility, specificity = Perf_calculator(predictions, val_pred)
 		lwp.append(wp)
 		lbp.append(bp)
 		acc.append(accuracy)
@@ -752,7 +752,7 @@ def multiple(N, percent) :
 			if prot not in ind :
 				ind.append(prot)
 
-	df_prot = pd.Dataframe(0, index = np.array(ind), columns = ['Score', 'Keep'])
+	df_prot = pd.DataFrame(0, index = np.array(ind), columns = ['Score', 'Keep'])
 
 	for prot in ind :
 		for l in lwp :
@@ -763,11 +763,12 @@ def multiple(N, percent) :
 		fold_sup = percent*N
 		fold_inf = N-(percent*N)
 		if elem >= fold_sup :
-			df_prot.iloc[index, 'Keep'] == 'Yes'
+			df_prot['Keep'].iloc[index] = 'Yes'
 		elif fold_inf < elem < fold_sup : 
-			df_prot.iloc[index, 'Keep'] == 'Middle'
+			df_prot['Keep'].iloc[index] = 'Middle'
 		else : 
-			df_prot.iloc[index, 'Keep'] == 'No'
+			df_prot['Keep'].iloc[index] = 'No'
+	print(df_prot)
 
 	df_prot.to_csv('df_prot_nrun'+str(N)+'.csv', sep = '\t', header = True, index = True)
 
@@ -778,8 +779,25 @@ def multiple(N, percent) :
 
 	for index, elem in enumerate(df_prot['Keep']) :
 		if elem == 'Yes' :
+			sup_prot.append(df_prot.index[index])
+		elif elem == 'Middle' :
+			mid_prot.append(df_prot.index[index])
+		else : 
+			inf_prot.append(df_prot.index[index])
 
+	if not os.path.exists(path_multiple+'run'+str(N)):
+		os.makedirs(path_multiple+'run'+str(N))
+	os.chdir(path_multiple+'run'+str(N))
 
+	with open('sup_prot_nrun'+str(N)+'.txt', 'w') as filout1 :
+		with open('mid_prot_nrun'+str(N)+'.txt', 'w') as filout2 :
+			with open('inf_prot_nrun'+str(N)+'.txt', 'w') as filout3 :
+				for prot in sup_prot :
+					filout1.write(prot+'\n')
+				for prot in mid_prot :
+					filout2.write(prot+'\n')
+				for prot in inf_prot :
+					filout3.write(prot+'\n')	
 
 
 	print("Sur "+str(N)+" run :")
@@ -798,6 +816,7 @@ if __name__ == '__main__' :
 	path_pos_neg = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
 	path_method_Cel = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/'
 	path_script = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/'
+	path_multiple = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/multiple_model/"
 
 	'''
 	# Chlamydomonas & Arabidopsis
@@ -863,8 +882,8 @@ if __name__ == '__main__' :
 	#	random_forest, 'dataframe_all.csv', 'Phaedodactylum')
 
 
-	os.chdir("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/multiple_model/")
-	multiple(10000, 0.85)
+	os.chdir(path_multiple)
+	multiple(15, 0.85)
 
 
 
