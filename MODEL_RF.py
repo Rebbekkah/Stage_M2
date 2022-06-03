@@ -405,7 +405,8 @@ def Perf_calculator(pred_test, pred_val) :
 		for idt in index_bp :
 			filout.write(idt+"\n")
 
-	return index_wp, index_bp
+	return index_wp, index_bp, Accuracy, Sensibility, Specificity
+	#return Accuracy, Sensibility, Specificity
 
 
 def which_clade(df_test, df_val) :
@@ -707,6 +708,87 @@ def select_imp(file) :
 	return dico
 
 
+def multiple(N, percent) :
+
+	acc = []
+	sens = []
+	spe = []
+	imp = []
+	lwp = []
+	lbp = []
+
+	for i in range(N) :
+	
+		print("--------------------------------RUN "+str(i)+"--------------------------------")
+
+		df_1 = data_reading(path+'dataframe_all.csv')
+		df = df_for_Diatoms(df_1)
+
+		sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
+		random_forest = model()
+	
+		model_res_, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
+		df_imp = Importance(random_forest, app, importance)
+		imp.append(df_imp)
+
+		wp, bd, accuracy, sensibility, specificity = Perf_calculator(predictions, val_pred)
+		lwp.append(wp)
+		lbp.append(bp)
+		acc.append(accuracy)
+		sens.append(sensibility)
+		spe.append(specificity)
+
+	macc = np.mean(acc)
+	msens = np.mean(sens)
+	mspe = np.mean(spe)
+
+	ind = []
+	for l in lwp :
+		for prot in l :
+			if prot not in ind :
+				ind.append(prot)
+	for l in lbp :
+		for prot in l :
+			if prot not in ind :
+				ind.append(prot)
+
+	df_prot = pd.Dataframe(0, index = np.array(ind), columns = ['Score', 'Keep'])
+
+	for prot in ind :
+		for l in lwp :
+			if prot in l :
+				df_prot.loc[prot, 'Score'] += 1
+
+	for index, elem in enumerate(df_prot['Score']) :
+		fold_sup = percent*N
+		fold_inf = N-(percent*N)
+		if elem >= fold_sup :
+			df_prot.iloc[index, 'Keep'] == 'Yes'
+		elif fold_inf < elem < fold_sup : 
+			df_prot.iloc[index, 'Keep'] == 'Middle'
+		else : 
+			df_prot.iloc[index, 'Keep'] == 'No'
+
+	df_prot.to_csv('df_prot_nrun'+str(N)+'.csv', sep = '\t', header = True, index = True)
+
+
+	sup_prot = []
+	mid_prot = []
+	inf_prot = []
+
+	for index, elem in enumerate(df_prot['Keep']) :
+		if elem == 'Yes' :
+
+
+
+
+	print("Sur "+str(N)+" run :")
+	print("MEAN ACCURACY :", macc)
+	print("MEAN SENSIBILITY :", msens)
+	print("MEAN SPECIFICITY :", mspe)
+
+	#print(imp)
+
 
 if __name__ == '__main__' :
 
@@ -761,26 +843,28 @@ if __name__ == '__main__' :
 
 	# Phaedodactylum 
 
-	os.chdir(path_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/')
+	#os.chdir(path_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/')
 
-	df_1 = data_reading(path+'dataframe_all.csv')
-	df = df_for_Diatoms(df_1)
+	#df_1 = data_reading(path+'dataframe_all.csv')
+	#df = df_for_Diatoms(df_1)
 
-	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
+	#sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
 
-	random_forest = model()
+	#random_forest = model()
 	#Optimal_parameters(app)
 
-	model_res_, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
-	df_imp = Importance(random_forest, app, importance)
-	Perf_calculator(predictions, val_pred)
+	#model_res_, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
+	#df_imp = Importance(random_forest, app, importance)
+	#Perf_calculator(predictions, val_pred)
 
 	#clade = which_clade(predictions, val_pred)
 
-	alphasol, nonalphasol, df_pred = To_Predict(path_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/',\
-		random_forest, 'dataframe_all.csv', 'Phaedodactylum')
+	#alphasol, nonalphasol, df_pred = To_Predict(path_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/',\
+	#	random_forest, 'dataframe_all.csv', 'Phaedodactylum')
 
 
+	os.chdir("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/multiple_model/")
+	multiple(10000, 0.85)
 
 
 
