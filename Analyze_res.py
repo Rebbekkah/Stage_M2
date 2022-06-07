@@ -2066,6 +2066,9 @@ def right_res_deeploc_porph() :
 
 def right_res_radar_porph() :
 
+
+################## PAS FINITO ##################
+
 	keep = []
 	prot = []
 	new_proteom = read_proteom(path_to_script+'Celine/algue_rouge/New_Proteom_Porphyridium_purpureum_NCBI_GCA_008690995.1_P_purpureum_CCMP1328_Hybrid_assembly_protein.faa.txt')
@@ -2076,15 +2079,67 @@ def right_res_radar_porph() :
 				idt = line.strip()
 				if idt in new_proteom.keys() :
 					keep.append(idt)
-			else :
+			elif not line.startswith('>') and '>KAA' in line :
+				idt = '>'+line.split('>')[1]
+				print("ICIIIIII", idt)
+				if idt in new_proteom.keys() :
+					print("LAAAAA", idt)
+					keep.append(idt)
+			else : ##################################################
 				if idt in new_proteom.keys() :
 					keep.append(line)
 
-	#print(keep)
+
+	#for i in range(len(keep)) :
+	#	if not keep[i].startswith('>KA') and '>KAA' in keep[i] :
+			#print(keep[i])
+	#		keep[i] = '>'+keep[i].split('>')[1]
+			#print(keep[i])
+			#print("----------")
+
+	for i in range(len(keep)) :
+		if keep[i].startswith('>KA') :
+			keep[i] = keep[i]+'\n'
+
+	#for k in keep :
+	#	if '>KAA' in k :
+	#		print(k)
+
+	i = 0
+	for k in keep :
+		if '>KAA' in k :
+			i += 1
+			#print(k)
+	#for k in keep :
+	#	if not k.startswith('>') and '>KAA' in k :
+	#		print(k)
+
+	print(i)
 	print(len(new_proteom.keys()))
+	#print(keep)
+
+	print("--------------------------------------")
+
+	for prot in new_proteom.keys() :
+		prot = prot+'\n'
+		if prot not in keep :
+			print(prot)
+
+	if '>KAA8490831.1' in keep :
+		print("yes")
+	else : 
+		print("no")
 
 
+	with open('New_Proteom_Porphyridium_purpureum_new_RADAR.txt', 'w') as filout :
+		for line in keep :
+			filout.write(line+'\n')
 
+
+	if '>KAA8490831.1' in new_proteom.keys() :
+		print("oui")
+	else :
+		print("non")
 
 
 
@@ -2184,5 +2239,5 @@ if __name__ == '__main__' :
 
 	#right_res_localizer_porph()
 	#right_res_deeploc_porph()
-	right_res_radar_porph()
+	#right_res_radar_porph()
 
