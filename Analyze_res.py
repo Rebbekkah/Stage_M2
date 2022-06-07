@@ -70,6 +70,8 @@ def read_proteom(file) :
 		for line in filin :
 			if line.startswith('>') :
 				idt = line.split(' ')[0]
+				if '\n' in idt :
+					idt = idt.strip()
 				dico[idt] = ""
 			else :
 				dico[idt] += line.strip()
@@ -2021,6 +2023,69 @@ def Venn_diagram() :
 	plt.show()
 
 
+def right_res_localizer_porph() :
+
+	keep = []
+	new_proteom = read_proteom(path_to_script+'Celine/algue_rouge/New_Proteom_Porphyridium_purpureum_NCBI_GCA_008690995.1_P_purpureum_CCMP1328_Hybrid_assembly_protein.faa.txt')
+	loca = path_to_script+'Celine/algue_rouge/LOCALIZER/Porphyridium_purpureum_NCBI_GCA_008690995.1_P_purpureum_CCMP1328_Hybrid_assembly_protein_faa_line_LOCALIZER.txt'
+	with open(loca, 'r') as filin :
+		for line in filin :
+			if line[0] == 'K' :
+				idt = '>'+line.split()[0]
+				if idt in new_proteom.keys() :
+					keep.append(line)
+	print(len(keep))
+	print(len(new_proteom))
+
+	with open('New_Proteom_Porphyridium_purpureum_new_LOCALIZER.txt', 'w') as filout :
+		for line in keep :
+			filout.write(line+'\n')
+
+
+def right_res_deeploc_porph() :
+	
+	keep = []
+	new_proteom = read_proteom(path_to_script+'Celine/algue_rouge/New_Proteom_Porphyridium_purpureum_NCBI_GCA_008690995.1_P_purpureum_CCMP1328_Hybrid_assembly_protein.faa.txt')
+	dploc = path_to_script+'Celine/algue_rouge/DEEPLOC/Porphyridium_purpureum_NCBI_GCA_008690995.1_P_purpureum_CCMP1328_Hybrid_assembly_protein.faa_line_DEEPLOC.txt'
+	with open(dploc, 'r') as filin :
+		for line in filin :
+			if line.startswith('ID') :
+				first = line
+			else :
+				idt = '>'+line.split()[0]
+				if idt in new_proteom.keys() :
+					keep.append(line)
+	print(len(keep))
+	print(len(new_proteom))
+
+	with open('New_Proteom_Porphyridium_purpureum_new_DEEPLOC.txt', 'w') as filout :
+		#filout.write(first+'\n')
+		for line in keep :
+			filout.write(line+'\n')
+
+
+def right_res_radar_porph() :
+
+	keep = []
+	prot = []
+	new_proteom = read_proteom(path_to_script+'Celine/algue_rouge/New_Proteom_Porphyridium_purpureum_NCBI_GCA_008690995.1_P_purpureum_CCMP1328_Hybrid_assembly_protein.faa.txt')
+	radar = path_to_script+'Celine/algue_rouge/RADAR/Porphyridium_purpureum_NCBI_GCA_008690995.1_P_purpureum_CCMP1328_Hybrid_assembly_protein_faa_line_RADAR.txt'
+	with open(radar, 'r', encoding = 'ascii', errors = 'ignore') as filin :
+		for line in filin :
+			if line.startswith('>') :
+				idt = line.strip()
+				if idt in new_proteom.keys() :
+					keep.append(idt)
+			else :
+				if idt in new_proteom.keys() :
+					keep.append(line)
+
+	#print(keep)
+	print(len(new_proteom.keys()))
+
+
+
+
 
 
 
@@ -2111,9 +2176,13 @@ if __name__ == '__main__' :
 	#res_table_annot(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/comp_RF1_RF2/resume_table/')
 
 
+	#Venn_diagram()
 
-	Venn_diagram()
+	# Porphyridium purpureum
+	
+	os.chdir(path_to_script+'Celine/algue_rouge/')
 
-
-
+	#right_res_localizer_porph()
+	#right_res_deeploc_porph()
+	right_res_radar_porph()
 
