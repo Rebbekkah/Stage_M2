@@ -223,9 +223,9 @@ def comp_methode_2(path_cel) :
 
 	print("----------- MÉTHODE 2 -----------")
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/comp_M2/')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/REEL_NEW/comp_M2/')
 
-	file = path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/comp_M2/prot_alpha_filtred_dploc_Chl_Ara.txt'
+	file = path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/REEL_NEW/new_new_Chlamy_Arabi.txt'
 	print(file, len(file), type(file))
 
 	res = glob.glob(path_cel)
@@ -326,12 +326,12 @@ def sep_alpha(osdir, prot_alpha) :
 
 def proteom_alpha() :
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/eggNOG_res/blast/')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/')
 	
 	all_proteom = Proteom_all(path_Chlamy_arabi)
 
-	alpha_Chlamy = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/blast/non_annoted_Chlamy.txt')
-	alpha_Arabi = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/blast/non_annoted_Arabi.txt')
+	alpha_Chlamy = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Filtrage_deeploc_alpha_Chlamy.txt')
+	alpha_Arabi = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Filtrage_deeploc_alpha_Arabi.txt')
 
 	list_alpha = [alpha_Arabi, alpha_Chlamy]
 
@@ -351,8 +351,8 @@ def proteom_alpha() :
 			proteom['Chlamydomonas'] = dic
 
 
-	with open('Proteom_non_annoted_Arabidopsis.txt', 'w') as filout_1 :
-		with open('Proteom_non_annoted_Chlamydomonas.txt', 'w') as filout_2 :
+	with open('Proteom_filtred_Arabidopsis.txt', 'w') as filout_1 :
+		with open('Proteom_filtred_Chlamydomonas.txt', 'w') as filout_2 :
 				for org, dic in proteom.items() :
 					if org == 'Arabidopsis' :
 						for prot, seq in dic.items() :
@@ -391,21 +391,21 @@ def Proteom_all(path) :
 	return dico
 
 
-def minus_log_evalue(pattern) :
+def minus_log_evalue(path) :
 
 
 	#os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/db_Chlamy')
 
-	files = glob.glob(path_Chlamy_arabi+pattern)
+	files = glob.glob(path+'*Themselves.out')
 	files.sort()
 	print(files)
 	lp = ['db_Arabi', 'db_Chlamy']
 
-	i = 0
+	k = 0
 	for f in files :
-		p = lp[i]
-		os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/'+p+'/')
-		i += 1
+		p = lp[k]
+		os.chdir(path)
+		k += 1
 		evalue = []
 		l = []
 		with open(f, 'r') as filin :
@@ -554,13 +554,14 @@ def adressage_alpha(file1, file2) :
 		i += 1
 
 
-def is_ppr_opr(file) :
+def is_ppr_opr() :
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Cytoscape/Chlamy/')
 
-	df = pd.read_csv(file, sep = '\t')
+	df = pd.read_csv(path_Chlamy_arabi+'Predictions/Pour_celine_comp/Chlamydomonas_opr_table961897.txt', sep = '\t')
 	df = df.set_index(df['protein_id'], inplace = False)
 	del df['protein_id']
+	print(df)
 
 	#for col in df :
 	#	print(df[col])
@@ -569,47 +570,55 @@ def is_ppr_opr(file) :
 	k = 0
 	for index, elem in enumerate(df['source']) :
 		k += 1
-		print(elem)
+		#print(elem)
 		if elem.startswith('Cre') :
 			lidt_opr.append(elem.split()[0])
 		else :
 			lelem = []
-			print("-----------")
-			print(elem)
-			print(elem.split())
+			#print("-----------")
+			#print(elem)
+			#print(elem.split())
 			lelem = elem.split()
 			for el in lelem :
 				if el.startswith('Cre') :
 					lidt_opr.append(el)
-	#print(lidt_opr, len(lidt_opr))
 
+	print(lidt_opr, len(lidt_opr))
 	for i in range(len(lidt_opr)) :
 		if '|' in lidt_opr[i] :
 			lidt_opr[i] = lidt_opr[i].split('|')[0]
-	print(lidt_opr, len(lidt_opr))
+	#print(lidt_opr, len(lidt_opr))
 
 	#print(df.loc['Chlre_OPR102', 'source'])
 	lidt_alpha = []
-	with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Chlamy.txt') as filin :
+	#with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Filtrage_deeploc_alpha_Chlamy.txt', 'r') as filin :
+	#with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/alpha_Chlamy.txt', 'r') as filin :
+	#with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/comp_M2/prot_alpha_filtred_dploc_Chl_Ara.txt', 'r') as filin :
+	with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Chlamy.txt', 'r') as filin :
 		for line in filin :
 			lidt_alpha.append(line.strip())
 
 	print("nb of opr in file :", k)
-	print(len(lidt_alpha))
+	print(lidt_alpha, len(lidt_alpha))
 
 	alpha_opr = []
+	none = 0
 	for idt in lidt_opr :
 		idt = '>'+idt
 		if idt in lidt_alpha :
 			#print(idt)
 			alpha_opr.append(idt)
+		else :
+			none += 1
+	print(alpha_opr, len(alpha_opr))
+	print(none)
 
 	with open('opr_in_alpha_pred_Chlamy.txt', 'w') as filout :
 		for idt in alpha_opr :
 			filout.write(idt+'\n')
 	
 
-	
+	'''
 	fich = path_to_script+'Celine/methode_1_2_Celine/M1_OPR_Chlre/cat_loops+blastp_motifs.fasta_PROTEINS_2rep_chlre_M1OPR_CHL'
 	Cel_opr = read_proteom(fich)
 
@@ -627,7 +636,7 @@ def is_ppr_opr(file) :
 
 	#for col in df :
 	#	print(df[col])
-
+	'''
 
 
 def comp_Hedi(file) :
@@ -788,22 +797,19 @@ def comp_pos_neg(Arabi_vs_neg, Arabi_vs_pos, Chlamy_vs_neg, Chlamy_vs_pos) :
 
 def for_cytoscape() :
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Chlamy_opr_blast/')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Cytoscape/Chlamy/')
 
 	opr = []
 	with open(path_Chlamy_arabi+'Predictions/Res_blast/Chlamy_alpha_pred_found_in_postitive.txt', 'r') as filin :
 		for line in filin :
 			opr.append('>'+line.strip())
-	#print(opr, len(opr))
 
 	alpha_chl = []
 	with open(path_Chlamy_arabi+'Predictions/Pour_celine_comp/alpha_Chlamy.txt', 'r') as filin :
 		for line in filin :
 			alpha_chl.append(line.strip())
-	#print(opr)
-	#print(alpha_chl)
 
-	with open('for_cytoscape_col_OPR_3.txt', 'w') as filout :
+	with open('for_cytoscape_col_OPR_Chlamy.txt', 'w') as filout :
 		for idt in alpha_chl :
 			if idt in opr :
 				filout.write(idt+'\t'+'Yes'+'\n')
@@ -2004,10 +2010,10 @@ def Venn_diagram() :
 	#plt.show()
 
 	
-	venn2(subsets = (1774, 570, 497), 
+	venn2(subsets = (667, 159, 107), 
 		set_labels = ('Machine Learning', 'Comparaison et alignement de motifs'),
 		set_colors = ('brown', 'blue'))
-	venn2_circles(subsets = (1774, 570, 497), linewidth = 0.4)
+	venn2_circles(subsets = (667, 159, 107), linewidth = 0.4)
 	#label = ['11 OPR', '107 OPR', '390 PPR', '304 PPR']
 	#for lab in label: 
 	#	v.get_label_by_id(lab).set_text(lab)
@@ -2067,7 +2073,7 @@ def right_res_deeploc_porph() :
 def right_res_radar_porph() :
 
 
-################## PAS FINITO ##################
+################## PAS FINITO --> On a relancé radar sur le bon protéome ##################
 
 	keep = []
 	prot = []
@@ -2140,6 +2146,30 @@ def right_res_radar_porph() :
 		print("oui")
 	else :
 		print("non")
+
+
+def opr_find_in_res_model() :
+	
+	ficel = path_method_Cel+'M1_OPR_Chlre/cat_loops+blastp_motifs.fasta_PROTEINS_2rep_chlre_M1OPR_CHL'
+
+	dico_opr = read_proteom(ficel)
+	print(len(dico_opr.keys()))
+
+	#alpha_filtred = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Filtrage_deeploc_alpha_Chlamy.txt')
+	alpha_filtred = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/alpha_Chlamy.txt')
+
+	#n = 0
+	found = []
+	for idt in dico_opr.keys() :
+		if idt in alpha_filtred :
+			#n += 1
+			found.append(idt)
+	print(found)
+	print("Number of OPR found :", len(found))
+
+	with open('OPR_found_in_non_filtered_alpha.txt', 'w') as filout :
+		for idt in found :
+			filout.write(idt+'\n')
 
 
 
@@ -2235,9 +2265,36 @@ if __name__ == '__main__' :
 
 	# Porphyridium purpureum
 	
-	os.chdir(path_to_script+'Celine/algue_rouge/')
+	#os.chdir(path_to_script+'Celine/algue_rouge/')
 
 	#right_res_localizer_porph()
 	#right_res_deeploc_porph()
 	#right_res_radar_porph()
+
+
+
+	# Comparaison M2 avec protéines filtrées
+	#comp_methode_2(path_method_Cel+'M2_*/*')
+	#Venn_diagram()
+
+
+	# RF2
+	#proteom_alpha()
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Cytoscape/')
+	#minus_log_evalue(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Cytoscape/')
+	#is_ppr_opr()
+	opr_find_in_res_model()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
