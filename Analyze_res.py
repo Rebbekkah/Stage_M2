@@ -2171,6 +2171,76 @@ def opr_find_in_res_model() :
 		for idt in found :
 			filout.write(idt+'\n')
 
+def comp_opr() :
+
+	alpha = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Filtrage_deeploc_alpha_Chlamy.txt')
+	opr = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Cytoscape/Chlamy/OPR_found_in_filtered_alpha.txt')
+
+	l = []
+	for idt in alpha :
+		if idt in opr :
+			l.append('Yes')
+		else : 
+			l.append('No')
+	print(l, len(l))
+
+	with open('col_OPR_Chlamy.txt', 'w') as filout :
+		for i in range(len(alpha)) :
+			filout.write(alpha[i]+'\t'+l[i]+'\n')
+
+
+
+def PPR_find_in_res_model() :
+	
+	ficel = path_method_Cel+'M1_PPR_Arath/cat_loops+blastp_motifs.fasta_PROTEINS_2rep_Arath_M1PPR_Arath'
+
+	dico_ppr = read_proteom(ficel)
+	print(len(dico_ppr.keys()))
+
+	#alpha = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Filtrage_deeploc_alpha_Arabi.txt')
+	alpha = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/alpha_Arabi.txt')
+
+	#n = 0
+	found = []
+	for idt in dico_ppr.keys() :
+		if idt in alpha :
+			#n += 1
+			found.append(idt)
+	print(found)
+	print("Number of PPR found :", len(found))
+
+	with open('PPR_found_in_non_filtered_alpha.txt', 'w') as filout :
+		for idt in found :
+			filout.write(idt+'\n')
+
+
+
+def comp_ppr() :
+
+	#alpha = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Filtrage_deeploc_alpha_Arabi.txt')
+	alpha = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/alpha_Arabi.txt')
+	ppr = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Cytoscape/Arabi/PPR_found_in_non_filtered_alpha.txt')
+
+	l = []
+	for idt in alpha :
+		if idt in ppr :
+			l.append('Yes')
+		else : 
+			l.append('No')
+	print(l, len(l))
+
+	with open('col_PPR_non_filtered_Arabi.txt', 'w') as filout :
+		for i in range(len(alpha)) :
+			filout.write(alpha[i]+'\t'+l[i]+'\n')
+
+
+def histogram() :
+
+	df = read_df(path_pos_neg+'outputs/neg_pos/')
+	print(df)
+
+
+
 
 
 
@@ -2280,13 +2350,19 @@ if __name__ == '__main__' :
 
 	# RF2
 	#proteom_alpha()
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Cytoscape/')
+	#os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Cytoscape/')
 	#minus_log_evalue(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Cytoscape/')
 	#is_ppr_opr()
-	opr_find_in_res_model()
+	#opr_find_in_res_model()
+	#comp_opr()
+	#PPR_find_in_res_model()
+	#comp_ppr()
 
 
 
+
+	os.chdir("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/Rapport/img/histo/")
+	histogram()
 
 
 
