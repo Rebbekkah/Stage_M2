@@ -2241,6 +2241,62 @@ def histogram() :
 
 
 
+def new_filtrage_alpha() :
+
+	alpha = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/prot_alpha.txt')
+
+	files_dploc = glob.glob(path_dploc+'*/*')
+	files_tgp2 = glob.glob(path_tgp2+'*')
+	files_loca = glob.glob(path_loca+'*/*')
+	files_wlf = glob.glob(path_wlf+'*')
+
+	files = [files_dploc, files_tgp2, files_loca, files_wlf]
+	for lf in files :
+		lf.sort()
+	print(files, len(files))
+
+
+	keep = []
+	for lf in files :
+		for f in lf :
+			print("-------------------", basename(f), "-------------------")
+			if 'DEEPLOC' in f : 
+				df = pd.read_csv(f, sep = '\t')
+				df = df.set_index(df['ID'], inplace = False)
+				del df['ID']
+				print(df)
+				for index, elem in enumerate(df['Location']) :
+					if elem == 'Mitochondrion' or elem == 'Plastid' :
+						keep.append('>'+df.index[index])
+			else :
+				with open(f, 'r') as filin :
+					if 'WOLFPSORT' in f :
+						for line in filin :
+							if not line.startswith('#') :
+								idt = '>'+line.split()[0]
+								if line.split()[1] == 'chlo' or line.split()[1] == 'mito' :
+									if idt not in keep :
+										keep.append(idt)
+					if 'LOCALIZER' in f :
+						for line in filin :
+							
+
+	#truc = 0
+	#for k in keep :
+	#	if k.startswith('>NP') :
+	#		print(k)
+	#		truc += 1
+	#print(truc)
+	print(len(keep))
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2361,10 +2417,19 @@ if __name__ == '__main__' :
 
 
 
-	os.chdir("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/Rapport/img/histo/")
-	histogram()
+	#os.chdir("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/Rapport/img/histo/")
+	#histogram()
 
+	# Nouvelle méthode de filtrage
 
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/')
+	
+	path_dploc = path_Chlamy_arabi+'DEEPLOC/'
+	path_loca = path_Chlamy_arabi+'LOCALIZER/'
+	path_tgp2 = path_Chlamy_arabi+'TARGETP2/'
+	path_wlf = path_Chlamy_arabi+'WOLFPSORT/'
+
+	new_filtrage_alpha()
 
 
 
