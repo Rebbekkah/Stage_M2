@@ -2256,7 +2256,13 @@ def new_filtrage_alpha() :
 	print(files, len(files))
 
 
-	keep = []
+	dico = {}
+	for prot in alpha :
+		dico[prot] = 0
+	print(dico, len(dico))
+
+
+	#keep = []
 	for lf in files :
 		for f in lf :
 			print("-------------------", basename(f), "-------------------")
@@ -2267,7 +2273,9 @@ def new_filtrage_alpha() :
 				print(df)
 				for index, elem in enumerate(df['Location']) :
 					if elem == 'Mitochondrion' or elem == 'Plastid' :
-						keep.append('>'+df.index[index])
+						#keep.append('>'+df.index[index])
+						if '>'+df.index[index] in alpha :
+							dico['>'+df.index[index]] += 1
 			else :
 				with open(f, 'r') as filin :
 					if 'WOLFPSORT' in f :
@@ -2275,11 +2283,46 @@ def new_filtrage_alpha() :
 							if not line.startswith('#') :
 								idt = '>'+line.split()[0]
 								if line.split()[1] == 'chlo' or line.split()[1] == 'mito' :
-									if idt not in keep :
-										keep.append(idt)
+									if idt in alpha :
+										dico[idt] += 1
 					if 'LOCALIZER' in f :
+						non = ['Over', '#', 'Identifier', '-', '\n']
 						for line in filin :
-							
+							if line.split(" ")[0].startswith('Cre') or line.split(" ")[0].startswith('NP')\
+							or line.split(" ")[0].startswith('YP') :
+								idt = '>'+line.split()[0]
+								if line.split("\t")[1] != '-' or line.split("\t")[2] != '-' :
+									if idt in alpha :
+										dico[idt] += 1
+					if 'TARGETP2' in f :
+						for line in filin :
+							if not line.startswith('#') :
+								idt = '>'+line.split('\t')[0]
+								if line.split('\t')[1] == 'cTP' or line.split('\t')[1] == 'mTP' :
+									if idt in alpha :
+										dico[idt] += 1
+									
+	print(dico, len(dico))				
+
+	with open('dico_filtrage.txt', 'w') as filout :
+		for idt, score in dico.items() :
+			filout.write(idt+'\t'+str(score)+'\n')
+
+	alpha_filtred = []
+	for idt, score in dico.items() :
+		if score >= 2 :
+			alpha_filtred.append(idt)
+	print(alpha_filtred, len(alpha_filtred))
+
+	with open('alpha_filtred.txt', 'w') as filout1 :
+		with open('alpha_Chlamy_filtred.txt', 'w') as filout2 :
+			with open('alpha_Arabi_filtred.txt', 'w') as filout3 :
+				for a in alpha_filtred :
+					filout1.write(a+'\n')
+					if a.startswith('>Cre') :
+						filout2.write(a+'\n')
+					else :
+						filout3.write(a+'\n')
 
 	#truc = 0
 	#for k in keep :
@@ -2287,11 +2330,13 @@ def new_filtrage_alpha() :
 	#		print(k)
 	#		truc += 1
 	#print(truc)
-	print(len(keep))
+	#print(len(keep))
 
-
-
-
+	#alpha_filtred = []
+	#for prot in alpha :
+	#	if prot in keep :
+	#		alpha_filtred.append(prot)
+	#print(alpha_filtred, len(alpha_filtred))
 
 
 
