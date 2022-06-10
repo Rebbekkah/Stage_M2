@@ -326,12 +326,12 @@ def sep_alpha(osdir, prot_alpha) :
 
 def proteom_alpha() :
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/')
+	#os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/')
 	
 	all_proteom = Proteom_all(path_Chlamy_arabi)
 
-	alpha_Chlamy = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Filtrage_deeploc_alpha_Chlamy.txt')
-	alpha_Arabi = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/comp_M2/Apres_filtrage/Filtrage_deeploc_alpha_Arabi.txt')
+	alpha_Chlamy = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/new_filtrage/alpha_Chlamy_filtred.txt')
+	alpha_Arabi = get_idt(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/new_filtrage/alpha_Arabi_filtred.txt')
 
 	list_alpha = [alpha_Arabi, alpha_Chlamy]
 
@@ -2339,9 +2339,26 @@ def new_filtrage_alpha() :
 	#print(alpha_filtred, len(alpha_filtred))
 
 
+def remove_ref(file, name) :
 
+	rewr = []
+	with open(file, 'r') as filin :
+		for line in filin :
+			item = line.split('\t')
+			for i in range(len(item)) :
+				if item[i].startswith('ref') :
+					replace = item[i].split('|')[1]
+					item[1] = replace
+			rewr.append(item)
 
+	print(rewr[0:10])
+	for i in range(len(rewr)) :
+		rewr[i] = '\t'.join(rewr[i])
+	print(rewr[0:10])
 
+	with open('for_cytoscape_db_'+name+'_clean'+'.csv', 'w') as filout :
+		for line in rewr :
+			filout.write(line)
 
 
 
@@ -2353,6 +2370,7 @@ if __name__ == '__main__' :
 	path_pos_neg = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/"
 	path_method_Cel = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/'
 	path_to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/"
+	path_cluster = path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/Cluster/'
 	keywords = ['TPR', 'PPR', 'OPR', 'RNA', 'binding', 'Binding', 'GTP', 'ATP', 'mito', 'Mito', 'chlo', 'Chlo', \
 		'Synthase', 'synthase', 'helicase', 'Helicase', 'transferase', 'protease', 'maturation', 'exonuclease', \
 		'endonuclease', 'exonuc', 'endonuc', 'Ribo', 'Armadillo', 'Tetratricopeptide', 'Pentatricopeptide', 'Octatricopeptide', \
@@ -2474,13 +2492,15 @@ if __name__ == '__main__' :
 	path_wlf = path_Chlamy_arabi+'WOLFPSORT/'
 	#new_filtrage_alpha()
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/cluster/Arabi/')
+
+	os.chdir(path_cluster)
 	#opr_find_in_res_model()
 	#comp_opr()
-	PPR_find_in_res_model()
-	comp_ppr()
-
-
+	#PPR_find_in_res_model()
+	#comp_ppr()
+	#proteom_alpha()
+	#minus_log_evalue(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/cluster/Arabi/blast/')
+	remove_ref(path_cluster+'Arabi/blast/for_cytoscape_db_Arabi.csv', 'Arabi')
 
 
 
