@@ -2369,38 +2369,17 @@ def histogram() :
 	print(df_pos)
 	print(df_neg)
 
-	'''
-	ldf = [df_pos, df_neg]
-
-	for df in ldf :
-		plt.bar(df['trp2'], height = 4)
-		plt.show()
-	'''
-	'''
-	barWidth = 0.4
-	#r = max(len(df_pos), len(df_neg))
-	r = len(df_neg)
-	print(r)
-	plt.bar(df_neg['trp2'], r)
-	#plt.bar(range(4), df_pos['trp2'])
-	plt.show()
-
-	#plt.hist(df[:, 'trp2'])
-	#plt.hist(df['trp2'])
-	#plt.bar(df['trp2'], height = 0.5)
-	#plt.show()
-	'''
-
-	#print(df_pos['trp2'].value_counts()[1])
-	#plt.bar(df_pos['trp2'].value_counts())
-	#plt.show()
-
 	ldf = [df_pos, df_neg]
 	barWidth = 0.4
 	r = range(5)
 
 	for df in ldf :
-
+		r = range(5)
+		if df is df_pos :
+			print('--------df pos--------')
+		else :
+			print('--------df neg--------')
+		#print(df['trp2'].value_counts())
 		zero = df['trp2'].value_counts()[0]
 		one = df['trp2'].value_counts()[1]
 		two = df['trp2'].value_counts()[2]
@@ -2408,18 +2387,75 @@ def histogram() :
 		four = df['trp2'].value_counts()[4]
 		l = [zero, one, two, three, four]
 
-		#plt.bar(list(range(barWidth, 5+barWidth, 1)), l, width = 0.5)
-		#barWidth += 0.5
-
 		if df is df_pos :
 			plt.bar(list(r), l, width = barWidth)
 		else :
 			plt.bar(list([x + barWidth for x in r]), l, width = barWidth)
 		plt.xticks([lg + barWidth / 2 for lg in r], ['NoTP', 'cTP', 'mTP', 'SP', 'iTP'])
 
+	plt.ylabel('Occurence')
+	plt.legend(["Positifs", "Négatifs"])
+	plt.title('Prédiction de localisation intracellulaire selon Targetp2')
+	plt.show()
+	#plt.savefig('barplot_trp2_2.png')
+
+	r = range(2)
+	for df in ldf :
+		if df is df_pos :
+			print('--------df pos--------')
+		else :
+			print('--------df neg--------')
+		print(df['localizer'].value_counts())
+		zero = df['localizer'].value_counts()[0]
+		one = df['localizer'].value_counts()[1]
+		l = [zero, one]
+		if df is df_pos :
+			plt.bar(list(r), l, width = barWidth)
+		else :
+			plt.bar(list([x + barWidth for x in r]), l, width = barWidth)
+		plt.xticks([lg + barWidth / 2 for lg in r], ['Non adressé', 'Adressé'])
+
+	plt.ylabel('Occurence')
+	plt.legend(["Positifs", "Négatifs"])
+	plt.title('Prédiction de localisation intracellulaire selon Localizer')
 	plt.show()
 
 
+
+def boxplot() :
+
+	df_pos = pd.read_csv(path_pos_neg+'/outputs/neg_pos/dataframe_pos.csv', sep = '\t')
+	df_pos = df_pos.set_index(df_pos['Unnamed: 0'], inplace = False)
+	del df_pos['Unnamed: 0']
+
+	df_neg = pd.read_csv(path_pos_neg+'/outputs/neg_pos/dataframe_neg.csv', sep = '\t')
+	df_neg = df_neg.set_index(df_neg['Unnamed: 0'], inplace = False)
+	del df_neg['Unnamed: 0']
+
+	print(df_pos)
+	print(df_neg)
+
+	ldf = [df_pos, df_neg]
+
+	df = read_df(path_pos_neg+'outputs/neg_pos/')
+	print(df)
+
+	#for col in df_pos :
+	#	print(df_pos[col])
+
+	
+	col = ['ard2', 'radar', 'deeploc', 'wolfpsort']
+
+	for c in col :
+		sns.boxplot(x = df['type'], y = df[c], hue = df['type'])
+		plt.xticks([0, 1], ['Positifs', 'Négatifs'])
+		if c == 'ard2' :
+			plt.title('Boxplot du nombre de coudes')
+		elif c == 'radar' :
+			plt.title('Boxplot de la proportion de répétition')
+		else :
+			plt.title('Boxplot du score d‘adressage')
+		plt.show()
 
 
 
@@ -2540,8 +2576,9 @@ if __name__ == '__main__' :
 	#PPR_find_in_res_model()
 	#comp_ppr()
 
-	os.chdir("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/Rapport/img/histo/")
-	histogram()
+	os.chdir("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/Rapport/img/boxplots2/")
+	#histogram()
+	boxplot()
 
 	# Nouvelle méthode de filtrage
 
