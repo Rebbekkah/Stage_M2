@@ -62,9 +62,13 @@ Nous avons appris notre modèle sur deux jeux de données (un positif contenant 
     
 À la suite de l'apprentissage il est possible d'utiliser le modèle sur les protéomes cibles et de déterminer les potentielles candidates ROGEs.
     
+-----
+
 ## Remerciements
 
 Je remercie
+
+-----
 
 ## Bibliographie
 
