@@ -38,6 +38,9 @@ Chaque outil prends en entrée un protéome qui a été filtré au préalable pa
 Les codes répondant aux problématiques ont été rédigés principalement en python (v3.9) et en R.
 Sur ce github tous les codes utilisés sont disponibles dont :    
 * acc.R -> code permettant le calcul des ACC sur chacune des séquences d'un protéome. Pour utiliser le script il faut indiquer le chemin vers les protéomes étudiés qu'il lira. En sortie nous obtenons deux fichiers utilisables pour le script `Analyze_sequence.py` nommés `ACC_output_nomdufichier.txt` et `rownames_nomdufichier.txt`.    Le premier contient les résultats du calcul d'ACC sur Z-scales pour chaque séquence et le second les noms des séquences correspondantes.
+* Analyze_sequence.py ->
+* MODEL_RF.py ->
+* Analyze_results.py ->
 
 
 ### Résultats
