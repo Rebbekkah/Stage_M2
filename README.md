@@ -9,7 +9,7 @@
 
 ## But de l'étude
 
-Le but de ce stage a été de développer un modèle de machine learning afin de pouvoir détecter les protéines en α-solénoïdes candidates à la régulation post-transcriptionelle chez les chloroplastes des diatomées en se basant sur les propriétés physico-chimiques des protéines.
+Le but de ce stage a été de développer un modèle de machine learning afin de pouvoir __détecter les protéines en α-solénoïdes candidates à la régulation post-transcriptionelle chez les chloroplastes des diatomées__ en se basant sur les propriétés physico-chimiques des protéines.
 
 -----
 
