@@ -26,6 +26,8 @@ Le modèle se base sur les résultats de logiciels de prédiction utilisés en s
 [`Wolfpsort`](https://wolfpsort.hgc.jp/)     
 [`Localizer`](https://localizer.csiro.au/)     
 [`Targetp2`](https://services.healthtech.dtu.dk/service.php?TargetP-2.0)     
+     
+À cela nous ajoutons le calcul des fréquences de chaque acide aminé pour chaque séquence et les valeurs d'[ACC sur Z-scales](https://pubmed.ncbi.nlm.nih.gov/32731621/) avec un lag de 4.
 
 -----
 
