@@ -43,7 +43,7 @@ Il produit aussi deux dataframe : `dataframe_interm.csv`(avec seulement les rés
 * MODEL_RF.py -> Script contenant le code du modèle Random Forest. Il faut lui donner le chemin vers la matrice `dataframe_all.csv`. En sortie il donne :
 -> Pour les témoins postifis et négatifs : les résultats des prédictions (0 = positif et 1 = négatif) ainsi que des fichiers contenant les protéines correctement prédites et celles non correctement prédites. Il fournit aussi des fichiers contenant les protéines prédites comme ROGEs et les prédites prédites comme n'étant pas des ROGEs. Avec cela s'additionne un histogramme de l'importance des descripteurs. Plus un descripteur est important plus il permet au modèle de prédire correctement la nature des protéines.
 -> Pour les protéomes à analyser : Fournit deux fichiers contenant les protéines prédites comme ROGEs ou non.
-* Analyze_results.py -> Script qui a servit à analyser les résultats du modèle.
+* Analyze_results.py -> Script qui a servit à analyser les résultats du modèle. Pour les diatomées il faut supprimer les colonnes de la dataframe contenant les résultats des logiciels de prédiction d'adressage à l'aide de la fonction "`dataframe_all.csv`".
 
 
 -----
