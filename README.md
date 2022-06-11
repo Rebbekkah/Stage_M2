@@ -44,6 +44,8 @@ Il produit aussi deux dataframe : `dataframe_interm.csv`(avec seulement les rés
 * Analyze_results.py ->
 
 
+-----
+
 ### Résultats
 
 Nous avons appris notre modèle sur deux jeux de données (un positif contenant des ROGEs et un négatif ne contenant aucune ROGE). Puis nous l'avons testé et calculé la moyenne des performances visibles ci-dessous sur 1000 run :    
