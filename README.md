@@ -38,7 +38,8 @@ Chaque outil prends en entrée un protéome qui a été filtré au préalable pa
 Les codes répondant aux problématiques ont été rédigés principalement en python (v3.9) et en R.
 Sur ce github tous les codes utilisés sont disponibles dont :    
 * acc.R -> code permettant le calcul des ACC sur chacune des séquences d'un protéome. Pour utiliser le script il faut indiquer le chemin vers les protéomes étudiés qu'il lira. En sortie nous obtenons deux fichiers utilisables pour le script `Analyze_sequence.py` nommés `ACC_output_nomdufichier.txt` et `rownames_nomdufichier.txt`.    Le premier contient les résultats du calcul d'ACC sur Z-scales pour chaque séquence et le second les noms des séquences correspondantes.
-* Analyze_sequence.py ->
+* Analyze_sequence.py -> Ce script prends les différents chemins jusqu'aux résultats des outils et des protéomes sur lesquels ils ont été lancés pour les lire, traiter et les analyser. En sortie ce script fournit les "nouveaux" protéomes (après analyse de TMHMM) qui seront réutiliser ensuite.    
+Il produit aussi deux dataframe : `dataframe_interm.csv`(avec seulement les résultats des outils de prédiction) et `dataframe_all.csv` (outils de prédiciton, ACC sur Z-scales et fréquences d'acides aminés) qui sont les dataframes contenant les résultats des traitements de données. Seule `dataframe_all.csv` sera donnée au modèle. 
 * MODEL_RF.py ->
 * Analyze_results.py ->
 
@@ -55,7 +56,7 @@ Nous avons appris notre modèle sur deux jeux de données (un positif contenant 
     
 </p>
     
-    
+#### cas particulier les idatomées
     
 ## Remerciements
 
