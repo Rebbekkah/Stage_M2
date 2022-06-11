@@ -40,8 +40,9 @@ Sur ce github tous les codes utilisés sont disponibles dont :
 * acc.R -> code permettant le calcul des ACC sur chacune des séquences d'un protéome. Pour utiliser le script il faut indiquer le chemin vers les protéomes étudiés qu'il lira. En sortie nous obtenons deux fichiers utilisables pour le script `Analyze_sequence.py` nommés `ACC_output_nomdufichier.txt` et `rownames_nomdufichier.txt`.    Le premier contient les résultats du calcul d'ACC sur Z-scales pour chaque séquence et le second les noms des séquences correspondantes.
 * Analyze_sequence.py -> Ce script prends les différents chemins jusqu'aux résultats des outils et des protéomes sur lesquels ils ont été lancés pour les lire, traiter et les analyser. En sortie ce script fournit les "nouveaux" protéomes (après analyse de TMHMM) qui seront réutiliser ensuite.    
 Il produit aussi deux dataframe : `dataframe_interm.csv`(avec seulement les résultats des outils de prédiction) et `dataframe_all.csv` (outils de prédiciton, ACC sur Z-scales et fréquences d'acides aminés) qui sont les dataframes contenant les résultats des traitements de données. Seule `dataframe_all.csv` sera donnée au modèle. 
-* MODEL_RF.py ->
-* Analyze_results.py ->
+* MODEL_RF.py -> Script contenant le code du modèle Random Forest. Il faut lui donner le chemin vers la matrice `dataframe_all.csv`. En sortie il donne :
+-> Pour les témoins postifis et négatifs : les résultats des prédictions (0 = positif et 1 = négatif) ainsi que des fichiers contenant les protéines correctement prédites et celles non correctement prédites. Il fournit aussi des fichiers contenant les protéines prédites comme ROGEs et les prédites prédites comme n'étant pas des ROGEs. Avec cela s'additionne un histogramme de l'importance des descripteurs. Plus un descripteur est important plus il permet au modèle de prédire correctement la nature des protéines.
+* Analyze_results.py -> 
 
 
 -----
