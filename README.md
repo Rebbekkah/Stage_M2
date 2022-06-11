@@ -67,8 +67,8 @@ Nous avons appris notre modèle sur deux jeux de données (un positif contenant 
 ## Remerciements
 
 Je remercie Angela Falciatore ainsi que toute l'équipe Photosynthèse de l'IBPC pour m'avoir acceuillie dans leur laboratoire.  
-Je remercie particulièrement *Ingrid Lafontaine* et *Céline Cattelin* pour leur dévouement et leur acceuil, ainsi que pour le suivi qu'elles m'ont apporté tout au long de mon stage.   
-Je remercie également Clotilde Garrido pour les directives qu'elle a pu m'apporter.
+Je remercie particulièrement __*Ingrid Lafontaine*__ et __*Céline Cattelin*__ pour leur dévouement et leur acceuil, ainsi que pour le suivi qu'elles m'ont apporté tout au long de mon stage.   
+Je remercie également __*Clotilde Garrido*__ pour les directives qu'elle a pu m'apporter.
 
 -----
 
