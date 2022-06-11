@@ -42,7 +42,8 @@ Sur ce github tous les codes utilisés sont disponibles dont :
 Il produit aussi deux dataframe : `dataframe_interm.csv`(avec seulement les résultats des outils de prédiction) et `dataframe_all.csv` (outils de prédiciton, ACC sur Z-scales et fréquences d'acides aminés) qui sont les dataframes contenant les résultats des traitements de données. Seule `dataframe_all.csv` sera donnée au modèle. 
 * MODEL_RF.py -> Script contenant le code du modèle Random Forest. Il faut lui donner le chemin vers la matrice `dataframe_all.csv`. En sortie il donne :
 -> Pour les témoins postifis et négatifs : les résultats des prédictions (0 = positif et 1 = négatif) ainsi que des fichiers contenant les protéines correctement prédites et celles non correctement prédites. Il fournit aussi des fichiers contenant les protéines prédites comme ROGEs et les prédites prédites comme n'étant pas des ROGEs. Avec cela s'additionne un histogramme de l'importance des descripteurs. Plus un descripteur est important plus il permet au modèle de prédire correctement la nature des protéines.
-* Analyze_results.py -> 
+-> Pour les protéomes à analyser : Fournit deux fichiers contenant les protéines prédites comme ROGEs ou non.
+* Analyze_results.py -> Script qui a servit à analyser les résultats du modèle.
 
 
 -----
