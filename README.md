@@ -66,7 +66,8 @@ Nous avons appris notre modèle sur deux jeux de données (un positif contenant 
 
 ## Autres fichiers importants
 
-Dans ce github vous trouverez également les protéomes utilisés ainsi que des exemples de sorties pour chacun des logiciels.
+Dans ce github vous trouverez également les protéomes utilisés ainsi que des exemples de sorties pour chacun des logiciels.   
+Le rapport du stage est aussi disponible au format PDF.
 
 -----
 
