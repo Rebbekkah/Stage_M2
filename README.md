@@ -35,7 +35,7 @@ Dire quels scripts j'ai utilisé et quels script fais quoi + commenter les codes
 
 ### Résultats
 
-Nous avons appris notre modèle sur deux jeux de données (un positif contenant des ROGEs et un négatif ne contenant aucune ROGE). Puis nous l'avons testé et calculé ses performances visibles ci-dessous sur 1000 run :    
+Nous avons appris notre modèle sur deux jeux de données (un positif contenant des ROGEs et un négatif ne contenant aucune ROGE). Puis nous l'avons testé et calculé la moyenne des performances visibles ci-dessous sur 1000 run :    
     
 
 | Précision   |      Sensibilité      |  Spécificité |
