@@ -64,6 +64,12 @@ Nous avons appris notre modèle sur deux jeux de données (un positif contenant 
     
 -----
 
+## Autres fichiers importants
+
+Dans ce github vous trouverez également les protéomes utilisés ainsi que des exemples de sorties pour chacun des logiciels.
+
+-----
+
 ## Remerciements
 
 Je remercie Angela Falciatore ainsi que toute l'équipe Photosynthèse de l'IBPC pour m'avoir acceuillie dans leur laboratoire.  
