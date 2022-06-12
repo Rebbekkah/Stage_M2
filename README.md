@@ -85,4 +85,4 @@ Je remercie également __*Clotilde Garrido*__ pour les directives qu'elle a pu m
 
 ## Bibliographie
 
-lien vers le github biblio
+La bibliographie est disponible [ici](https://github.com/Rebbekkah/Stage_M2/tree/main/Bibliographie).
