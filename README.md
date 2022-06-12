@@ -47,7 +47,7 @@ Il produit aussi deux dataframe : `dataframe_interm.csv`(avec seulement les rés
 -> Pour les protéomes à analyser : Fournit deux fichiers contenant les protéines prédites comme ROGEs ou non.
 * Analyze_results.py -> Script qui a servit à analyser les résultats du modèle. Pour les diatomées il faut supprimer les colonnes de la dataframe contenant les résultats des logiciels de prédiction d'adressage à l'aide de la fonction "`for_Diatoms()`".
     
-* TSNE -> ???????????????? j'ia fais quoi déjà
+* TSNE_plot_freq_ACC.py -> script qui permet d'avoir une visualisation graphique sous forme de TSNE (T-distribution Neighbor joining Embbedding) qui permet la réduction de dimensionnalité. Le graphe représente la TSNE des fréquences d'acides aminés et les ACC sur Z-scales pour les protéomes d'entrée. Il faut lui fournir le chemin vers les protéomes et des résultats d'ACC.
 
 
 -----
