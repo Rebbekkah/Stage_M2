@@ -146,11 +146,11 @@ def get_idt(file) :
 
 def comp_res_Celine(path) :
 
-	print("----------- MÉTHODE 1&2 -----------")
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/')
+	print("----------- MÉTHODE 1 & 2 -----------")
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/new_filtrage/comp_celine_M1&2/')
 
 
-	file = path_Chlamy_arabi+'Predictions/prot_alpha.txt'
+	file = path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/new_filtrage/alpha_filtred.txt'
 	print(file, len(file), type(file))
 
 	res = glob.glob(path)
@@ -223,9 +223,9 @@ def comp_methode_2(path_cel) :
 
 	print("----------- MÉTHODE 2 -----------")
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/REEL_NEW/comp_M2/')
+	os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/comp_M2/')
 
-	file = path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/REEL_NEW/new_new_Chlamy_Arabi.txt'
+	file = path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/alpha_filtred.txt'
 	print(file, len(file), type(file))
 
 	res = glob.glob(path_cel)
@@ -2002,18 +2002,18 @@ def res_table_annot(path_comp) :
 
 def Venn_diagram() :
 
-	#venn3(subsets = (536, 1184, 0, 1714, 545, 12, 0), 
-	#	set_labels = ('Positifs', 'Négatifs', 'Machine Learning : α-solénoïdes prédites'),
-	#	set_colors = ('green', 'red', 'brown'))
-	#venn3_circles(subsets = (536, 1184, 0, 1714, 545, 12, 0), linewidth = 0.4)
-	#plt.title('A')
-	#plt.show()
+	venn3(subsets = (578, 1186, 0, 1267, 487, 3, 0), 
+		set_labels = ('Positifs', 'Négatifs', 'Machine Learning : α-solénoïdes prédites'),
+		set_colors = ('green', 'red', 'brown'))
+	venn3_circles(subsets = (583, 1186, 0, 1267, 487, 3, 0), linewidth = 0.4)
+	plt.title('A')
+	plt.show()
 
 	
-	venn2(subsets = (667, 159, 107), 
-		set_labels = ('Machine Learning', 'Comparaison et alignement de motifs'),
-		set_colors = ('brown', 'blue'))
-	venn2_circles(subsets = (667, 159, 107), linewidth = 0.4)
+	#venn2(subsets = (1563, 62, 204), 
+	#	set_labels = ('Machine Learning', '    Comparaison et alignement'+'\n'+'       de motifs'),
+	#	set_colors = ('brown', 'blue'))
+	#venn2_circles(subsets = (1563, 62, 204), linewidth = 0.4)
 	#label = ['11 OPR', '107 OPR', '390 PPR', '304 PPR']
 	#for lab in label: 
 	#	v.get_label_by_id(lab).set_text(lab)
@@ -2458,6 +2458,131 @@ def boxplot() :
 		plt.show()
 
 
+def comp_pos_neg() :
+
+	fpos = path_new_filtrage+'comp_pos_neg/1081_tem_pos.fasta_line'
+	fneg = path_new_filtrage+'comp_pos_neg/1196_tem_neg.fasta_line'
+
+	files_tem = [fpos, fneg]
+	dico_tem = {}
+	for f in files_tem :
+		dico_tem[basename(f)] = read_proteom(f)
+	#print(dico_tem, len(dico_tem), dico_tem.keys())
+
+
+	files = glob.glob(path_new_filtrage+'Proteom_filtred*')
+	files.sort()
+	dico = {}
+	for f in files :
+		dico[basename(f)] = read_proteom(f)
+	print(dico, len(dico), dico.keys())
+
+	liste = []
+	for org, dic in dico.items() :
+		print("--------------------", org, "--------------------")
+		if org == 'Proteom_filtred_Arabidopsis.txt' : 
+			for idt, seq in dic.items() :
+				for tem, dic in dico_tem.items() :
+					if seq in dic.values() :
+						if [idt, tem] not in liste :
+							liste.append([idt, tem])
+		if org == 'Proteom_filtred_Chlamydomonas.txt' :
+			for idt, seq in dic.items() :
+				for tem, dic in dico_tem.items() :
+					if idt in dic.keys() :
+						if [idt, tem] not in liste :
+							liste.append([idt, tem])
+
+	print(liste, len(liste))
+
+	in_pos = []
+	in_neg = []
+	for l in liste :
+		if l[1] == '1081_tem_pos.fasta_line' :
+			in_pos.append(l[0])
+		else : 
+			in_neg.append(l[0])
+
+	with open('alpha_filtred_in_pos.txt', 'w') as filout1 :
+		with open('alpha_filtred_in_neg.txt', 'w') as filout2 :
+			for idt in in_pos :
+				filout1.write(idt+'\n')
+			for idt in in_neg :
+				filout2.write(idt+'\n')
+
+
+
+def col_img_OPR_PPR() :
+
+
+	cyto_opr_ch = path_cluster+'Chlamy/col_OPR_Chlamy.txt'
+	cyto_ppr_ch = path_cluster+'Chlamy/col_PPR_in_filtered_Chlamy.txt'
+
+	new = []
+	with open(cyto_opr_ch, 'r') as filin :
+		for line in filin :
+			idt = line.split()[0]
+			if line.split()[1] == 'Yes' :
+				new.append(idt+ '\tOPR\n')
+			else :
+				new.append(idt+'\tElse\n')
+
+	with open(cyto_ppr_ch, 'r') as filin :
+		for line in filin :
+			idt = line.split()[0]
+			for i in range(len(new)) :
+				if idt == new[i].split()[0] :
+					if line.split()[1] == 'Yes' :
+						new[i] = idt+'\tPPR\n'
+
+	print(new, len(new))
+
+	with open('new_col_OPR_PPR_Chlamy.txt', 'w') as filout :
+		for elem in new :
+			filout.write(elem) 
+
+
+
+	'''
+	cyto_chl = glob.glob(path_cluster+'Chlamy/col_*.txt')
+	cyto_chl.sort()
+	print(cyto_chl, len(cyto_chl))
+	cyto_arabi = glob.glob(path_cluster+'Arabi/col_PPR_in_filtered_Arabi.txt')
+
+	idt = []
+	status = []
+	for f in cyto_chl :
+		with open(f, 'r') as filin :
+			for line in filin :
+				prot = line.split()[0]
+				sec = line.split()[1]
+				if prot not in idt :
+					idt.append(prot)
+				if 'OPR' in f :
+					if sec == 'Yes' :
+						status.append(prot, '\tOPR') 
+					else : 
+						status.append('else')
+
+	print(status, len(status))
+
+	with open('new_col_OPR+PPR.txt', 'w') as filout :
+	'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__' :
 
@@ -2468,6 +2593,7 @@ if __name__ == '__main__' :
 	path_method_Cel = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/'
 	path_to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/"
 	path_cluster = path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/Cluster/'
+	path_new_filtrage =  path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/'
 	keywords = ['TPR', 'PPR', 'OPR', 'RNA', 'binding', 'Binding', 'GTP', 'ATP', 'mito', 'Mito', 'chlo', 'Chlo', \
 		'Synthase', 'synthase', 'helicase', 'Helicase', 'transferase', 'protease', 'maturation', 'exonuclease', \
 		'endonuclease', 'exonuc', 'endonuc', 'Ribo', 'Armadillo', 'Tetratricopeptide', 'Pentatricopeptide', 'Octatricopeptide', \
@@ -2576,9 +2702,9 @@ if __name__ == '__main__' :
 	#PPR_find_in_res_model()
 	#comp_ppr()
 
-	os.chdir("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/Rapport/img/boxplots2/")
+	#os.chdir("/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/Rapport/img/boxplots2/")
 	#histogram()
-	boxplot()
+	#boxplot()
 
 	# Nouvelle méthode de filtrage
 
@@ -2600,7 +2726,14 @@ if __name__ == '__main__' :
 	#minus_log_evalue(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/cluster/Arabi/blast/')
 	#remove_ref(path_cluster+'Arabi/blast/for_cytoscape_db_Arabi.csv', 'Arabi')
 
+	#comp_res_Celine(path_method_Cel+'*/*')
+	#comp_methode_2(path_method_Cel+'M2_*/*')
+
+	#os.chdir(path_new_filtrage+'comp_pos_neg/')
+	#comp_pos_neg()
+	#Venn_diagram()
 
 
-
+	os.chdir(path_cluster)
+	col_img_OPR_PPR()
 
