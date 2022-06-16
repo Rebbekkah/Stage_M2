@@ -1,4 +1,4 @@
-# __Annotation des protéines candidates à la régulation post-transcriptionelle des génomes des organites chez les diatomées et autres organismes photosynthétiques__
+# __Annotation des protéines candidates à la régulation post-transcriptionelle des génomes des organites chez les organismes photosynthétiques__
 
 ## Organismes étudiés
 
@@ -9,7 +9,7 @@
 
 ## But de l'étude
 
-Le but de ce stage a été de développer un modèle de machine learning afin de pouvoir __détecter les protéines en α-solénoïdes candidates à la régulation post-transcriptionelle chez les chloroplastes des diatomées__ en se basant sur les propriétés physico-chimiques des protéines.
+Le but de ce stage a été de développer un modèle de machine learning afin de __détecter les protéines en α-solénoïdes candidates à la régulation post-transcriptionelle dans le chloroplaste et la mitochondrie des organismes photosynthétiques__ en utilisant les propriétés physico-chimiques des protéines.
 
 -----
 
@@ -27,7 +27,7 @@ Le modèle se base sur les résultats de logiciels de prédiction utilisés en s
 [`Localizer`](https://localizer.csiro.au/)     
 [`Targetp2`](https://services.healthtech.dtu.dk/service.php?TargetP-2.0)     
 
-Chaque outil prends en entrée un protéome qui a été filtré au préalable par [TMHMM](https://services.healthtech.dtu.dk/service.php?TMHMM-2.0) pour ne garder que les protéines sans domaines transmembranaire. Toute protéine avec un ou plusieurs domaines transmembranaires après le 68e acide aminé (avant cela correspond à un peptide d'adressage qui sera clivé et perdu à l'entrée de l'organite) sera supprimé du jeu de données.
+Chaque outil prends en entrée un protéome filtré au préalable par [TMHMM](https://services.healthtech.dtu.dk/service.php?TMHMM-2.0) pour ne garder que les protéines sans domaines transmembranaire. Toute protéine avec un ou plusieurs domaines transmembranaires après le 68e acide aminé est supprimé du jeu de données. Avant cet acide aminé, nous considérons qu'une telle prédiction peut correspondre à un peptide d'adressage qui sera clivé et perdu à l'entrée de l'organite et nous n'en tenons pas compte.
 
 À cela nous ajoutons le calcul des fréquences de chaque acide aminé pour chaque séquence et les valeurs d'[ACC sur Z-scales](https://pubmed.ncbi.nlm.nih.gov/32731621/) avec un lag de 4.
 
@@ -39,7 +39,7 @@ Les codes répondant aux problématiques ont été rédigés principalement en p
 Sur ce github tous les codes utilisés sont disponibles dont :       
 * acc.R -> code permettant le calcul des ACC sur chacune des séquences d'un protéome. Pour utiliser le script il faut indiquer le chemin vers les protéomes étudiés qu'il lira. En sortie nous obtenons deux fichiers utilisables pour le script `Analyze_sequence.py` nommés `ACC_output_nomdufichier.txt` et `rownames_nomdufichier.txt`.    Le premier contient les résultats du calcul d'ACC sur Z-scales pour chaque séquence et le second les noms des séquences correspondantes.    
     
-* Analyze_sequence.py -> Ce script prends les différents chemins jusqu'aux résultats des outils et des protéomes sur lesquels ils ont été lancés pour les lire, traiter et les analyser. En sortie ce script fournit les "nouveaux" protéomes (après analyse de TMHMM) qui seront réutiliser ensuite.        
+* Analyze_sequence.py -> Ce script prends les différents chemins jusqu'aux résultats des outils et des protéomes sur lesquels ils ont été lancés pour les lire, traiter et les analyser. En sortie ce script fournit les "nouveaux" protéomes (après analyse de TMHMM) qui seront réutilisés par la suite.        
 Il produit aussi deux dataframe : `dataframe_interm.csv`(avec seulement les résultats des outils de prédiction) et `dataframe_all.csv` (outils de prédiciton, ACC sur Z-scales et fréquences d'acides aminés) qui sont les dataframes contenant les résultats des traitements de données. Seule `dataframe_all.csv` sera donnée au modèle. 
     
 * MODEL_RF.py -> Script contenant le code du modèle Random Forest. Il faut lui donner le chemin vers la matrice `dataframe_all.csv`. En sortie il donne :
@@ -54,7 +54,7 @@ Il produit aussi deux dataframe : `dataframe_interm.csv`(avec seulement les rés
 
 ### Résultats
 
-Nous avons appris notre modèle sur deux jeux de données (un positif contenant des ROGEs et un négatif ne contenant aucune ROGE). Puis nous l'avons testé et calculé la moyenne des performances visibles ci-dessous sur 1000 run :    
+Nous avons appris notre modèle sur deux jeux de données (un positif contenant des ROGEs et un négatif ne contenant aucune ROGE). Puis nous l'avons testé et calculé la moyenne des performances sur 1000 run (ci-dessous) :    
     
 <p align="center"> 
     
