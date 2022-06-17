@@ -5,6 +5,7 @@ import os
 import glob
 import seaborn as sns
 from os.path import basename
+from operator import itemgetter
 import matplotlib.pyplot as plt
 from matplotlib_venn import venn3, venn3_circles
 from matplotlib_venn import venn2, venn2_circles
@@ -403,7 +404,8 @@ def minus_log_evalue(path) :
 
 	k = 0
 	for f in files :
-		p = lp[k]
+		#p = lp[k]
+		p = basename(f)
 		os.chdir(path)
 		k += 1
 		evalue = []
@@ -1306,9 +1308,9 @@ def what_is_in_filtrage_deeploc_arabi() :
 
 def dataframe_eggnog(path_files, path_new) :
 
-	os.chdir(path_files+'Parsing/')
+	os.chdir(path_new_filtrage+'eggNOG/')
 
-	files = glob.glob(path_files+'*/*.tsv')
+	files = glob.glob(path_files+'*.tsv')
 	files.sort()
 	#print(files, len(files))
 	files_new = glob.glob(path_new+'*.txt')
@@ -1316,7 +1318,8 @@ def dataframe_eggnog(path_files, path_new) :
 	#print(files_new, len(files_new))
 
 	for f in files :
-		name = f.split('/')[-2]
+		#name = f.split('/')[-2]
+		name = basename(f)
 		print("---------------------", name, "---------------------")
 		#df = pd.read_excel(f, header = None)
 		#df = pd.read_excel(f)
@@ -1341,8 +1344,8 @@ def dataframe_eggnog(path_files, path_new) :
 			for prot in idt_egg :
 				filout.write(prot+'\n')
 		for n in files_new :
-			if name+'.txt' in n :
-				new = get_idt(n)
+			#if name+'.txt' in n :
+			new = get_idt(n)
 		#print(new, len(new))
 
 		non_annot = []
@@ -1408,7 +1411,7 @@ def dataframe_eggnog(path_files, path_new) :
 
 def parsing_eggnog(path_df) :
 
-	os.chdir(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
+	os.chdir(path_new_filtrage+'eggNOG/')
 
 	files = glob.glob(path_df+'df_*.tsv')
 	files.sort()
@@ -1419,8 +1422,11 @@ def parsing_eggnog(path_df) :
 		print("----------------", basename(f), "----------------")
 		new_df = pd.DataFrame()
 		df = pd.read_csv(f, sep = '\t')
-		df = df.set_index(df['Unnamed: 0'], inplace = False)
-		del df['Unnamed: 0']
+		print(df)
+		#df = df.set_index(df['Unnamed: 0'], inplace = False)
+		#del df['Unnamed: 0']
+		df = df.set_index(df['#query'], inplace = False)
+		del df['#query']
 		print(df)
 
 
@@ -1430,11 +1436,13 @@ def parsing_eggnog(path_df) :
 				for word in keywords :
 					if word in elem :
 						if word not in prot :
-							prot.append(df.index[index])
+							if df.index[index] not in prot :
+								prot.append(df.index[index])
 		print(prot, len(prot))
 
-		name = basename(f).split('.')[0]
-		name = name.split('_')[1]
+		#name = basename(f).split('.')[0]
+		#name = name.split('_')[1]
+		name = basename(f)
 
 		with open('Keywords_'+name+'.txt', 'w') as filout :
 			for idt in prot :
@@ -2002,18 +2010,18 @@ def res_table_annot(path_comp) :
 
 def Venn_diagram() :
 
-	venn3(subsets = (578, 1186, 0, 1267, 487, 3, 0), 
-		set_labels = ('Positifs', 'Négatifs', 'Machine Learning : α-solénoïdes prédites'),
-		set_colors = ('green', 'red', 'brown'))
-	venn3_circles(subsets = (583, 1186, 0, 1267, 487, 3, 0), linewidth = 0.4)
-	plt.title('A')
-	plt.show()
+	#venn3(subsets = (578, 1186, 0, 1267, 497, 3, 0), 
+	#	set_labels = ('Positifs', 'Négatifs', 'Machine Learning : α-solénoïdes prédites'),
+	#	set_colors = ('green', 'red', 'brown'))
+	#venn3_circles(subsets = (578, 1186, 0, 1267, 497, 3, 0), linewidth = 0.4)
+	#plt.title('A')
+	#plt.show()
 
 	
-	#venn2(subsets = (1563, 62, 204), 
-	#	set_labels = ('Machine Learning', '    Comparaison et alignement'+'\n'+'       de motifs'),
-	#	set_colors = ('brown', 'blue'))
-	#venn2_circles(subsets = (1563, 62, 204), linewidth = 0.4)
+	venn2(subsets = (1563, 62, 204), 
+		set_labels = ('Machine Learning', '    Arbre décisionnel'),
+		set_colors = ('brown', 'blue'))
+	venn2_circles(subsets = (1563, 62, 204), linewidth = 0.4)
 	#label = ['11 OPR', '107 OPR', '390 PPR', '304 PPR']
 	#for lab in label: 
 	#	v.get_label_by_id(lab).set_text(lab)
@@ -2032,14 +2040,21 @@ def Venn_diagram() :
 def right_res_localizer_porph() :
 
 	keep = []
-	new_proteom = read_proteom(path_to_script+'Celine/algue_rouge/New_Proteom_Porphyridium_purpureum_NCBI_GCA_008690995.1_P_purpureum_CCMP1328_Hybrid_assembly_protein.faa.txt')
-	loca = path_to_script+'Celine/algue_rouge/LOCALIZER/Porphyridium_purpureum_NCBI_GCA_008690995.1_P_purpureum_CCMP1328_Hybrid_assembly_protein_faa_line_LOCALIZER.txt'
+	new_proteom = read_proteom(path_to_script+'Celine/algue_rouge/New_Proteom_All.txt')
+	loca = path_to_script+'Celine/algue_rouge/outputs/LOCALIZER/res_cel_loca.txt'
 	with open(loca, 'r') as filin :
+		i = 0
 		for line in filin :
 			if line[0] == 'K' :
 				idt = '>'+line.split()[0]
+				print(line)
+				other = line.split(']')[1]
+				print(other)
+				print("-----------------------------------")
+				i += 1
 				if idt in new_proteom.keys() :
-					keep.append(line)
+					idt = line.split()[0]
+					keep.append(idt+'\t'+other)
 	print(len(keep))
 	print(len(new_proteom))
 
@@ -2051,23 +2066,26 @@ def right_res_localizer_porph() :
 def right_res_deeploc_porph() :
 	
 	keep = []
-	new_proteom = read_proteom(path_to_script+'Celine/algue_rouge/New_Proteom_Porphyridium_purpureum_NCBI_GCA_008690995.1_P_purpureum_CCMP1328_Hybrid_assembly_protein.faa.txt')
-	dploc = path_to_script+'Celine/algue_rouge/DEEPLOC/Porphyridium_purpureum_NCBI_GCA_008690995.1_P_purpureum_CCMP1328_Hybrid_assembly_protein.faa_line_DEEPLOC.txt'
+	new_proteom = read_proteom(path_to_script+'Celine/algue_rouge/outputs/New_Proteom_All.txt')
+	dploc = path_to_script+'Celine/algue_rouge/outputs/DEEPLOC/Cel_res_dploc.txt'
 	with open(dploc, 'r') as filin :
 		for line in filin :
 			if line.startswith('ID') :
 				first = line
+				keep.append(first)
 			else :
 				idt = '>'+line.split()[0]
+				other = line.split((']'))[1]
 				if idt in new_proteom.keys() :
-					keep.append(line)
+					idt = line.split()[0]
+					keep.append(idt+'\t'+other)
 	print(len(keep))
 	print(len(new_proteom))
 
 	with open('New_Proteom_Porphyridium_purpureum_new_DEEPLOC.txt', 'w') as filout :
 		#filout.write(first+'\n')
 		for line in keep :
-			filout.write(line+'\n')
+			filout.write(line)
 
 
 def right_res_radar_porph() :
@@ -2570,14 +2588,155 @@ def col_img_OPR_PPR() :
 	'''
 
 
+def make_cluster(file) :
+	
+	dico = {}
+	with open(file, 'r') as filin :
+		for line in filin :
+			node = line.split('\t')[0]
+			dico[node] = []
+
+	with open(file, 'r') as filin :
+		for line in filin :
+			target = line.split('\t')[2].strip()
+			node = line.split('\t')[0]
+			dico[node].append(target)
+
+
+	print(dico, len(dico))
+
+	i = 1
+	with open('Clusters_prot_'+basename(file)+'.txt', 'w') as filout :
+		for un, deux in dico.items() :
+			filout.write('Cluster '+str(i)+' : '+str(deux)+'\n\n')
+			i += 1
 
 
 
 
+def for_blast_Phaeo(file) :
+
+	dico = read_proteom(file)
+	print(dico, len(dico))
+
+	dico2 = {}
+	for prot, seq in dico.items() :
+		idt = prot.replace('|', '-')
+		dico2[idt] = seq
+
+	print(dico2, len(dico2))
+
+
+	with open('Proteom_alpha_final_Phaedo_for_blast.txt', 'w') as filout :
+		for prot, seq in dico2.items() :
+			filout.write(prot+'\n'+seq+'\n')
 
 
 
+def make_biblio(file) :
 
+	'''
+	df = pd.read_csv(file, sep = ',')
+	print(df)
+	print(df.iloc[0, :])
+
+	new = []
+	for i in range(len(df)) :
+		new.append([df.iloc[i, 'Author'], '(', str(df.iloc[i, 'Year']), ')', '"', df.iloc[i, 'Title'], '"', ])
+
+	print(new, len)
+	'''
+
+	liste = []
+	new = []
+	with open(file, 'r') as filin :
+		for line in filin :
+			print(line+'\n\n')
+			print(line.split('"'))
+			liste.append(line.split('"'))
+			liste = sorted(liste, key = itemgetter(5), reverse = True)
+	i = 0
+	for l in liste :
+		author = l[7]
+		year = l[5]
+		title = l[9]
+		pub = l[11]
+		pages = l[31]
+		dio = l[17]
+		num = l[35]
+		vol = l[37]
+		print(type(num))
+		new.append(['[', i, ']', author, '(', year, ')', '"', title, '"', '_', \
+			pub, 'Numéro', num, 'Volume', vol, '$', dio, '.'])
+		i += 1
+
+
+	new = new[1:]
+	#print(new)
+	#print(new[0], len(new))
+
+
+	for j in range(len(new)) :
+		new[j] = "".join(map(str, new[j]))
+		#print("".join(new[j]))
+
+	print("------------------")
+	#print(new[0], len(new))
+
+	#for publication in new :
+	#	for letter in publication :
+	#		print(letter)
+	#		if letter == ']' :
+
+	'''
+	for j in range(len(new)) :
+		print(new[j])
+		for k in range(len(new[j])) :
+			#print(new[j][k])
+			if new[j][k] == ']' :
+				letter = '] '
+				new[j][k] == letter
+		break
+	print(new[0], len(new))
+	'''
+	'''
+	for j in range(len(new)) :
+		new2 = []
+		print(new[j])
+		for k in range(len(new[j])) :
+			print(new[j][k])
+			if new[j][k] == ']' :
+				new[j][k] = '] '
+				new2.append(new[j][k])
+		break
+	'''
+
+	for k in range(len(new)) :
+		new[k] = new[k].replace(']', '] ')
+		new[k] = new[k].replace('(', ' (')
+		new[k] = new[k].replace(')', ') ')
+		new[k] = new[k].replace('"', '" ')
+		new[k] = new[k].replace(' " ', ' "')
+		new[k] = new[k].replace('" _', '", ')
+		new[k] = new[k].replace('Numéro', ', Numéro ')
+		new[k] = new[k].replace('Volume', ', Volume ')
+		new[k] = new[k].replace('$', ', ')
+		new[k] = new[k].replace('_', ', ')
+		new[k] = new[k].replace(', .', '.')
+		new[k] = new[k].replace(', , Numéro , Volume .', '.')
+		new[k] = new[k].replace(', Numéro , Volume .', '.')
+		new[k] = new[k].replace(', Numéro ,', ',')
+		new[k] = new[k].replace(', Volume ,', ', ')
+		new[k] = new[k].replace(', Numéro Web Server,', ',')
+		new[k] = new[k].replace(', Numéro 2022-05-25 13:59:47, Volume 2022-05-25 13:59:47,', ' ')
+	
+	for n in new :
+		print(n)
+		print("------------")
+
+	with open('Bibliographie.txt', 'w') as filout :
+		for publi in new :
+			filout.write(publi+'\n\n')
 
 
 
@@ -2594,6 +2753,7 @@ if __name__ == '__main__' :
 	path_to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/"
 	path_cluster = path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/Cluster/'
 	path_new_filtrage =  path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/'
+	path_Phaeo = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/Phaedodactylum/Prot_finales/'
 	keywords = ['TPR', 'PPR', 'OPR', 'RNA', 'binding', 'Binding', 'GTP', 'ATP', 'mito', 'Mito', 'chlo', 'Chlo', \
 		'Synthase', 'synthase', 'helicase', 'Helicase', 'transferase', 'protease', 'maturation', 'exonuclease', \
 		'endonuclease', 'exonuc', 'endonuc', 'Ribo', 'Armadillo', 'Tetratricopeptide', 'Pentatricopeptide', 'Octatricopeptide', \
@@ -2661,7 +2821,9 @@ if __name__ == '__main__' :
 	#	path_to_script+'Celine/proteomes_diatom/outputs/Phaedodactylum/Apres_filtrage_Hectar/prot_alpha_filtred_hectar_Phaedo.txt')
 	#comp_methode_2(path_method_Cel+'M2_*/*')
 	#parsing_eggnog(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/eggNOG_res/Parsing/')
-
+	#os.chdir(path_Phaeo+'blast/')
+	#for_blast_Phaeo(path_Phaeo+'Proteom_alpha_final_Phaedo.txt')
+	#minus_log_evalue(path_Phaeo+'blast/')
 
 
 	# Comparaison RF1 & RF2
@@ -2677,7 +2839,7 @@ if __name__ == '__main__' :
 
 	# Porphyridium purpureum
 	
-	#os.chdir(path_to_script+'Celine/algue_rouge/')
+	#os.chdir(path_to_script+'Celine/algue_rouge/outputs/')
 
 	#right_res_localizer_porph()
 	#right_res_deeploc_porph()
@@ -2734,6 +2896,19 @@ if __name__ == '__main__' :
 	#Venn_diagram()
 
 
-	os.chdir(path_cluster)
-	col_img_OPR_PPR()
+	#os.chdir(path_cluster)
+	#col_img_OPR_PPR()
+	#parsing_eggnog(path_new_filtrage+'eggNOG/tsv/')
+	#dataframe_eggnog(path_new_filtrage+'eggNOG/tsv/', path_new_filtrage+'filtred/')
+
+	#make_cluster(path_cluster+'Arabi/blast/cluster_Arabi_clean.csv.sif')
+
+	os.chdir('/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/Rapport/Bibliographie/')
+	make_biblio('/Users/rgoulanc/Desktop/truc_biblio/Ma_bibliothèque.csv')
+
+
+
+
+
+
 
