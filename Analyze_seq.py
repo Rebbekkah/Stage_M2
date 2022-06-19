@@ -1543,7 +1543,7 @@ def Sep_long_proteom(path, pattern1, pattern2, fold) :
 					#i += 1
 
 
-def concat(path, pattern1, pattern2, pattern3) :
+def concat_ard2(path, pattern1, pattern2, pattern3) :
 	
 	res = glob.glob(path+pattern1)
 	res.sort()
@@ -2002,6 +2002,8 @@ if __name__ == '__main__' :
 
 
 	'''
+	# POS - NEG
+
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/TEMOINS_POS_NEG/outputs/"
 	to_script = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
@@ -2058,6 +2060,10 @@ if __name__ == '__main__' :
 	#boxplot(df_f, 'type')
 	'''
 	
+
+	'''
+	# Chlamy Arabi
+
 	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/TMHMM/old/"
 	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
 	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
@@ -2108,4 +2114,99 @@ if __name__ == '__main__' :
 	#tsne = Tsne(df_pos)
 	#tsne = Tsne(df_neg)
 	#test_of_proportion = Prop_Test(df_pos, df_neg, 0.05, 'ard2')
+	'''
+
+	# Diatom
+	#path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/TMHMM/Pour_Celine/"
+	#path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/"
+	#list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
+
+
+	#os.chdir(path_output)
+
+
+	# ARD2
+	#path_ard2 = path_output+"ARD2/*/"
+	#path_tmhmm = path_output+"TMHMM/"
+	#Long_prot_sep = Sep_long_proteom(path_output, 'TMHMM/New_prot/*.txt', 'TMHMM/New_prot/Separated/', int(25000))
+	#concat(path_output, 'ARD2/Arabi/old_1_2/*/_STDOUT_*', 'Arabi', 'ARD2/Arabi/concat/')
 	
+	# WOLFPSORT
+	#path_wpsort = path_output+"WOLFPSORT/*/"
+
+	# TARGETP2
+	#path_trgp2 = path_output+"TARGETP2/*/"
+
+	# DEEPLOC
+	#path_dploc = path_output+"DEEPLOC/*/"
+
+	# LOCALIZER
+	#path_loca = path_output+"LOCALIZER/*/"
+
+	# RADAR
+	#path_radar = path_output+"RADAR/*/"
+
+	#results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create("STDOUT_"+"*", 'TMHMM/prote/*.txt', "*.wolfpsort", "short_output_"+"*", "*"+"DEEPLOC"+"*", '*'+'LOCALIZER', '*'+'RADAR')
+	#final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
+	#df = Modification(final_results)
+	#idt = rows_acc(path_output, 'ACC/rownames_*')
+	#df_f = add_df(idt, 'ACC/Acc_output_*', path_output, 'dataframe_interm.csv')
+	#writing(df_f)
+	#tsne = Tsne(df_f)
+	
+
+	# Porphyridium purpureum
+
+	# TMHMM
+
+	#os.chdir(path_output+'/TMHMM/')
+	#proteins = listing(path_output, 'TMHMM/*.tmhmm')
+	#new_proteom = proteome_maker(proteins, path_proteom, '*.f*_line')
+	#separateur = sep(path_proteom, '*.f*_line', '*.tmhmm', 'TMHMM/')
+
+
+	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/algue_rouge/proteome_complete/"
+	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/algue_rouge/outputs/"
+	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
+
+	os.chdir(path_output+'seq_res/')
+
+	# ARD2
+	path_ard2 = path_output+"ARD2/"
+	path_tmhmm = path_output+"TMHMM/"
+	#Long_prot_sep = Sep_long_proteom(path_output, 'TMHMM/New_prot/*.txt', 'TMHMM/New_prot/Separated/', int(25000))
+	#concat(path_output, 'ARD2/Arabi/old_1_2/*/_STDOUT_*', 'Arabi', 'ARD2/Arabi/concat/')
+	
+	# WOLFPSORT
+	path_wpsort = path_output+"WOLFPSORT/"
+
+	# TARGETP2
+	path_trgp2 = path_output+"TARGETP2/"
+
+	# DEEPLOC
+	path_dploc = path_output+"DEEPLOC/"
+
+	# LOCALIZER
+	path_loca = path_output+"LOCALIZER/"
+
+	# RADAR
+	path_radar = path_output+"RADAR/"
+
+	results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar = Data_Create("STDOUT_"+"*", 'TMHMM/New_Proteom_All.txt', "*.wolfpsort", "short_output_"+"*", "*"+"DEEPLOC"+"*", '*'+'LOCALIZER', '*'+'RADAR')
+	final_results = dataframe_maker(results_trgp2, results_wlf, results_ard2, results_loca, results_dploc, results_radar)
+	df = Modification(final_results)
+	#idt = rows_acc(path_output, 'ACC/rownames_*')
+	#df_f = add_df(idt, 'ACC/Acc_output_*', path_output, 'dataframe_interm.csv')
+	#writing(df_f)
+
+
+
+
+
+
+
+
+
+
+
+
