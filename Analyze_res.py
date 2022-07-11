@@ -2253,14 +2253,15 @@ def comp_ppr() :
 
 
 
-def new_filtrage_alpha() :
+def new_filtrage_alpha(file) :
 
-	alpha = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/prot_alpha.txt')
+	#alpha = get_idt(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/prot_alpha.txt')
+	alpha = get_idt(file)
 
-	files_dploc = glob.glob(path_dploc+'*/*')
-	files_tgp2 = glob.glob(path_tgp2+'*')
-	files_loca = glob.glob(path_loca+'*/*')
-	files_wlf = glob.glob(path_wlf+'*')
+	files_dploc = glob.glob(path_dploc+'*DEEPLOC.txt')
+	files_tgp2 = glob.glob(path_tgp2+'short_output_*')
+	files_loca = glob.glob(path_loca+'*LOCALIZER')
+	files_wlf = glob.glob(path_wlf+'*.wolfpsort')
 
 	files = [files_dploc, files_tgp2, files_loca, files_wlf]
 	for lf in files :
@@ -2280,9 +2281,10 @@ def new_filtrage_alpha() :
 			print("-------------------", basename(f), "-------------------")
 			if 'DEEPLOC' in f : 
 				df = pd.read_csv(f, sep = '\t')
-				df = df.set_index(df['ID'], inplace = False)
-				del df['ID']
 				print(df)
+				#df = df.set_index(df['ID'], inplace = False)
+				#del df['ID']
+				#print(df)
 				for index, elem in enumerate(df['Location']) :
 					if elem == 'Mitochondrion' or elem == 'Plastid' :
 						#keep.append('>'+df.index[index])
@@ -2846,11 +2848,67 @@ def boxplot_Chlamy_Arabi_Phaeo(alpha_Chlamy, alpha_Arabi, alpha_Phaeo, df_Ch_Ar,
 
 	print(df)
 
+	lidt = aA+aC+aP
+	#print(lidt, len(lidt))
 
+	#df_candidates =  pd.DataFrame(0, index = lidt, columns = [df.columns])
+	df_candidates =  pd.DataFrame(0, index = lidt, columns = df.columns)
+	#print(list(df_candidates.index), type(df_candidates.index))
+	#print(df_candidates.index, type(df_candidates.index))
+
+	for prot in list(df_candidates.index) :
+	#for prot in df_candidates.index :
+		#print(prot)
+		if prot.startswith('>Cre') :
+			df_candidates.loc[prot, 'ard2'] = float(new_CA.loc[prot, 'ard2'])
+			df_candidates.loc[prot, 'radar'] = float(new_CA.loc[prot, 'radar'])
+		elif prot.startswith('>jgi') :
+			df_candidates.loc[prot, 'ard2'] = float(new_P.loc[prot, 'ard2'])
+			df_candidates.loc[prot, 'radar'] = float(new_P.loc[prot, 'radar'])
+		else :
+			df_candidates.loc[prot, 'ard2'] = float(new_CA.loc[prot, 'ard2'])
+			df_candidates.loc[prot, 'radar'] = float(new_CA.loc[prot, 'radar'])
+	
+	#df_candidates = df_candidates.assign(Type = 0)
+
+	for index in list(df_candidates.index) :
+		if index.startswith('>Cre') :
+			df_candidates.loc[index, 'Type'] = int(0)
+		elif index.startswith('>jgi') :
+			df_candidates.loc[index, 'Type'] = int(2)
+		else :
+			df_candidates.loc[index, 'Type'] = int(1)
+	print(df_candidates)
+	#print(df.loc['>jgi|Phatr1|48106|estExt_fgenesh1_pg.C_80279', :])
+
+	#print(type(list(df_candidates.index)), type(df_candidates.index))
+	#print(list(df_candidates.index))
+
+	for elem in enumerate(df_candidates['ard2']) :
+		print(elem, type(elem))
+
+	print(df_candidates['ard2'])
+
+
+
+	print(df)
+	print(df_candidates)
+
+	df_candidates.to_csv('DataFrame_df_candidates.csv', sep = '\t', header = True, index = True)
+	df.to_csv('DataFrame_df.csv', sep = '\t', header = True, index = True)
+
+
+
+
+	col = ['ard2', 'radar']
 	for c in col :
-		sns.boxplot(x = df['Type'], y = df[c], showmeans = True, meanprops = {"marker": "+", 
+		print(c, type(c))
+		#print(str(df_candidates.columns[0]), type(df_candidates.columns[0]))
+		print(df_candidates.columns, type(df_candidates.columns))
+		print(df.columns, type(df.columns))
+		sns.boxplot(x = df_candidates['Type'], y = df_candidates[c], showmeans = True, meanprops = {"marker": "+", 
 					   "markeredgecolor": "black", 
-					   "markersize": "10"}) 
+					   "markersize": "8"}) 
 		plt.xticks([0, 1, 2], ['C. reinhardtii', 'A. thaliana', 'P. tricornutum'])
 		if c == 'ard2' :
 			plt.title('Boxplot of the number of linker')
@@ -2936,6 +2994,57 @@ def data_Hedi(file) :
 
 
 
+def alphasol_Hedi(file) :
+
+	with open (file, 'r') as filin :
+		pass
+
+
+def comp_Hedi_2(fileH, fileMe) :
+	pass
+
+
+
+def comp_porph_cel(file, file_Cel, fileOPR, filePPR) :
+
+	alpha = get_idt(file)
+	alphaCel = read_proteom(file_Cel)
+	OPR = 
+
+	com_pred = []
+	my_pred = []
+	her_pred = []
+	for idt in alpha :
+		if idt in alphaCel.keys() :
+			if idt not in com_pred :
+				com_pred.append(idt)
+		else :
+			if idt not in my_pred :
+				my_pred.append(idt)
+	for idt in alphaCel.keys() :
+		if idt not in alpha :
+			if idt not in her_pred :
+				her_pred.append(idt)
+
+	with open('my_pred_porph.txt', 'w') as filout1 :
+		with open('her_pred_porph.txt', 'w') as filout2 :
+			with open('com_pred_porph.txt', 'w') as filout3 :
+				for idt in my_pred :
+					filout1.write(idt+'\n')
+				for idt in her_pred :
+					filout2.write(idt+'\n')
+				for idt in com_pred :
+					filout3.write(idt+'\n')
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2951,6 +3060,7 @@ if __name__ == '__main__' :
 	path_cluster = path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/Cluster/'
 	path_new_filtrage =  path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/'
 	path_Phaeo = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/Phaedodactylum/Prot_finales/'
+	path_porph = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/algue_rouge/outputs/"
 	keywords = ['TPR', 'PPR', 'OPR', 'RNA', 'binding', 'Binding', 'GTP', 'ATP', 'mito', 'Mito', 'chlo', 'Chlo', \
 		'Synthase', 'synthase', 'helicase', 'Helicase', 'transferase', 'protease', 'maturation', 'exonuclease', \
 		'endonuclease', 'exonuc', 'endonuc', 'Ribo', 'Armadillo', 'Tetratricopeptide', 'Pentatricopeptide', 'Octatricopeptide', \
@@ -3076,10 +3186,10 @@ if __name__ == '__main__' :
 
 	#os.chdir(path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/')
 	
-	path_dploc = path_Chlamy_arabi+'DEEPLOC/'
-	path_loca = path_Chlamy_arabi+'LOCALIZER/'
-	path_tgp2 = path_Chlamy_arabi+'TARGETP2/'
-	path_wlf = path_Chlamy_arabi+'WOLFPSORT/'
+	#path_dploc = path_Chlamy_arabi+'DEEPLOC/'
+	#path_loca = path_Chlamy_arabi+'LOCALIZER/'
+	#path_tgp2 = path_Chlamy_arabi+'TARGETP2/'
+	#path_wlf = path_Chlamy_arabi+'WOLFPSORT/'
 	#new_filtrage_alpha()
 
 
@@ -3134,10 +3244,15 @@ if __name__ == '__main__' :
 	#os.chdir(path_Phaeo+'pour_Hedi/')
 	#data_Hedi(path_Phaeo+'pour_Hedi/2022_02_24_predicition_Hedi.txt')
 
+	#os.chdir(path_to_script+'RF/comp_res/')
+	#boxplot_Chlamy_Arabi_Phaeo(path_new_filtrage+'filtred/alpha_Arabi_filtred.txt', path_new_filtrage+'filtred/alpha_Chlamy_filtred.txt', \
+	#	path_Phaeo+'idt_alpha_filtred_Phaedo.txt', path_Chlamy_arabi, path_Phaeo)
 
-	boxplot_Chlamy_Arabi_Phaeo(path_new_filtrage+'filtred/alpha_Arabi_filtred.txt', path_new_filtrage+'filtred/alpha_Chlamy_filtred.txt', \
-		path_Phaeo+'idt_alpha_filtred_Phaedo.txt', path_Chlamy_arabi, path_Phaeo)
-
-
+	os.chdir(path_porph+'model_res/filtrage/')
+	path_dploc = path_porph+'DEEPLOC/'
+	path_loca = path_porph+'LOCALIZER/'
+	path_tgp2 = path_porph+'TARGETP2/'
+	path_wlf = path_porph+'WOLFPSORT/'
+	#new_filtrage_alpha(path_porph+'model_res/prot_alpha.txt')
 
 
