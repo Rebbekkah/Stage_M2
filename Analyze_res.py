@@ -2994,55 +2994,139 @@ def data_Hedi(file) :
 
 
 
+def comp_porph_cel(file, file_Cel, fileOPR, filePPR) :
+
+	alpha = get_idt(file)
+	alphaCel = read_proteom(file_Cel)
+	OPR = read_proteom(fileOPR)
+	PPR = read_proteom(filePPR)
+
+	com_pred = []
+	my_pred = []
+	her_pred = []
+	for prot in alpha :
+		if prot in alphaCel.keys() :
+			if prot not in com_pred :
+				com_pred.append(prot)
+		else :
+			if prot not in my_pred :
+				my_pred.append(prot)
+	for prot in alphaCel.keys() :
+		if prot not in alpha :
+			if prot not in her_pred :
+				her_pred.append(prot)
+
+	with open('my_pred_porph.txt', 'w') as filout1 :
+		with open('her_pred_porph.txt', 'w') as filout2 :
+			with open('com_pred_porph.txt', 'w') as filout3 :
+				for prot in my_pred :
+					filout1.write(prot+'\n')
+				for prot in her_pred :
+					filout2.write(prot+'\n')
+				for prot in com_pred :
+					filout3.write(prot+'\n')
+
+	opr = []
+	ppr = []
+	for prot in alpha :
+		if prot in OPR.keys() :
+			if prot not in opr :
+				opr.append(prot)
+			if prot in PPR.keys() :
+				if prot not in ppr :
+					ppr.append(prot)
+
+	with open('alpha_OPR_porph.txt', 'w') as filout_1 :
+		with open('alpha_PPR_porph.txt', 'w') as filout_2 :
+			for prot in opr :
+				filout_1.write(prot+'\n')
+			for prot in ppr :
+				filout_2.write(prot+'\n')
+
+
+	print(len(my_pred), len(her_pred), len(com_pred))
+	print(len(opr), len(ppr))
+
+
+
+def Proteom_alpha_(file, path_proteom_all, name) :
+
+
+	all_proteom = Proteom_all(path_proteom_all)
+	alpha = get_idt(file)
+
+	dico = {}
+	for prot in alpha : 
+		dico[prot] = all_proteom[prot]
+
+	with open('Proteom_alpha_'+name+'.txt', 'w') as filout :
+		for idt, seq in dico.items() :
+			filout.write(idt+'\n'+seq+'\n')
+
+
+
 def alphasol_Hedi(file) :
 
+	asol = []
+	nsol = []
 	with open (file, 'r') as filin :
-		pass
+		for line in filin :
+			idt = line.split()[0]
+			res = line.split()[1].strip()
+			#if res == 0
+
 
 
 def comp_Hedi_2(fileH, fileMe) :
 	pass
 
 
+def distrib_len(file_P, file_A, file_C) :
 
-def comp_porph_cel(file, file_Cel, fileOPR, filePPR) :
+	llen = []
+	dico_P = read_proteom(file_P)
+	for idt, seq in dico_P.items() :
+		llen.append(len(seq))
+	#print(llen, len(llen))
 
-	alpha = get_idt(file)
-	alphaCel = read_proteom(file_Cel)
-	OPR = 
+	dico_A = read_proteom(file_A)
+	for idt, seq in dico_A.items() :
+		llen.append(len(seq))
+	#print(llen, len(llen))
 
-	com_pred = []
-	my_pred = []
-	her_pred = []
-	for idt in alpha :
-		if idt in alphaCel.keys() :
-			if idt not in com_pred :
-				com_pred.append(idt)
+	dico_C = read_proteom(file_C)
+	for idt, seq in dico_C.items() :
+		llen.append(len(seq))
+
+	#print(llen, len(llen))
+
+	index = list(dico_P.keys())+list(dico_A.keys())+list(dico_C.keys())
+	#print(index, len(index))
+
+	
+	df = pd.DataFrame(0, index = index, columns = ['Type', 'Length'])
+	print(df)
+	df['Length'] = llen
+	print(df)
+	for ind in list(df.index) :
+		if ind.startswith('>jgi') :
+			df.loc[ind, 'Type'] = 0
+		elif ind.startswith('>Cre') :
+			df.loc[ind, 'Type'] = 1
 		else :
-			if idt not in my_pred :
-				my_pred.append(idt)
-	for idt in alphaCel.keys() :
-		if idt not in alpha :
-			if idt not in her_pred :
-				her_pred.append(idt)
+			df.loc[ind, 'Type'] = 2
 
-	with open('my_pred_porph.txt', 'w') as filout1 :
-		with open('her_pred_porph.txt', 'w') as filout2 :
-			with open('com_pred_porph.txt', 'w') as filout3 :
-				for idt in my_pred :
-					filout1.write(idt+'\n')
-				for idt in her_pred :
-					filout2.write(idt+'\n')
-				for idt in com_pred :
-					filout3.write(idt+'\n')
+	print(df)
 
 
-
-
-
-
-
-
+	sns.boxplot(x = df['Type'], y = df_candidates['Length'], showmeans = True, meanprops = {"marker": "+", 
+					   "markeredgecolor": "black", 
+					   "markersize": "8"}) 
+	plt.xticks([0, 1, 2], ['P. tricornutum', 'C. reinhardtii', 'A. thaliana'])
+	plt.title('Boxplot of the length of the predicted α-solenoids')
+	plt.ylabel('Length of the sequence')
+	plt.xlabel(' ')
+	plt.show()
 
 
 
@@ -3248,11 +3332,36 @@ if __name__ == '__main__' :
 	#boxplot_Chlamy_Arabi_Phaeo(path_new_filtrage+'filtred/alpha_Arabi_filtred.txt', path_new_filtrage+'filtred/alpha_Chlamy_filtred.txt', \
 	#	path_Phaeo+'idt_alpha_filtred_Phaedo.txt', path_Chlamy_arabi, path_Phaeo)
 
-	os.chdir(path_porph+'model_res/filtrage/')
+	#os.chdir(path_porph+'model_res/filtrage/')
 	path_dploc = path_porph+'DEEPLOC/'
 	path_loca = path_porph+'LOCALIZER/'
 	path_tgp2 = path_porph+'TARGETP2/'
 	path_wlf = path_porph+'WOLFPSORT/'
 	#new_filtrage_alpha(path_porph+'model_res/prot_alpha.txt')
+	#comp_porph_cel(path_porph+'model_res/filtrage/alpha_filtred.txt', path_porph+'model_res/filtrage/comp_Cel_M2/results_mito_chloro_loca.x2_fasta', \
+	#	path_porph+'model_res/filtrage/comp_Cel_M1/OPR_porph.txt', path_porph+'model_res/filtrage/comp_Cel_M1/PPR_porph.txt')
+	#Proteom_alpha_(path_porph+'model_res/filtrage/alpha_filtred.txt', path_porph, 'Porph')
+
+	distrib_len(path_Phaeo+'Proteom_alpha_final_Phaedo.txt', path_new_filtrage+'filtred/Proteom_filtred_Arabidopsis.txt', \
+		path_new_filtrage+'filtred/Proteom_filtred_Chlamydomonas.txt')
+
+	os.chdir(path_Phaeo+'pour_Hedi/comp_Hedi/')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
