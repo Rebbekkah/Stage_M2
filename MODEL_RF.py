@@ -49,7 +49,7 @@ def data_reading(file) :
 	return df
 
 
-def df_for_Diatoms(df) :
+def df_for_Diatoms(df, name) :
 	
 	del df['trp2']
 	del df['wolfpsort']
@@ -57,6 +57,9 @@ def df_for_Diatoms(df) :
 	del df['localizer']
 
 	print(df)
+
+	df.to_csv('dataframe_all_61_'+name+'.csv', sep = '\t', header = True, index = True)
+
 	return df
 
 
@@ -385,16 +388,18 @@ def Perf_calculator(pred_test, pred_val) :
 		y_true = p['type']
 		y_pred = p['pred']
 		data = confusion_matrix(y_true, y_pred)
-		df_cm = pd.DataFrame(data, columns = np.unique(y_true), index = np.unique(y_true))
+		#df_cm = pd.DataFrame(data, columns = np.unique(y_true), index = np.unique(y_true))
+		df_cm = pd.DataFrame(data, columns = ['α-solenoid', 'non α-solenoid'], index = ['α-solenoid', 'non α-solenoid'])
 		df_cm.index.name = 'Actual'
 		df_cm.columns.name = 'Predicted'
 		plt.figure()
 		sns.heatmap(df_cm, cmap = "Blues", annot = True)
+		#sns.heatmap(df_cm, cmap = "Blues", annot = ['α-solenoid', 'non α-solenoid'])
 		if p is pred_test :
 			plt.title("Heatmap of Performances on the test dataset")
 		elif p is pred_val :
 			plt.title("Heatmap of Performances on the validation dataset")
-		#plt.show()
+		plt.show()
 
 		print("Good pred : ", index_wp, "\n", "Bad pred : ", index_bp)
 
@@ -724,6 +729,14 @@ def multiple(N, percent) :
 		df_1 = data_reading(path+'dataframe_all.csv')
 		df = df_for_Diatoms(df_1)
 
+		df_all = data_reading('dataframe_all_Chlamy_Arabi.csv')
+		tca1 = df_all.loc['>Cre09.g415500.t1.1', :] 
+		print(tca1)
+		
+		if '>Cre09.g415500.t1.1' not in list(df.index) :
+			df.loc['>Cre09.g415500.t1.1'] = tca1
+		print(df)
+
 		sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
 		random_forest = model()
 	
@@ -761,17 +774,21 @@ def multiple(N, percent) :
 
 	for index, elem in enumerate(df_prot['Score']) :
 		fold_sup = percent*N
-		fold_inf = N-(percent*N)
+		#fold_inf = N-(percent*N)
 		if elem >= fold_sup :
 			df_prot['Keep'].iloc[index] = 'Yes'
-		elif fold_inf < elem < fold_sup : 
-			df_prot['Keep'].iloc[index] = 'Middle'
+		#elif fold_inf < elem < fold_sup : 
+		#	df_prot['Keep'].iloc[index] = 'Middle'
 		else : 
 			df_prot['Keep'].iloc[index] = 'No'
 	print(df_prot)
 
-	df_prot.to_csv('df_prot_nrun'+str(N)+'.csv', sep = '\t', header = True, index = True)
 
+	if not os.path.exists(path_multiple+'run'+str(N)+'_fold'+str(percent)):
+		os.makedirs(path_multiple+'run'+str(N)+'_fold'+str(percent))
+	os.chdir(path_multiple+'run'+str(N)+'_fold'+str(percent))
+
+	df_prot.to_csv('df_prot_nrun'+str(N)+'.csv', sep = '\t', header = True, index = True)
 
 	sup_prot = []
 	mid_prot = []
@@ -784,10 +801,6 @@ def multiple(N, percent) :
 			mid_prot.append(df_prot.index[index])
 		else : 
 			inf_prot.append(df_prot.index[index])
-
-	if not os.path.exists(path_multiple+'run'+str(N)):
-		os.makedirs(path_multiple+'run'+str(N))
-	os.chdir(path_multiple+'run'+str(N))
 
 	with open('sup_prot_nrun'+str(N)+'.txt', 'w') as filout1 :
 		with open('mid_prot_nrun'+str(N)+'.txt', 'w') as filout2 :
@@ -805,7 +818,6 @@ def multiple(N, percent) :
 	print("MEAN SENSIBILITY :", msens)
 	print("MEAN SPECIFICITY :", mspe)
 
-	#print(imp)
 
 
 if __name__ == '__main__' :
@@ -817,13 +829,15 @@ if __name__ == '__main__' :
 	path_method_Cel = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/methode_1_2_Celine/'
 	path_script = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/'
 	path_multiple = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/multiple_model/"
+	path_new_filtrage =  path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/'
 
-	'''
+	
 	# Chlamydomonas & Arabidopsis
+	'''
+	os.chdir(path_new_filtrage+'modele3/')
 
-	os.chdir(path_Chlamy_arabi)
-
-	df = data_reading(path+'dataframe_all.csv')
+	df_1 = data_reading(path+'dataframe_all.csv')
+	df = df_for_Diatoms(df_1)
 	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
 
 	random_forest = model()
@@ -882,9 +896,33 @@ if __name__ == '__main__' :
 	#	random_forest, 'dataframe_all.csv', 'Phaedodactylum')
 
 
-	os.chdir(path_multiple)
-	multiple(15, 0.85)
 
+	# MODEL EN PLUSIEURS RUN
+	#os.chdir(path_multiple)
+	#multiple(100, 0.25)
+
+
+
+	# Porphyridium purpureum
+	
+	os.chdir(path_script+'Celine/algue_rouge/outputs/model_res/')
+
+	df_1 = data_reading(path+'dataframe_all.csv')
+	df = df_for_Diatoms(df_1, 'Chlamy_Arabi')
+
+	sh_df, val, app, test = app_test_val(df, 0.90, 0.10, 0.80, 0.20)
+
+	random_forest = model()
+	#Optimal_parameters(app)
+
+	model_res_, score_app, importance, predictions, val_pred = Model_(random_forest, app, test, val)
+	df_imp = Importance(random_forest, app, importance)
+	Perf_calculator(predictions, val_pred)
+	
+
+	#df_for_Diatoms(path_script+'Celine/algue_rouge/outputs/model_res/dataframe_all.csv', 'Porphyridium')
+	alphasol, nonalphasol, df_pred = To_Predict(path_script+'Celine/algue_rouge/outputs/model_res/',\
+		random_forest, 'dataframe_all.csv', 'Porphyridium')
 
 
 
