@@ -3171,15 +3171,16 @@ def distrib_len(file_P, file_A, file_C, file_PO, pos, neg) :
 	plt.show()
 
 
-def distrib_radar(file, proteom) :
+def prop_radar(file, proteom, file_cand) :
 
 	df = pd.read_csv(file, sep = '\t')
 	df = df.set_index(df['Unnamed: 0'], inplace = False)
 	del df['Unnamed: 0']
 
-	print(df)
-
-	print(df.loc['>KAA8490199.1', 'radar'])
+	cand = get_idt(file_cand)
+	for prot in list(df.index) :
+		if prot not in cand :
+			df = df.drop(prot)
 
 	'''
 	for index, dico in enumerate(df['radar']) :
@@ -3219,31 +3220,29 @@ def distrib_radar(file, proteom) :
 			#print(elem.keys())
 			#break
 
-	print(df.loc['>KAA8490199.1', 'radar'])
-
-	print(df)
 
 	Proteom = read_proteom(proteom)
 
 	for index, dico in enumerate(df['radar']) :
 		l = []
 		#print(dico.keys())
-		print(dico['l_rep'])
+		if type(dico) != type(float(0)) :
+			print(dico['l_rep'])
 
-		for nb in dico['l_rep'] :
-			print(nb)
-			if 29 <= nb <= 46 :
-				l.append(nb)
-		print(l, len(l))
+			for nb in dico['l_rep'] :
+				print(nb)
+				if 29 <= nb <= 46 :
+					l.append(nb)
+			print(l, len(l))
 
-		length = sum(l)
-		print(length)
+			length = sum(l)
+			print(length)
 
-		prot = df.index[index]
-		print(prot)
-		print(Proteom[prot])
+			prot = df.index[index]
+			print(prot)
+			print(Proteom[prot])
 
-		df.loc[prot, 'radar'] = length/len(Proteom[prot])
+			df.loc[prot, 'radar'] = length/len(Proteom[prot])
 
 		'''
 		length = sum(dico['l_rep'])
@@ -3259,9 +3258,163 @@ def distrib_radar(file, proteom) :
 		l.append(length)
 		print(l, len(l))
 		'''
-		break
+
+	print(df, type(df), len(df))
+
+	'''
+	sns.boxplot(df['radar'], showmeans = True)
+	plt.show()
+	'''
+	return df
+
+
+def nb_radar(file, proteom, file_cand) :
+	
+	df = pd.read_csv(file, sep = '\t')
+	df = df.set_index(df['Unnamed: 0'], inplace = False)
+	del df['Unnamed: 0']
+
+	cand = get_idt(file_cand)
+	for prot in list(df.index) :
+		if prot not in cand :
+			df = df.drop(prot)
+
+
+	
+	for index, elem in enumerate(df['radar']) :
+		elem = ast.literal_eval(str(elem))
+		if type(elem) == type(int(0)) :
+			df['radar'].iloc[index] = float(elem)
+		else :
+			for dico in elem :
+				df['radar'].iloc[index] = dico
+
+
+	Proteom = read_proteom(proteom)
+
+	#nb = []
+	for index, dico in enumerate(df['radar']) :
+		if type(dico) != type(float(0)) :
+			#nb.append(len(dico['l_rep']))
+			nb = len(dico['l_rep'])
+			prot = df.index[index]
+			df.loc[prot, 'radar'] = nb
 
 	print(df)
+
+	return df
+
+
+
+def distrib_radar_C_A_P_PO(fileCA, fileP, filePO, proteomCA, proteomP, proteomPO, \
+	cand_CA, cand_P, cand_PO) :
+	
+	df_prop_PO = prop_radar(filePO, proteomPO, cand_PO)
+	df_prop_P = prop_radar(fileP, proteomP, cand_P)
+	df_prop_CA = prop_radar(fileCA, proteomCA, cand_CA)
+
+	ldf_prop = [df_prop_CA, df_prop_P, df_prop_PO]
+	print(ldf_prop)
+	
+	index = []
+	for df in ldf_prop :
+		for prot in list(df.index) :
+			index.append(prot)
+
+
+	df_nb_PO = nb_radar(filePO, proteomPO, cand_PO)
+	df_nb_P = nb_radar(fileP, proteomP, cand_P)
+	df_nb_CA = nb_radar(fileCA, proteomCA, cand_CA)
+
+	ldf_nb = [df_nb_CA, df_nb_P, df_nb_PO]
+	print(ldf_nb)
+	
+
+	df = pd.DataFrame(0, index = index, columns = ['Type', 'radar_prop', 'radar_nb'])
+
+	for datafr in ldf_prop :
+		for prot in list(datafr.index) :
+			df.loc[prot, 'radar_prop'] = datafr.loc[prot, 'radar']
+
+	for prot in list(df.index) :
+		if prot.startswith('>Cre') :
+			df.loc[prot, 'Type'] = 1
+		if prot.startswith('>NP') or prot.startswith('>YP') :
+			df.loc[prot, 'Type'] = 0
+		if prot.startswith('>jgi') :
+			df.loc[prot, 'Type'] = 2
+		if prot.startswith('>KAA') : 
+			df.loc[prot, 'Type'] = 3
+
+
+	for datafr in ldf_nb :
+		for prot in list(datafr.index) :
+			df.loc[prot, 'radar_nb'] = datafr.loc[prot, 'radar']
+
+	for prot in list(df.index) :
+		if prot.startswith('>Cre') :
+			df.loc[prot, 'Type'] = 1
+		if prot.startswith('>NP') or prot.startswith('>YP') :
+			df.loc[prot, 'Type'] = 0
+		if prot.startswith('>jgi') :
+			df.loc[prot, 'Type'] = 2
+		if prot.startswith('>KAA') : 
+			df.loc[prot, 'Type'] = 3
+
+
+	print(df)
+
+	sns.boxplot(x = df['Type'], y = df['radar_prop'], showmeans = True, meanprops = {"marker": "+", 
+					   "markeredgecolor": "black", 
+					   "markersize": "8"}) 
+	plt.xticks([0, 1, 2, 3], ['A. thaliana', 'C. reinhardtii', 'P.tricornutum', 'P. purpureum'])
+	plt.title('Boxplot of the proportion of the sequence in repetition')
+	plt.ylabel('Proportion')
+	plt.xlabel(' ')
+	plt.show()
+
+	plt.close()
+
+	sns.boxplot(x = df['Type'], y = df['radar_nb'], showmeans = True, meanprops = {"marker": "+", 
+					   "markeredgecolor": "black", 
+					   "markersize": "8"}) 
+	plt.xticks([0, 1, 2, 3], ['A. thaliana', 'C. reinhardtii', 'P.tricornutum', 'P. purpureum'])
+	plt.title('Boxplot of the number of repetition in sequences')
+	plt.ylabel('Number of repetitions')
+	plt.xlabel(' ')
+	plt.show()
+
+	df.to_csv('df_radar.csv', sep = '\t', header = True, index = True)
+
+	'''
+	ind_pn = list(dico_pos.keys())+list(dico_neg.keys())
+	df_pn = pd.DataFrame(0, index = ind_pn, columns = ['Type', 'Length'])
+	df_pn['Length'] = llen_pn
+	print(df)
+	i = 0
+	for ind in list(df_pn.index) :
+		if i > len(dico_pos) :
+			df_pn['Type'].iloc[i] = 1
+		i += 1
+
+	print(df_pn)
+
+	plt.close()
+	sns.boxplot(x = df_pn['Type'], y = df_pn['Length'], showmeans = True, meanprops = {"marker": "+", 
+					   "markeredgecolor": "black", 
+					   "markersize": "8"}) 
+	plt.xticks([0, 1], ['Positive', 'Negative'])
+	plt.title('Boxplot of the length on the learning samples')
+	plt.ylabel('Length of the sequence')
+	plt.xlabel(' ')
+	plt.show()
+	'''
+
+
+
+
+
+
 
 
 if __name__ == '__main__' :
@@ -3275,6 +3428,7 @@ if __name__ == '__main__' :
 	path_cluster = path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/Cluster/'
 	path_new_filtrage =  path_Chlamy_arabi+'Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/new_filtrage/'
 	path_Phaeo = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/Phaedodactylum/Prot_finales/'
+	path_Phaeo2 = '/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/proteomes_diatom/outputs/Phaedodactylum/'
 	path_porph = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/algue_rouge/outputs/"
 	keywords = ['TPR', 'PPR', 'OPR', 'RNA', 'binding', 'Binding', 'GTP', 'ATP', 'mito', 'Mito', 'chlo', 'Chlo', \
 		'Synthase', 'synthase', 'helicase', 'Helicase', 'transferase', 'protease', 'maturation', 'exonuclease', \
@@ -3479,9 +3633,20 @@ if __name__ == '__main__' :
 
 	#os.chdir(path_Phaeo+'pour_Hedi/comp_Hedi/')
 
-	distrib_radar(path_porph+'model_res/dataframe_first.csv', path_porph+'New_Proteom_All.txt')
+	#prop_radar(path_porph+'model_res/dataframe_first.csv', path_porph+'New_Proteom_All.txt', \
+	#	path_porph+'model_res/filtrage/alpha_filtred.txt')
 
 
+	os.chdir(path_to_script+'RF/comp_res/')
+	distrib_radar_C_A_P_PO(path_Chlamy_arabi+'Predictions/Pour_celine_comp/df_adressage/Model_without_adr/New_run/dataframe_first.csv', \
+		path_Phaeo2+'dataframe_first.csv', \
+		path_porph+'model_res/dataframe_first.csv', \
+		path_Chlamy_arabi+'TMHMM/prote/NeW_ALL/New_Proteom_All.txt', \
+		path_Phaeo2+'New_Proteom_Phatr1_models_proteins.fasta.txt', \
+		path_porph+'New_Proteom_All.txt', \
+		path_new_filtrage+'alpha_filtred.txt', \
+		path_Phaeo+'idt_alpha_filtred_Phaedo.txt', \
+		path_porph+'model_res/filtrage/alpha_filtred.txt') 
 
 
 
