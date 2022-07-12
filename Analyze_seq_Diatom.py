@@ -876,8 +876,11 @@ def dataframe_maker(dico_ard2, dico_radar, pattern_prot_all, pattern_idt) :
 	idt_all = []
 
 	for idt in dico_all.keys() :
-		if idt.startswith(pattern_idt) :
-			idt_all.append(idt)
+		#if idt.startswith(pattern_idt) :
+		#if idt in pattern_idt :
+		for pat in pattern_idt :
+			if pat in idt :
+				idt_all.append(idt)
 
 	#to_drop = []
 	#for idt in idt_all :
@@ -1376,27 +1379,57 @@ if __name__ == '__main__' :
 
 	# Porphyridium
 
-	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/algue_rouge/TMHMM/"
+	#path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/algue_rouge/TMHMM/"
 	#path_red = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/algue_rouge/outputs/"
-	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/algue_rouge/outputs/"
-	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
+	#path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/Celine/algue_rouge/outputs/"
+	#list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
 	
-	os.chdir(path_output+'model_res/')
+	#os.chdir(path_output+'model_res/')
+
+	# ARD2
+	#path_ard2 = path_output+"ARD2/"
+
+	# RADAR
+	#path_radar = path_output+"RADAR/"
+
+	#results_ard2, results_radar = Data_Create("STDOUT_"+"*", 'TMHMM/New_Proteom_All.txt', '*'+'RADAR', path_output+'TMHMM/')
+	#final_results = dataframe_maker(results_ard2, results_radar, path_output+'TMHMM/', ['>KAA')]
+	#df = Modification(final_results, path_output+'TMHMM/')
+	#idt = rows_acc(path_output, 'ACC/rownames_*')
+	#df_f = add_df(idt, 'ACC/Acc_output_*', path_output, 'dataframe_interm.csv')
+	#writing(df_f)
+	
+	# Chlamy Arabi
+
+	path_proteom = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/TMHMM/old/"
+	path_proteom_all = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/TMHMM/prote/"
+	path_output2 = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/Predictions/Pour_Celine_comp/df_adressage/Model_without_adr/New_run"
+	path_output = "/Users/rgoulanc/Desktop/Rebecca/FAC/M2BI/Stage/LAFONTAINE/script/RF/Chlamy_Arabi/results/"
+	list_of_aa = ['M', 'Q', 'A', 'L', 'S', 'I', 'P', 'K', 'G', 'V', 'R', 'E', 'F', 'D', 'C', 'T', 'N', 'W', 'Y', 'H']
+
+
+	os.chdir(path_output2)
+	
+	# TMHMM
+	#os.chdir(path_output+'/TMHMM/')
+	#proteins = listing(path_output, 'TMHMM/old/*.tmhmm')
+	#new_proteom = proteome_maker(proteins, path_proteom, '*.f*')
+	#separateur = sep(path_proteom, '*.f*a', '*.tmhmm', 'TMHMM/')
+	#Long_prot_sep = Sep_long_proteom(path_output, 'TMHMM/New_prot/*.txt', 'TMHMM/New_prot/Separated/', int(25000))
+
+
 
 	# ARD2
 	path_ard2 = path_output+"ARD2/"
-
 	# RADAR
 	path_radar = path_output+"RADAR/"
 
-	#results_ard2, results_radar = Data_Create("STDOUT_"+"*", 'TMHMM/New_Proteom_All.txt', '*'+'RADAR', path_output+'TMHMM/')
-	#final_results = dataframe_maker(results_ard2, results_radar, path_output+'TMHMM/', '>KAA')
-	#df = Modification(final_results, path_output+'TMHMM/')
+	results_ard2, results_radar = Data_Create("STDOUT_"+"*", 'TMHMM/prote/*.txt', '*'+'RADAR', path_proteom_all+'New_ALL/')
+	final_results = dataframe_maker(results_ard2, results_radar, path_proteom_all+'New_ALL/', ['>Cre', '>NP', '>YP'])
+	df = Modification(final_results)
 	idt = rows_acc(path_output, 'ACC/rownames_*')
 	df_f = add_df(idt, 'ACC/Acc_output_*', path_output, 'dataframe_interm.csv')
 	writing(df_f)
-	
-
 
 
 
