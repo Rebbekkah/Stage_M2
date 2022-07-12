@@ -3,6 +3,7 @@ import numpy as np
 import math as m
 import os
 import glob
+import ast
 import seaborn as sns
 from os.path import basename
 from operator import itemgetter
@@ -3081,7 +3082,7 @@ def comp_Hedi_2(fileH, fileMe) :
 	pass
 
 
-def distrib_len(file_P, file_A, file_C) :
+def distrib_len(file_P, file_A, file_C, file_PO, pos, neg) :
 
 	llen = []
 	dico_P = read_proteom(file_P)
@@ -3098,10 +3099,14 @@ def distrib_len(file_P, file_A, file_C) :
 	for idt, seq in dico_C.items() :
 		llen.append(len(seq))
 
+	dico_PO = read_proteom(file_PO)
+	for idt, seq in dico_PO.items() :
+		llen.append(len(seq))
+
 	#print(llen, len(llen))
 
-	index = list(dico_P.keys())+list(dico_A.keys())+list(dico_C.keys())
-	#print(index, len(index))
+	index = list(dico_P.keys())+list(dico_A.keys())+list(dico_C.keys())+list(dico_PO.keys())
+	print(index, len(index))
 
 	
 	df = pd.DataFrame(0, index = index, columns = ['Type', 'Length'])
@@ -3110,27 +3115,153 @@ def distrib_len(file_P, file_A, file_C) :
 	print(df)
 	for ind in list(df.index) :
 		if ind.startswith('>jgi') :
-			df.loc[ind, 'Type'] = 0
+			df.loc[ind, 'Type'] = 2
 		elif ind.startswith('>Cre') :
 			df.loc[ind, 'Type'] = 1
+		elif ind.startswith('>KAA') :
+			df.loc[ind, 'Type'] = 3
 		else :
-			df.loc[ind, 'Type'] = 2
+			df.loc[ind, 'Type'] = 0
 
 	print(df)
 
 
-	sns.boxplot(x = df['Type'], y = df_candidates['Length'], showmeans = True, meanprops = {"marker": "+", 
+	sns.boxplot(x = df['Type'], y = df['Length'], showmeans = True, meanprops = {"marker": "+", 
 					   "markeredgecolor": "black", 
 					   "markersize": "8"}) 
-	plt.xticks([0, 1, 2], ['P. tricornutum', 'C. reinhardtii', 'A. thaliana'])
+	plt.xticks([0, 1, 2, 3], ['A. thaliana', 'C. reinhardtii', 'P. tricornutum', 'P. purpureum'])
 	plt.title('Boxplot of the length of the predicted α-solenoids')
+	plt.ylabel('Length of the sequence')
+	plt.xlabel(' ')
+	#plt.show()
+
+
+	dico_pos = read_proteom(pos)
+	print(len(dico_pos))
+	dico_neg = read_proteom(neg)
+	print(len(dico_neg))
+
+	llen_pn = []
+	for idt, seq in dico_pos.items() :
+		llen_pn.append(len(seq))
+	for idt, seq in dico_neg.items() :
+		llen_pn.append(len(seq))
+	print(len(llen_pn))
+
+	ind_pn = list(dico_pos.keys())+list(dico_neg.keys())
+	df_pn = pd.DataFrame(0, index = ind_pn, columns = ['Type', 'Length'])
+	df_pn['Length'] = llen_pn
+	print(df)
+	i = 0
+	for ind in list(df_pn.index) :
+		if i > len(dico_pos) :
+			df_pn['Type'].iloc[i] = 1
+		i += 1
+
+	print(df_pn)
+
+	plt.close()
+	sns.boxplot(x = df_pn['Type'], y = df_pn['Length'], showmeans = True, meanprops = {"marker": "+", 
+					   "markeredgecolor": "black", 
+					   "markersize": "8"}) 
+	plt.xticks([0, 1], ['Positive', 'Negative'])
+	plt.title('Boxplot of the length on the learning samples')
 	plt.ylabel('Length of the sequence')
 	plt.xlabel(' ')
 	plt.show()
 
 
+def distrib_radar(file, proteom) :
+
+	df = pd.read_csv(file, sep = '\t')
+	df = df.set_index(df['Unnamed: 0'], inplace = False)
+	del df['Unnamed: 0']
+
+	print(df)
+
+	print(df.loc['>KAA8490199.1', 'radar'])
+
+	'''
+	for index, dico in enumerate(df['radar']) :
+		#print(len(dico))
+		#print(dico)
+		print(type(dico))
+		dico = list(dico)
+		print(dico)
+		for item in dico :
+			print(item)
+			#break
+		#for key, elem in dico.items() :
+		#	print(key)
+	
+
+	for index, elem in enumerate(df['radar']) :
+		nb = 0
+		if type(elem) != type(['liste']) :
+			df['radar'].iloc[index] = [elem]
+		for dic in elem :
+			print(dic)
+
+	#print(df.loc['>KAA8490199.1', 'radar'])
+	'''
+
+	for index, elem in enumerate(df['radar']) :
+		#print(type(elem))
+		elem = ast.literal_eval(str(elem))
+		#print(type(elem))
+		#print(elem)
+		if type(elem) == type(int(0)) :
+			df['radar'].iloc[index] = float(elem)
+		else :
+			for dico in elem :
+				#print(dico.keys())
+				df['radar'].iloc[index] = dico
+			#print(elem.keys())
+			#break
+
+	print(df.loc['>KAA8490199.1', 'radar'])
+
+	print(df)
+
+	Proteom = read_proteom(proteom)
+
+	for index, dico in enumerate(df['radar']) :
+		l = []
+		#print(dico.keys())
+		print(dico['l_rep'])
+
+		for nb in dico['l_rep'] :
+			print(nb)
+			if 29 <= nb <= 46 :
+				l.append(nb)
+		print(l, len(l))
+
+		length = sum(l)
+		print(length)
+
+		prot = df.index[index]
+		print(prot)
+		print(Proteom[prot])
+
+		df.loc[prot, 'radar'] = length/len(Proteom[prot])
+
+		'''
+		length = sum(dico['l_rep'])
+		print(length)
+
+		prot = df.index[index]
+		print(prot)
+		print(Proteom[prot])
+
+		df.loc[prot, 'radar'] = length/len(Proteom[prot])
 
 
+		l.append(length)
+		print(l, len(l))
+		'''
+		break
+
+	print(df)
 
 
 if __name__ == '__main__' :
@@ -3342,12 +3473,13 @@ if __name__ == '__main__' :
 	#	path_porph+'model_res/filtrage/comp_Cel_M1/OPR_porph.txt', path_porph+'model_res/filtrage/comp_Cel_M1/PPR_porph.txt')
 	#Proteom_alpha_(path_porph+'model_res/filtrage/alpha_filtred.txt', path_porph, 'Porph')
 
-	distrib_len(path_Phaeo+'Proteom_alpha_final_Phaedo.txt', path_new_filtrage+'filtred/Proteom_filtred_Arabidopsis.txt', \
-		path_new_filtrage+'filtred/Proteom_filtred_Chlamydomonas.txt')
+	#distrib_len(path_Phaeo+'Proteom_alpha_final_Phaedo.txt', path_new_filtrage+'filtred/Proteom_filtred_Arabidopsis.txt', \
+	#	path_new_filtrage+'filtred/Proteom_filtred_Chlamydomonas.txt', path_porph+'model_res/filtrage/Proteom_alpha_Porph.txt',
+	#	path_pos_neg+'1081_tem_pos.fasta_line', path_pos_neg+'1196_tem_neg.fasta_line')
 
-	os.chdir(path_Phaeo+'pour_Hedi/comp_Hedi/')
+	#os.chdir(path_Phaeo+'pour_Hedi/comp_Hedi/')
 
-
+	distrib_radar(path_porph+'model_res/dataframe_first.csv', path_porph+'New_Proteom_All.txt')
 
 
 
